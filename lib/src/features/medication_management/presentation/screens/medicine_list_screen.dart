@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import '../../domain/entities/medicine.dart';
 import '../providers/all_medicines_provider.dart';
 
@@ -38,7 +39,7 @@ class MedicineListScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/add-medicine'),
-        icon: const Icon(Icons.add),
+        icon: const Icon(Symbols.add_rounded),
         label: const Text('New Medication'),
       ),
     );
@@ -52,7 +53,7 @@ class MedicineListScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Icon(
-              Icons.medication_liquid_outlined,
+              Symbols.medication_liquid_rounded,
               size: 80,
               color: theme.colorScheme.primary.withAlpha(100),
             ),
@@ -76,7 +77,7 @@ class MedicineListScreen extends ConsumerWidget {
             const SizedBox(height: 32),
             ElevatedButton.icon(
               onPressed: () => context.push('/add-medicine'),
-              icon: const Icon(Icons.add),
+              icon: const Icon(Symbols.add_rounded),
               label: const Text('Add First Medicine'),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
@@ -158,7 +159,7 @@ class _MedicineCard extends StatelessWidget {
                       ),
                     ),
                     Icon(
-                      Icons.chevron_right,
+                      Symbols.chevron_right_rounded,
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ],
@@ -173,14 +174,14 @@ class _MedicineCard extends StatelessWidget {
                     _buildChip(
                       context,
                       _getIntervalLabel(medicine.intervalType),
-                      Icons.repeat,
+                      Symbols.repeat_rounded,
                       theme.colorScheme.secondaryContainer,
                       theme.colorScheme.onSecondaryContainer,
                     ),
                     _buildChip(
                       context,
                       _getMealLabel(medicine.mealContext),
-                      Icons.restaurant_menu,
+                      Symbols.restaurant_menu_rounded,
                       theme.colorScheme.tertiaryContainer,
                       theme.colorScheme.onTertiaryContainer,
                     ),
@@ -228,17 +229,17 @@ class _MedicineCard extends StatelessWidget {
   IconData _getDeliveryIcon(DeliveryMethod method) {
     switch (method) {
       case DeliveryMethod.water:
-        return Icons.water_drop;
+        return Symbols.water_drop_rounded;
       case DeliveryMethod.milk:
-        return Icons.egg;
+        return Symbols.egg_rounded;
       case DeliveryMethod.injection:
-        return Icons.vaccines;
+        return Symbols.vaccines_rounded;
       case DeliveryMethod.drops:
-        return Icons.opacity;
+        return Symbols.opacity_rounded;
       case DeliveryMethod.inhaler:
-        return Icons.air;
+        return Symbols.air_rounded;
       default:
-        return Icons.medication;
+        return Symbols.medication_rounded;
     }
   }
 

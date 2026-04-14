@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class BiometricGate extends StatefulWidget {
   const BiometricGate({required this.child, super.key});
@@ -95,7 +96,11 @@ class _BiometricGateState extends State<BiometricGate>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Icon(Icons.health_and_safety, size: 72, color: Colors.grey),
+            const Icon(
+              Symbols.health_and_safety_rounded,
+              size: 72,
+              color: Colors.grey,
+            ),
             const SizedBox(height: 20),
             Text(
               'Medtrack',
@@ -114,7 +119,7 @@ class _BiometricGateState extends State<BiometricGate>
             else
               FilledButton.icon(
                 onPressed: _authenticate,
-                icon: const Icon(Icons.fingerprint),
+                icon: const Icon(Symbols.fingerprint_rounded),
                 label: const Text('Unlock with Biometrics'),
               ),
           ],

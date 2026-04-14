@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import '../../../daily_dashboard/presentation/screens/daily_dashboard_screen.dart';
 import '../../../history_tracking/presentation/screens/calendar_screen.dart';
 import '../../../medication_management/presentation/screens/medicine_list_screen.dart';
@@ -28,7 +29,7 @@ class MainScreen extends ConsumerWidget {
                 ? NetworkImage(user!.photoURL!)
                 : null,
             child: user?.photoURL == null
-                ? const Icon(Icons.account_circle)
+                ? const Icon(Symbols.account_circle_rounded)
                 : null,
           ),
         ),
@@ -87,23 +88,23 @@ class MainScreen extends ConsumerWidget {
             ref.read(navigationProvider.notifier).setIndex(index),
         destinations: const <NavigationDestination>[
           NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home_filled),
+            icon: Icon(Symbols.home_rounded, fill: 0),
+            selectedIcon: Icon(Symbols.home_rounded, fill: 1),
             label: 'Home',
           ),
           NavigationDestination(
-            icon: Icon(Icons.medication_liquid_outlined),
-            selectedIcon: Icon(Icons.medication_liquid),
+            icon: Icon(Symbols.medication_liquid_rounded, fill: 0),
+            selectedIcon: Icon(Symbols.medication_liquid_rounded, fill: 1),
             label: 'Medicines',
           ),
           NavigationDestination(
-            icon: Icon(Icons.calendar_month_outlined),
-            selectedIcon: Icon(Icons.calendar_month),
+            icon: Icon(Symbols.calendar_month_rounded, fill: 0),
+            selectedIcon: Icon(Symbols.calendar_month_rounded, fill: 1),
             label: 'Calendar',
           ),
           NavigationDestination(
-            icon: Icon(Icons.menu_open_outlined),
-            selectedIcon: Icon(Icons.menu_open),
+            icon: Icon(Symbols.menu_rounded, fill: 0),
+            selectedIcon: Icon(Symbols.menu_rounded, fill: 1),
             label: 'Menu',
           ),
         ],

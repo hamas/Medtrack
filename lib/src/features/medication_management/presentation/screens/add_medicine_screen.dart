@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../services/local_db_service.dart';
@@ -129,7 +130,7 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
             controller: _nameController,
             decoration: const InputDecoration(
               labelText: 'Name',
-              prefixIcon: Icon(Icons.medication),
+              prefixIcon: Icon(Symbols.medication_rounded, fill: 0),
             ),
             validator: (String? v) =>
                 (v == null || v.isEmpty) ? 'Enter medication name' : null,
@@ -139,7 +140,7 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
             controller: _dosageController,
             decoration: const InputDecoration(
               labelText: 'Dosage',
-              prefixIcon: Icon(Icons.scale),
+              prefixIcon: Icon(Symbols.scale_rounded, fill: 0),
             ),
             validator: (String? v) =>
                 (v == null || v.isEmpty) ? 'Enter dosage (e.g. 500mg)' : null,
@@ -229,10 +230,10 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
         const Text('Dose Times', style: TextStyle(fontWeight: FontWeight.w500)),
         ..._selectedTimes.asMap().entries.map(
           (MapEntry<int, TimeOfDay> e) => ListTile(
-            leading: const Icon(Icons.access_time),
+            leading: const Icon(Symbols.access_time_rounded, fill: 0),
             title: Text(e.value.format(context)),
             trailing: IconButton(
-              icon: const Icon(Icons.delete_outline),
+              icon: const Icon(Symbols.delete_rounded, fill: 0),
               onPressed: () => setState(() => _selectedTimes.removeAt(e.key)),
             ),
             onTap: () async {
@@ -250,7 +251,7 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
           onPressed: () => setState(
             () => _selectedTimes.add(const TimeOfDay(hour: 8, minute: 0)),
           ),
-          icon: const Icon(Icons.add),
+          icon: const Icon(Symbols.add_rounded, fill: 0),
           label: const Text('Add Another Dose'),
         ),
       ],
@@ -320,17 +321,17 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
             ListTile(
               title: Text(_nameController.text),
               subtitle: Text(_dosageController.text),
-              leading: const Icon(Icons.check_circle),
+              leading: const Icon(Symbols.check_circle_rounded, fill: 0),
             ),
             ListTile(
               title: const Text('Starting'),
               subtitle: Text(start),
-              leading: const Icon(Icons.calendar_today),
+              leading: const Icon(Symbols.calendar_today_rounded, fill: 0),
             ),
             ListTile(
               title: const Text('Frequency'),
               subtitle: Text(_intervalType.name),
-              leading: const Icon(Icons.repeat),
+              leading: const Icon(Symbols.repeat_rounded, fill: 0),
             ),
           ],
         ),
@@ -347,11 +348,13 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
             onPressed: details.onStepContinue,
             child: Text(_currentStep == 3 ? 'SAVE' : 'NEXT'),
           ),
-          if (_currentStep > 0)
+          if (_currentStep > 0) ...<Widget>[
+            const SizedBox(width: 12),
             TextButton(
               onPressed: details.onStepCancel,
               child: const Text('BACK'),
             ),
+          ],
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../medication_management/domain/entities/medicine.dart';
 import '../../domain/entities/dose.dart';
@@ -36,7 +37,7 @@ class DailyDashboardScreen extends ConsumerWidget {
                   right: 24,
                   child: FloatingActionButton.extended(
                     onPressed: () => context.push('/add-medicine'),
-                    icon: const Icon(Icons.add),
+                    icon: const Icon(Symbols.add_rounded),
                     label: const Text('Add Medication'),
                   ),
                 ),
@@ -102,7 +103,7 @@ class _DashboardItem extends ConsumerWidget {
             Row(
               children: <Widget>[
                 Icon(
-                  Icons.info_outline,
+                  Symbols.info_rounded,
                   size: 14,
                   color: theme.colorScheme.primary,
                 ),
