@@ -40,7 +40,7 @@ final class AuthStateProvider
   }
 }
 
-String _$authStateHash() => r'd8eb17123e8971f9b8086bb415a4b2bde52779e2';
+String _$authStateHash() => r'758ae4e4e34de70fe2d743034d78a541d9de3f05';
 
 @ProviderFor(currentUid)
 final currentUidProvider = CurrentUidProvider._();
@@ -81,4 +81,4 @@ final class CurrentUidProvider
   }
 }
 
-String _$currentUidHash() => r'decfe2f88fc3490fb8563c040e56216df23b5792';
+String _$currentUidHash() => r'78497e32f931e400c6df89c6f3ab34795c25b598';
