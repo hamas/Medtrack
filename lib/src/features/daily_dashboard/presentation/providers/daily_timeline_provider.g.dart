@@ -1,0 +1,102 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'daily_timeline_provider.dart';
+
+// **************************************************************************
+// RiverpodGenerator
+// **************************************************************************
+
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(dashboardRepository)
+final dashboardRepositoryProvider = DashboardRepositoryProvider._();
+
+final class DashboardRepositoryProvider
+    extends
+        $FunctionalProvider<
+          DashboardRepository,
+          DashboardRepository,
+          DashboardRepository
+        >
+    with $Provider<DashboardRepository> {
+  DashboardRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'dashboardRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$dashboardRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<DashboardRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  DashboardRepository create(Ref ref) {
+    return dashboardRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DashboardRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DashboardRepository>(value),
+    );
+  }
+}
+
+String _$dashboardRepositoryHash() =>
+    r'e5c9c75dd4a85ab1e4de9216425ecb05cc781d39';
+
+@ProviderFor(DailyTimeline)
+final dailyTimelineProvider = DailyTimelineProvider._();
+
+final class DailyTimelineProvider
+    extends $AsyncNotifierProvider<DailyTimeline, List<Dose>> {
+  DailyTimelineProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'dailyTimelineProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$dailyTimelineHash();
+
+  @$internal
+  @override
+  DailyTimeline create() => DailyTimeline();
+}
+
+String _$dailyTimelineHash() => r'5e3e8fb88efb4c7098487f573d2693c255173671';
+
+abstract class _$DailyTimeline extends $AsyncNotifier<List<Dose>> {
+  FutureOr<List<Dose>> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<List<Dose>>, List<Dose>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<Dose>>, List<Dose>>,
+              AsyncValue<List<Dose>>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}

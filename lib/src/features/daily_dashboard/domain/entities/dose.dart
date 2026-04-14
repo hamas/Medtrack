@@ -1,6 +1,6 @@
-// Developed by Hamas - Medtrack Project [100% Dart Implementation].
+// Developed by Hamas — Medtrack Project [100% Dart Implementation]
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:medtrack/src/features/medication_management/domain/entities/medicine.dart';
+import '../../../medication_management/domain/entities/medicine.dart';
 
 part 'dose.freezed.dart';
 part 'dose.g.dart';

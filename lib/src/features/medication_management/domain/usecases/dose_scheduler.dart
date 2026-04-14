@@ -1,7 +1,7 @@
 // Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'package:timezone/timezone.dart' as tz;
 import '../entities/medicine.dart';
-import '../entities/dose.dart';
+import '../../daily_dashboard/domain/entities/dose.dart';
 
 class DoseScheduler {
   /// Calculates the next 10 dose objects for a given medicine.

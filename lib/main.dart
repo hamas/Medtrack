@@ -1,4 +1,4 @@
-// Developed by Hamas - Medtrack Project [100% Dart Implementation].
+// Developed by Hamas — Medtrack Project [100% Dart Implementation]
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,22 +10,18 @@ import 'src/services/notification_manager.dart';
 import 'src/services/firebase_service.dart';
 import 'src/core/theme.dart';
 import 'src/features/authentication/presentation/biometric_gate.dart';
-import 'src/features/medication_management/presentation/screens/dashboard_screen.dart';
+import 'src/features/daily_dashboard/presentation/screens/daily_dashboard_screen.dart';
 import 'src/features/medication_management/presentation/screens/add_medicine_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    // 1. Initialize Firebase with Custom Options
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    
-    // 2. Initialize Firebase Sign-In (v7+ requirement)
     final firebaseService = FirebaseService();
     await firebaseService.initialize();
-    
   } catch (e) {
     debugPrint('Firebase initialization failed. Error: $e');
   }
@@ -42,7 +38,7 @@ final GoRouter _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const DashboardScreen(),
+      builder: (context, state) => const DailyDashboardScreen(),
     ),
     GoRoute(
       path: '/add-medicine',
