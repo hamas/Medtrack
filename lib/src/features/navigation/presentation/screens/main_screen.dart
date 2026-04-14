@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -15,6 +16,7 @@ class MainScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int currentIndex = ref.watch(navigationProvider);
+    final User? user = FirebaseAuth.instance.currentUser;
     final AsyncValue<UserProfile> userProfileAsync = ref.watch(
       userProfileStateProvider,
     );
@@ -125,25 +127,51 @@ class MainScreen extends ConsumerWidget {
         selectedIndex: currentIndex,
         onDestinationSelected: (int index) =>
             ref.read(navigationProvider.notifier).setIndex(index),
-        destinations: const <NavigationDestination>[
-          NavigationDestination(
+        destinations: <NavigationDestination>[
+          const NavigationDestination(
             icon: Icon(Symbols.home_rounded, fill: 0),
             selectedIcon: Icon(Symbols.home_rounded, fill: 1),
             label: 'Home',
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Icon(Symbols.pill_rounded, fill: 0),
             selectedIcon: Icon(Symbols.pill_rounded, fill: 1),
             label: 'Medicines',
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Icon(Symbols.calendar_today_rounded, fill: 0),
             selectedIcon: Icon(Symbols.calendar_today_rounded, fill: 1),
             label: 'Calendar',
           ),
           NavigationDestination(
-            icon: Icon(Symbols.person_rounded, fill: 0),
-            selectedIcon: Icon(Symbols.person_rounded, fill: 1),
+            icon: Container(
+              width: 40,
+              height: 40,
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: currentIndex == 3
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.transparent,
+                  width: 2,
+                ),
+              ),
+              child: CircleAvatar(
+                radius: 18,
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                backgroundImage: user?.photoURL != null
+                    ? NetworkImage(user!.photoURL!)
+                    : null,
+                child: user?.photoURL == null
+                    ? Icon(
+                        Symbols.person_rounded,
+                        size: 24,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      )
+                    : null,
+              ),
+            ),
             label: 'Profile',
           ),
         ],
