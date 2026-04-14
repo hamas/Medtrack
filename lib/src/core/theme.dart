@@ -54,6 +54,9 @@ class MedTrackTheme {
         labelTextStyle: WidgetStateProperty.all(
           GoogleFonts.googleSans(fontSize: 12, fontWeight: FontWeight.w500),
         ),
+        iconTheme: WidgetStateProperty.all(
+          const IconThemeData(size: 20),
+        ),
       ),
       iconTheme: const IconThemeData(
         weight: 600,
@@ -110,6 +113,9 @@ class MedTrackTheme {
         indicatorColor: darkScheme.primaryContainer,
         labelTextStyle: WidgetStateProperty.all(
           GoogleFonts.googleSans(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
+        iconTheme: WidgetStateProperty.all(
+          const IconThemeData(size: 20),
         ),
       ),
       iconTheme: const IconThemeData(
