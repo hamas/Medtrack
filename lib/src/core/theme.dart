@@ -23,11 +23,11 @@ class MedTrackTheme {
       onError: Colors.white,
       errorContainer: Color(0xFFFEE2E2),
       onErrorContainer: Color(0xFF991B1B),
-      surface: Color(0xFFF8FAFC), // Slate 50
-      onSurface: Color(0xFF0F172A), // Slate 900
-      surfaceContainerHighest: Color(0xFFE2E8F0),
-      onSurfaceVariant: Color(0xFF475569),
-      outline: Color(0xFF94A3B8),
+      surface: Color(0xFF091413), // Deep Midnight Teal
+      onSurface: Color(0xFFF8FAFC), // Slate 50
+      surfaceContainerHighest: Color(0xFF1E293B),
+      onSurfaceVariant: Color(0xFFE2E8F0),
+      outline: Color(0xFF475569),
     );
 
     return ThemeData(
@@ -38,7 +38,7 @@ class MedTrackTheme {
           Colors.transparent, // Required for global background
       appBarTheme: AppBarTheme(
         centerTitle: true,
-        backgroundColor: lightScheme.surface.withAlpha(200),
+        backgroundColor: lightScheme.surface,
         titleTextStyle: GoogleFonts.googleSans(
           color: lightScheme.onSurface,
           fontSize: 20,
@@ -49,7 +49,7 @@ class MedTrackTheme {
         scrolledUnderElevation: 0,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: lightScheme.surface.withAlpha(200),
+        backgroundColor: lightScheme.surface,
         indicatorColor: lightScheme.primaryContainer,
         labelTextStyle: WidgetStateProperty.all(
           GoogleFonts.googleSans(fontSize: 12, fontWeight: FontWeight.w500),
@@ -77,11 +77,11 @@ class MedTrackTheme {
       onError: Color(0xFFFEF2F2),
       errorContainer: Color(0xFF991B1B),
       onErrorContainer: Color(0xFFFEE2E2),
-      surface: Color(0xFF0F172A), // Slate 900
+      surface: Color(0xFF091413), // Deep Midnight Teal
       onSurface: Color(0xFFF8FAFC), // Slate 50
       surfaceContainerHighest: Color(0xFF1E293B),
-      onSurfaceVariant: Color(0xFFCBD5E1),
-      outline: Color(0xFF64748B),
+      onSurfaceVariant: Color(0xFFE2E8F0),
+      outline: Color(0xFF475569),
     );
 
     return ThemeData(
@@ -92,7 +92,7 @@ class MedTrackTheme {
           Colors.transparent, // Required for global background
       appBarTheme: AppBarTheme(
         centerTitle: true,
-        backgroundColor: darkScheme.surface.withAlpha(200),
+        backgroundColor: darkScheme.surface,
         titleTextStyle: GoogleFonts.googleSans(
           color: darkScheme.onSurface,
           fontSize: 20,
@@ -103,7 +103,7 @@ class MedTrackTheme {
         scrolledUnderElevation: 0,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: darkScheme.surface.withAlpha(200),
+        backgroundColor: darkScheme.surface,
         indicatorColor: darkScheme.primaryContainer,
         labelTextStyle: WidgetStateProperty.all(
           GoogleFonts.googleSans(fontSize: 12, fontWeight: FontWeight.w500),

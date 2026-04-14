@@ -54,7 +54,7 @@ class MainScreen extends ConsumerWidget {
                   colors: <Color>[
                     Theme.of(
                       context,
-                    ).colorScheme.primaryContainer.withAlpha(150),
+                    ).colorScheme.primaryContainer.withAlpha(80),
                     Theme.of(context).colorScheme.surface,
                   ],
                   stops: const <double>[0.0, 1.0],
