@@ -1,4 +1,4 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../authentication/presentation/providers/auth_provider.dart';
 import '../../data/repositories/user_profile_repository_impl.dart';
 import '../../domain/entities/achievement.dart';
 import '../../domain/entities/user_profile.dart';
@@ -15,7 +15,11 @@ UserProfileRepository userProfileRepo(Ref ref) {
 class UserProfileState extends _$UserProfileState {
   @override
   Stream<UserProfile> build() {
-    const String userId = 'hamas_lead_dev';
+    final String? userId = ref.watch(currentUidProvider);
+    if (userId == null) {
+      // Return a dummy stream or handle unauthenticated state
+      return const Stream<UserProfile>.empty();
+    }
     return ref.watch(userProfileRepoProvider).streamUserProfile(userId);
   }
 

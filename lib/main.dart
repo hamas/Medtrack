@@ -20,6 +20,7 @@ Future<void> main() async {
     );
     final FirebaseService firebaseService = FirebaseService();
     await firebaseService.initialize();
+    await firebaseService.ensureAuthenticated();
   } catch (e) {
     debugPrint('Firebase initialization failed. Error: $e');
   }

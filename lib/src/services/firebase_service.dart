@@ -65,4 +65,18 @@ class FirebaseService {
     await _googleSignIn.signOut();
     await _auth.signOut();
   }
+
+  Future<User?> ensureAuthenticated() async {
+    final User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      return currentUser;
+    }
+    try {
+      final UserCredential userCredential = await _auth.signInAnonymously();
+      return userCredential.user;
+    } catch (e) {
+      debugPrint('Anonymous Auth Error: $e');
+      return null;
+    }
+  }
 }

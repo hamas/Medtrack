@@ -1,5 +1,4 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
+import '../../../authentication/presentation/providers/auth_provider.dart';
 import '../../../gamification/domain/entities/achievement.dart';
 import '../../../gamification/domain/entities/user_profile.dart';
 import '../../../gamification/presentation/providers/user_profile_provider.dart';
@@ -18,7 +17,9 @@ DashboardRepository dashboardRepo(Ref ref) {
 class DailyTimeline extends _$DailyTimeline {
   @override
   FutureOr<List<Dose>> build() async {
-    const String userId = 'hamas_lead_dev';
+    final String? userId = ref.watch(currentUidProvider);
+    if (userId == null) return <Dose>[];
+
     final DashboardRepository repository = ref.watch(dashboardRepoProvider);
     return repository.getDailyTimeline(userId, DateTime.now());
   }
