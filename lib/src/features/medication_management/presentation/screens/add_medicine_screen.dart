@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 import '../../domain/entities/medicine.dart';
 import '../../data/repositories/medication_repository_impl.dart';
 import '../../../../services/local_db_service.dart';
-import '../providers/timeline_provider.dart';
+import '../../daily_dashboard/presentation/providers/daily_timeline_provider.dart';
 
 class AddMedicineScreen extends ConsumerStatefulWidget {
   const AddMedicineScreen({super.key});
