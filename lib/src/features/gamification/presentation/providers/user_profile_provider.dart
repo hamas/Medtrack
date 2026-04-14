@@ -1,5 +1,4 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../authentication/presentation/providers/auth_provider.dart';
 import '../../data/repositories/user_profile_repository_impl.dart';
 import '../../domain/entities/achievement.dart';
