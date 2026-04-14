@@ -62,8 +62,8 @@ class _DashboardItem extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: dose.isTaken
-            ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
-            : theme.colorScheme.surface,
+            ? theme.colorScheme.surfaceContainerHighest.withAlpha(128)
+            : theme.colorScheme.surface.withAlpha(220),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
       ),

@@ -1,4 +1,4 @@
-import 'package:dynamic_color/dynamic_color.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -59,16 +59,12 @@ class MedTrackApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DynamicColorBuilder(
-      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        return MaterialApp.router(
-          title: 'Medtrack',
-          theme: MedTrackTheme.lightTheme(lightDynamic),
-          darkTheme: MedTrackTheme.darkTheme(darkDynamic),
-          themeMode: ThemeMode.system,
-          routerConfig: _router,
-        );
-      },
+    return MaterialApp.router(
+      title: 'Medtrack',
+      theme: MedTrackTheme.lightTheme(),
+      darkTheme: MedTrackTheme.darkTheme(),
+      themeMode: ThemeMode.system,
+      routerConfig: _router,
     );
   }
 }

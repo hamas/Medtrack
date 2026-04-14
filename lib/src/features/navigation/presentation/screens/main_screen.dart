@@ -16,6 +16,8 @@ class MainScreen extends ConsumerWidget {
     final User? user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
+      extendBody: true,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
@@ -43,13 +45,36 @@ class MainScreen extends ConsumerWidget {
           const SizedBox(width: 8),
         ],
       ),
-      body: IndexedStack(
-        index: currentIndex,
-        children: const <Widget>[
-          DailyDashboardScreen(),
-          MedicineListScreen(),
-          CalendarScreen(),
-          MenuScreen(),
+      body: Stack(
+        children: <Widget>[
+          // Background Layer
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  center: const Alignment(0, -0.6),
+                  radius: 1.5,
+                  colors: <Color>[
+                    Theme.of(context).colorScheme.primaryContainer.withAlpha(150),
+                    Theme.of(context).colorScheme.surface,
+                  ],
+                  stops: const <double>[0.0, 1.0],
+                ),
+              ),
+            ),
+          ),
+          // Content Layer
+          SafeArea(
+            child: IndexedStack(
+              index: currentIndex,
+              children: const <Widget>[
+                DailyDashboardScreen(),
+                MedicineListScreen(),
+                CalendarScreen(),
+                MenuScreen(),
+              ],
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: NavigationBar(
