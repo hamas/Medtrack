@@ -1,4 +1,3 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation]
 import '../entities/dose.dart';
 
 abstract class DashboardRepository {

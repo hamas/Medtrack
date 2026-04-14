@@ -1,4 +1,3 @@
-// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'adherence_log.freezed.dart';
@@ -7,7 +6,7 @@ part 'adherence_log.g.dart';
 enum AdherenceStatus { taken, skipped, missed }
 
 @freezed
-abstract class AdherenceLog with _$AdherenceLog {
+class AdherenceLog with _$AdherenceLog {
   const factory AdherenceLog({
     required String id,
     required String medicineId,
@@ -17,6 +16,5 @@ abstract class AdherenceLog with _$AdherenceLog {
     String? mealNotes,
   }) = _AdherenceLog;
 
-  factory AdherenceLog.fromJson(Map<String, dynamic> json) =>
-      _$AdherenceLogFromJson(json);
+  factory AdherenceLog.fromJson(Map<String, dynamic> json) => _$AdherenceLogFromJson(json);
 }

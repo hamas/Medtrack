@@ -1,18 +1,16 @@
-// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 
 class BiometricGate extends StatefulWidget {
+  const BiometricGate({required this.child, super.key});
   final Widget child;
-  const BiometricGate({super.key, required this.child});
 
   @override
   State<BiometricGate> createState() => _BiometricGateState();
 }
 
-class _BiometricGateState extends State<BiometricGate>
-    with WidgetsBindingObserver {
+class _BiometricGateState extends State<BiometricGate> with WidgetsBindingObserver {
   final LocalAuthentication auth = LocalAuthentication();
   bool _isAuthenticated = false;
   bool _isAuthenticating = false;
@@ -32,9 +30,7 @@ class _BiometricGateState extends State<BiometricGate>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed &&
-        !_isAuthenticated &&
-        !_isAuthenticating) {
+    if (state == AppLifecycleState.resumed && !_isAuthenticated && !_isAuthenticating) {
       _authenticate();
     } else if (state == AppLifecycleState.paused) {
       setState(() {
@@ -49,8 +45,7 @@ class _BiometricGateState extends State<BiometricGate>
     });
     try {
       final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
-      final bool canAuthenticate =
-          canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+      final bool canAuthenticate = canAuthenticateWithBiometrics || await auth.isDeviceSupported();
 
       if (!canAuthenticate) {
         setState(() {
@@ -62,8 +57,10 @@ class _BiometricGateState extends State<BiometricGate>
 
       final bool didAuthenticate = await auth.authenticate(
         localizedReason: 'Please authenticate to access your medical logs',
-        persistAcrossBackgrounding: true,
-        biometricOnly: true,
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: true,
+        ),
       );
 
       setState(() {
@@ -73,7 +70,7 @@ class _BiometricGateState extends State<BiometricGate>
     } on PlatformException catch (e) {
       debugPrint('Biometric Error: $e');
       setState(() {
-        _isAuthenticated = false; // Stay locked
+        _isAuthenticated = false;
         _isAuthenticating = false;
       });
     }
@@ -88,7 +85,7 @@ class _BiometricGateState extends State<BiometricGate>
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             const Icon(Icons.lock, size: 64, color: Colors.grey),
             const SizedBox(height: 16),
             const Text('App Locked', style: TextStyle(fontSize: 24)),

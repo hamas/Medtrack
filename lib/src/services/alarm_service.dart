@@ -1,29 +1,30 @@
-// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import '../features/medication_management/domain/entities/medicine.dart';
 import '../features/medication_management/domain/usecases/dose_scheduler.dart';
 import 'notification_manager.dart';
+import '../features/daily_dashboard/domain/entities/dose.dart';
 
 class AlarmService {
-  static final AlarmService _instance = AlarmService._internal();
   factory AlarmService() => _instance;
   AlarmService._internal();
+  static final AlarmService _instance = AlarmService._internal();
 
   final NotificationManager _notificationManager = NotificationManager();
 
-  /// Calculates and schedules the absolute next alert for a given medicine.
   Future<void> scheduleNextAlarm(Medicine medicine) async {
-    if (!medicine.isActive) return;
+    if (!medicine.isActive) {
+      return;
+    }
 
-    final nextDoses = DoseScheduler.calculateNextDoses(medicine);
-    if (nextDoses.isEmpty) return;
+    final List<Dose> nextDoses = DoseScheduler.calculateNextDoses(medicine);
+    if (nextDoses.isEmpty) {
+      return;
+    }
 
-    final nextDose = nextDoses.first;
-
-    // Create highly contextual body text
-    final body = _buildContextualBody(medicine);
+    final Dose nextDose = nextDoses.first;
+    final String body = _buildContextualBody(medicine);
 
     await _notificationManager.scheduleNotification(
-      id: medicine.id.hashCode, // Unique ID per medication for overriding
+      id: medicine.id.hashCode,
       title: 'Time for ${medicine.name} (${medicine.dosage})',
       body: body,
       scheduledDate: nextDose.scheduledTime,
@@ -31,12 +32,12 @@ class AlarmService {
   }
 
   Future<void> cancelAlarm(Medicine medicine) async {
-    // We would add a cancel method to NotificationManager
+    // Placeholder for future cancellation implementation
   }
 
   String _buildContextualBody(Medicine medicine) {
-    final method = medicine.deliveryMethod.name.toUpperCase();
-    final meal = _getMealInstruction(medicine.mealContext);
+    final String method = medicine.deliveryMethod.name.toUpperCase();
+    final String meal = _getMealInstruction(medicine.mealContext);
 
     return 'Dose: $method • Instructions: $meal';
   }

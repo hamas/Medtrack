@@ -1,13 +1,9 @@
-﻿# Developed by Hamas â€” Medtrack Project [100% Dart Implementation]
 
 ![Dart](https://img.shields.io/badge/Language-100%25_Dart-0175C2?logo=dart&logoColor=white) 
 ![Verified](https://img.shields.io/badge/DevOps-Verified-success?logo=github-actions&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Android_%7C_Web-blue?logo=android&logoColor=white)
 
-# Medtrack â€” Professional Medicine Tracking
-
-**Lead Developer & Architect:** Hamas
-
+# Medtrack — Professional Medicine Tracking
 
 ## Vision
 Medtrack is a "Google Task-style" medicine tracker designed from the ground up for medical-grade precision. It pairs an intuitive, clean interface with robust, reliable tracking, ensuring you never miss a dose while providing deep insights into your adherence history.
@@ -26,5 +22,5 @@ Medtrack is a "Google Task-style" medicine tracker designed from the ground up f
 - **Security:** Local Auth, Flutter Secure Storage
 - **Routing:** GoRouter
 
-## Architecture
-Medtrack adheres strictly to the **Feature-First Clean Architecture**, separating the application into decoupled, highly testable domains (`core`, `features`, `services`) with unidirectional data flows.
+---
+Developed by Hamas ❤️.

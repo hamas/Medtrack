@@ -1,4 +1,3 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation]
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../medication_management/domain/entities/medicine.dart';
 
@@ -6,7 +5,7 @@ part 'dose.freezed.dart';
 part 'dose.g.dart';
 
 @freezed
-abstract class Dose with _$Dose {
+class Dose with _$Dose {
   const factory Dose({
     required String id,
     required Medicine medicine,

@@ -1,29 +1,30 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation]
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
-import '../providers/daily_timeline_provider.dart';
+import 'package:intl/intl.dart';
+
 import '../../domain/entities/dose.dart';
+import '../../domain/entities/medicine.dart';
+import '../providers/daily_timeline_provider.dart';
 
 class DailyDashboardScreen extends ConsumerWidget {
   const DailyDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final timelineAsync = ref.watch(dailyTimelineProvider);
+    final AsyncValue<List<Dose>> timelineAsync = ref.watch(dailyTimelineProvider);
 
     return timelineAsync.when(
-      data: (doses) => doses.isEmpty
+      data: (List<Dose> doses) => doses.isEmpty
           ? const Center(child: Text('No doses scheduled for today.'))
           : Stack(
-              children: [
+              children: <Widget>[
                 ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: doses.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final dose = doses[index];
+                  separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 12),
+                  itemBuilder: (BuildContext context, int index) {
+                    final Dose dose = doses[index];
                     return _DashboardItem(dose: dose);
                   },
                 ),
@@ -39,20 +40,20 @@ class DailyDashboardScreen extends ConsumerWidget {
               ],
             ),
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(child: Text('Error: $err')),
+      error: (Object err, StackTrace stack) => Center(child: Text('Error: $err')),
     );
   }
 }
 
 class _DashboardItem extends ConsumerWidget {
-  final Dose dose;
   const _DashboardItem({required this.dose});
+  final Dose dose;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final medicine = dose.medicine;
-    final timeStr = DateFormat('hh:mm a').format(dose.scheduledTime);
+    final ThemeData theme = Theme.of(context);
+    final Medicine medicine = dose.medicine;
+    final String timeStr = DateFormat('hh:mm a').format(dose.scheduledTime);
     
     return Container(
       decoration: BoxDecoration(
@@ -61,7 +62,7 @@ class _DashboardItem extends ConsumerWidget {
           : theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: theme.dividerColor.withOpacity(0.1),
+          color: theme.dividerColor.withValues(alpha: 0.1),
         ),
       ),
       child: ListTile(
@@ -89,11 +90,11 @@ class _DashboardItem extends ConsumerWidget {
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: <Widget>[
             Text('${medicine.dosage} • ${medicine.deliveryMethod.name.toUpperCase()}'),
             const SizedBox(height: 4),
             Row(
-              children: [
+              children: <Widget>[
                 Icon(Icons.info_outline, size: 14, color: theme.colorScheme.primary),
                 const SizedBox(width: 4),
                 Text(
@@ -110,7 +111,7 @@ class _DashboardItem extends ConsumerWidget {
         ),
         trailing: Checkbox(
           value: dose.isTaken,
-          onChanged: dose.isTaken ? null : (value) {
+          onChanged: dose.isTaken ? null : (bool? value) {
             if (value == true) {
               ref.read(dailyTimelineProvider.notifier).checkOffDose(dose);
             }
@@ -121,13 +122,12 @@ class _DashboardItem extends ConsumerWidget {
     );
   }
 
-  String _getMealLabel(dynamic context) {
-    final name = context.toString().split('.').last;
-    switch (name) {
-      case 'beforeMeal': return 'Take Before Meal';
-      case 'withMeal': return 'Take With Meal';
-      case 'afterMeal': return 'Take After Meal';
-      default: return 'No meal instructions';
+  String _getMealLabel(MealContext context) {
+    switch (context) {
+      case MealContext.beforeMeal: return 'Take Before Meal';
+      case MealContext.withMeal: return 'Take With Meal';
+      case MealContext.afterMeal: return 'Take After Meal';
+      case MealContext.none: return 'No meal instructions';
     }
   }
 }

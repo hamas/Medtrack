@@ -1,4 +1,3 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation]
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'navigation_provider.g.dart';

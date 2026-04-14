@@ -50,7 +50,7 @@ final class CheckoffNotifierProvider
   }
 }
 
-String _$checkoffNotifierHash() => r'c6db44ae2fa0ee593c2db7deee24c770042a48c7';
+String _$checkoffNotifierHash() => r'715e821b15cc86e185057c3690f5e00472acacf0';
 
 final class CheckoffNotifierFamily extends $Family
     with

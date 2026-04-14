@@ -1,4 +1,3 @@
-// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'medicine.freezed.dart';
@@ -13,7 +12,7 @@ enum MealContext { beforeMeal, withMeal, afterMeal, none }
 enum DeliveryMethod { water, milk, mixed, injection, drops, inhaler, other }
 
 @freezed
-abstract class Medicine with _$Medicine {
+class Medicine with _$Medicine {
   const factory Medicine({
     required String id,
     required String userId,
@@ -32,6 +31,5 @@ abstract class Medicine with _$Medicine {
     DateTime? createdAt,
   }) = _Medicine;
 
-  factory Medicine.fromJson(Map<String, dynamic> json) =>
-      _$MedicineFromJson(json);
+  factory Medicine.fromJson(Map<String, dynamic> json) => _$MedicineFromJson(json);
 }

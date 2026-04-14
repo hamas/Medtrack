@@ -1,32 +1,31 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation]
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:go_router/go_router.dart';
 
 import 'firebase_options.dart';
-import 'src/services/notification_manager.dart';
-import 'src/services/firebase_service.dart';
 import 'src/core/theme.dart';
 import 'src/features/authentication/presentation/biometric_gate.dart';
-import 'src/features/navigation/presentation/screens/main_screen.dart';
 import 'src/features/medication_management/presentation/screens/add_medicine_screen.dart';
+import 'src/features/navigation/presentation/screens/main_screen.dart';
+import 'src/services/firebase_service.dart';
+import 'src/services/notification_manager.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    final firebaseService = FirebaseService();
+    final FirebaseService firebaseService = FirebaseService();
     await firebaseService.initialize();
   } catch (e) {
     debugPrint('Firebase initialization failed. Error: $e');
   }
 
-  final notificationManager = NotificationManager();
+  final NotificationManager notificationManager = NotificationManager();
   await notificationManager.initialize();
   await notificationManager.requestPermissions();
 
@@ -35,14 +34,14 @@ void main() async {
 
 final GoRouter _router = GoRouter(
   initialLocation: '/',
-  routes: [
+  routes: <RouteBase>[
     GoRoute(
       path: '/',
-      builder: (context, state) => const MainScreen(),
+      builder: (BuildContext context, GoRouterState state) => const MainScreen(),
     ),
     GoRoute(
       path: '/add-medicine',
-      builder: (context, state) => const AddMedicineScreen(),
+      builder: (BuildContext context, GoRouterState state) => const AddMedicineScreen(),
     ),
   ],
 );

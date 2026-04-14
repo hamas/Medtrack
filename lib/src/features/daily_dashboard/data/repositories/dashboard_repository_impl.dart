@@ -1,4 +1,3 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation]
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/dose.dart';
 import '../../domain/repositories/dashboard_repository.dart';

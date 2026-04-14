@@ -54,7 +54,7 @@ final class DashboardRepoProvider
   }
 }
 
-String _$dashboardRepoHash() => r'950301cd5482b75b9def466a76317e3723f8fcaf';
+String _$dashboardRepoHash() => r'b5a4c13a15911d2498158d4f0fbc9b524d56033a';
 
 @ProviderFor(DailyTimeline)
 final dailyTimelineProvider = DailyTimelineProvider._();
@@ -80,7 +80,7 @@ final class DailyTimelineProvider
   DailyTimeline create() => DailyTimeline();
 }
 
-String _$dailyTimelineHash() => r'15edc08590b5b69aab5120524aa9e08fdf0e2c50';
+String _$dailyTimelineHash() => r'c9fb2b770d849f342e8a739daf1c31182496e6b1';
 
 abstract class _$DailyTimeline extends $AsyncNotifier<List<Dose>> {
   FutureOr<List<Dose>> build();

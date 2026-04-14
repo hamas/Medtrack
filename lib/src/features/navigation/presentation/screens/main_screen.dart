@@ -1,11 +1,10 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation]
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../providers/navigation_provider.dart';
 import '../../../daily_dashboard/presentation/screens/daily_dashboard_screen.dart';
-import '../../../medication_management/presentation/screens/medicine_list_screen.dart';
 import '../../../history_tracking/presentation/screens/calendar_screen.dart';
+import '../../../medication_management/presentation/screens/medicine_list_screen.dart';
+import '../providers/navigation_provider.dart';
 import 'menu_screen.dart';
 
 class MainScreen extends ConsumerWidget {
@@ -13,8 +12,8 @@ class MainScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentIndex = ref.watch(navigationProvider);
-    final user = FirebaseAuth.instance.currentUser;
+    final int currentIndex = ref.watch(navigationProvider);
+    final User? user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       appBar: AppBar(
@@ -30,7 +29,7 @@ class MainScreen extends ConsumerWidget {
             child: user?.photoURL == null ? const Icon(Icons.account_circle) : null,
           ),
         ),
-        actions: [
+        actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.notifications_sharp),
             onPressed: () {
@@ -42,7 +41,7 @@ class MainScreen extends ConsumerWidget {
       ),
       body: IndexedStack(
         index: currentIndex,
-        children: const [
+        children: const <Widget>[
           DailyDashboardScreen(),
           MedicineListScreen(),
           CalendarScreen(),
@@ -51,8 +50,8 @@ class MainScreen extends ConsumerWidget {
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
-        onDestinationSelected: (index) => ref.read(navigationProvider.notifier).setIndex(index),
-        destinations: const [
+        onDestinationSelected: (int index) => ref.read(navigationProvider.notifier).setIndex(index),
+        destinations: const <NavigationDestination>[
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home_filled),
