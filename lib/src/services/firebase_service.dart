@@ -36,27 +36,25 @@ class FirebaseService {
   }
 
   Future<UserCredential?> signInWithGoogle() async {
-    // authenticate() in v7+ is non-nullable; cancellation throws an exception
-    final googleUser = await _googleSignIn.authenticate();
+    try {
+      // signIn() returns null if the user cancels the flow
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return null;
 
-    // In v7+, we get individual tokens via authentication or authorizationClient
-    final googleAuth = googleUser.authentication;
+      // Obtain auth details from the request
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-    // For idToken, it's still on authentication
-    final idToken = googleAuth.idToken;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
 
-    // For accessToken in v7+, we request it via authorizeScopes
-    final authResult = await googleUser.authorizationClient.authorizeScopes([
-      'email',
-      'profile',
-    ]);
-
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: authResult.accessToken,
-      idToken: idToken,
-    );
-
-    return await _auth.signInWithCredential(credential);
+      // Once signed in, return the UserCredential
+      return await _auth.signInWithCredential(credential);
+    } catch (e) {
+      debugPrint('Google Sign-In Error: $e');
+      return null;
+    }
   }
 
   Future<void> signOut() async {
