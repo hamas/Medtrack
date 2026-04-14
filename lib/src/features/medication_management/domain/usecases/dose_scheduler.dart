@@ -1,7 +1,7 @@
-// Developed by Hamas - Medtrack Project [100% Dart Implementation].
+// Developed by Hamas — Medtrack Project [100% Dart Implementation]
 import 'package:timezone/timezone.dart' as tz;
 import '../entities/medicine.dart';
-import '../../daily_dashboard/domain/entities/dose.dart';
+import '../../../daily_dashboard/domain/entities/dose.dart';
 
 class DoseScheduler {
   /// Calculates the next 10 dose objects for a given medicine.
@@ -12,17 +12,22 @@ class DoseScheduler {
     final List<Dose> doses = [];
     final DateTime start = startAfter ?? DateTime.now();
 
-    // We iterate forward day by day until we have 10 doses
-    // Ensuring we start from the medicine's startDate or the current date
+    // Calculate effective endDate if durationDays is provided
+    final effectiveEndDate = medicine.endDate ?? 
+        (medicine.durationDays != null 
+          ? medicine.startDate.add(Duration(days: medicine.durationDays!)) 
+          : null);
+
+    // Use TZ-aware candidate for consistency
+    final localLocation = tz.local;
     DateTime currentDateCandidate = medicine.startDate.isAfter(start)
         ? medicine.startDate
         : DateTime(start.year, start.month, start.day);
 
     while (doses.length < 10) {
-      // Check if we passed the endDate
-      if (medicine.endDate != null &&
-          currentDateCandidate.isAfter(medicine.endDate!))
+      if (effectiveEndDate != null && currentDateCandidate.isAfter(effectiveEndDate)) {
         break;
+      }
 
       if (_isDoseDay(medicine, currentDateCandidate)) {
         for (final timeStr in medicine.scheduleTimes) {
@@ -30,6 +35,7 @@ class DoseScheduler {
           final hour = int.parse(parts[0]);
           final minute = int.parse(parts[1]);
 
+          // Create dose at local time
           final doseDateTime = DateTime(
             currentDateCandidate.year,
             currentDateCandidate.month,
@@ -39,10 +45,9 @@ class DoseScheduler {
           );
 
           if (doseDateTime.isAfter(start)) {
-            // Check endDate again for the specific time
-            if (medicine.endDate != null &&
-                doseDateTime.isAfter(medicine.endDate!))
+            if (effectiveEndDate != null && doseDateTime.isAfter(effectiveEndDate)) {
               break;
+            }
 
             doses.add(
               Dose(
@@ -57,9 +62,8 @@ class DoseScheduler {
       }
       currentDateCandidate = currentDateCandidate.add(const Duration(days: 1));
 
-      // Safety limit to prevent infinite loops (e.g., 2 years)
-      if (currentDateCandidate.isAfter(start.add(const Duration(days: 730))))
-        break;
+      // Limit search range to 1 year
+      if (currentDateCandidate.isAfter(start.add(const Duration(days: 365)))) break;
     }
 
     return doses;
@@ -78,20 +82,28 @@ class DoseScheduler {
 
     switch (medicine.intervalType) {
       case IntervalType.daily:
-        return true;
+        return diffDays % medicine.intervalCount == 0;
       case IntervalType.weekly:
-        return diffDays % 7 == 0;
-      case IntervalType.biWeekly:
-        return diffDays % 14 == 0;
-      case IntervalType.customDays:
-        final interval = medicine.customDayInterval ?? 1;
-        return diffDays % interval == 0;
+        return diffDays % (7 * medicine.intervalCount) == 0;
       case IntervalType.monthly:
-        return date.day == startDay.day;
-      case IntervalType.quarterly:
-        final monthDiff =
-            (date.year - startDay.year) * 12 + date.month - startDay.month;
-        return monthDiff % 3 == 0 && date.day == startDay.day;
+        // Match day of month
+        if (medicine.intervalCount == 1) {
+          return date.day == startDay.day;
+        } else {
+          // Complex interval like "Every 3 months"
+          final monthDiff = (date.year - startDay.year) * 12 + date.month - startDay.month;
+          return monthDiff % medicine.intervalCount == 0 && date.day == startDay.day;
+        }
+      case IntervalType.custom:
+        switch (medicine.intervalUnit) {
+          case IntervalUnit.days:
+            return diffDays % medicine.intervalCount == 0;
+          case IntervalUnit.weeks:
+            return diffDays % (7 * medicine.intervalCount) == 0;
+          case IntervalUnit.months:
+            final monthDiff = (date.year - startDay.year) * 12 + date.month - startDay.month;
+            return monthDiff % medicine.intervalCount == 0 && date.day == startDay.day;
+        }
     }
   }
 }

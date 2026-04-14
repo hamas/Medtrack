@@ -12,7 +12,10 @@ _Medicine _$MedicineFromJson(Map<String, dynamic> json) => _Medicine(
   name: json['name'] as String,
   dosage: json['dosage'] as String,
   intervalType: $enumDecode(_$IntervalTypeEnumMap, json['intervalType']),
-  customDayInterval: (json['customDayInterval'] as num?)?.toInt(),
+  intervalCount: (json['intervalCount'] as num?)?.toInt() ?? 1,
+  intervalUnit:
+      $enumDecodeNullable(_$IntervalUnitEnumMap, json['intervalUnit']) ??
+      IntervalUnit.days,
   scheduleTimes: (json['scheduleTimes'] as List<dynamic>)
       .map((e) => e as String)
       .toList(),
@@ -22,6 +25,7 @@ _Medicine _$MedicineFromJson(Map<String, dynamic> json) => _Medicine(
   endDate: json['endDate'] == null
       ? null
       : DateTime.parse(json['endDate'] as String),
+  durationDays: (json['durationDays'] as num?)?.toInt(),
   isActive: json['isActive'] as bool? ?? true,
   createdAt: json['createdAt'] == null
       ? null
@@ -34,12 +38,14 @@ Map<String, dynamic> _$MedicineToJson(_Medicine instance) => <String, dynamic>{
   'name': instance.name,
   'dosage': instance.dosage,
   'intervalType': _$IntervalTypeEnumMap[instance.intervalType]!,
-  'customDayInterval': instance.customDayInterval,
+  'intervalCount': instance.intervalCount,
+  'intervalUnit': _$IntervalUnitEnumMap[instance.intervalUnit]!,
   'scheduleTimes': instance.scheduleTimes,
   'mealContext': _$MealContextEnumMap[instance.mealContext]!,
   'deliveryMethod': _$DeliveryMethodEnumMap[instance.deliveryMethod]!,
   'startDate': instance.startDate.toIso8601String(),
   'endDate': instance.endDate?.toIso8601String(),
+  'durationDays': instance.durationDays,
   'isActive': instance.isActive,
   'createdAt': instance.createdAt?.toIso8601String(),
 };
@@ -47,10 +53,14 @@ Map<String, dynamic> _$MedicineToJson(_Medicine instance) => <String, dynamic>{
 const _$IntervalTypeEnumMap = {
   IntervalType.daily: 'daily',
   IntervalType.weekly: 'weekly',
-  IntervalType.biWeekly: 'biWeekly',
   IntervalType.monthly: 'monthly',
-  IntervalType.quarterly: 'quarterly',
-  IntervalType.customDays: 'customDays',
+  IntervalType.custom: 'custom',
+};
+
+const _$IntervalUnitEnumMap = {
+  IntervalUnit.days: 'days',
+  IntervalUnit.weeks: 'weeks',
+  IntervalUnit.months: 'months',
 };
 
 const _$MealContextEnumMap = {
