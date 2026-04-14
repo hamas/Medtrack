@@ -25,11 +25,12 @@ class MainScreen extends ConsumerWidget {
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
+            radius: 11,
             backgroundImage: user?.photoURL != null
                 ? NetworkImage(user!.photoURL!)
                 : null,
             child: user?.photoURL == null
-                ? const Icon(Symbols.account_circle_rounded)
+                ? const Icon(Symbols.account_circle_rounded, size: 22)
                 : null,
           ),
         ),
@@ -37,8 +38,8 @@ class MainScreen extends ConsumerWidget {
           IconButton(
             icon: Image.asset(
               'assets/icons/notification_bell.png',
-              width: 28,
-              height: 28,
+              width: 22,
+              height: 22,
             ),
             onPressed: () {
               // Notification center logic
