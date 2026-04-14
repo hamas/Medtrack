@@ -35,15 +35,21 @@ Future<void> main() async {
 final GoRouter _router = GoRouter(
   initialLocation: '/',
   routes: <RouteBase>[
-    GoRoute(
-      path: '/',
-      builder: (BuildContext context, GoRouterState state) =>
-          const MainScreen(),
-    ),
-    GoRoute(
-      path: '/add-medicine',
-      builder: (BuildContext context, GoRouterState state) =>
-          const AddMedicineScreen(),
+    ShellRoute(
+      builder: (BuildContext context, GoRouterState state, Widget child) =>
+          BiometricGate(child: child),
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const MainScreen(),
+        ),
+        GoRoute(
+          path: '/add-medicine',
+          builder: (BuildContext context, GoRouterState state) =>
+              const AddMedicineScreen(),
+        ),
+      ],
     ),
   ],
 );
@@ -55,14 +61,12 @@ class MedTrackApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        return BiometricGate(
-          child: MaterialApp.router(
-            title: 'Medtrack',
-            theme: MedTrackTheme.lightTheme(lightDynamic),
-            darkTheme: MedTrackTheme.darkTheme(darkDynamic),
-            themeMode: ThemeMode.system,
-            routerConfig: _router,
-          ),
+        return MaterialApp.router(
+          title: 'Medtrack',
+          theme: MedTrackTheme.lightTheme(lightDynamic),
+          darkTheme: MedTrackTheme.darkTheme(darkDynamic),
+          themeMode: ThemeMode.system,
+          routerConfig: _router,
         );
       },
     );

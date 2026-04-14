@@ -69,8 +69,16 @@ class _BiometricGateState extends State<BiometricGate>
       });
     } on LocalAuthException catch (e) {
       debugPrint('Biometric auth error: ${e.code}');
+      // If the biometric UI is unavailable (e.g. no biometrics enrolled,
+      // device policy, or emulator), grant access gracefully.
+      final bool bypass =
+          e.code == LocalAuthExceptionCode.uiUnavailable ||
+          e.code == LocalAuthExceptionCode.noBiometricsEnrolled ||
+          e.code == LocalAuthExceptionCode.noBiometricHardware ||
+          e.code == LocalAuthExceptionCode.noCredentialsSet ||
+          e.code == LocalAuthExceptionCode.biometricHardwareTemporarilyUnavailable;
       setState(() {
-        _isAuthenticated = false;
+        _isAuthenticated = bypass;
         _isAuthenticating = false;
       });
     }
