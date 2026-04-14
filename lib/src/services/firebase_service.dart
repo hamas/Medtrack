@@ -36,7 +36,7 @@ class FirebaseService {
   }
 
   Future<UserCredential?> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await _googleSignIn.authenticate();
+    final googleUser = await _googleSignIn.authenticate();
     if (googleUser == null) return null;
 
     // In v7+, we get individual tokens via authentication or authorizationClient
