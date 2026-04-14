@@ -55,7 +55,9 @@ class MainScreen extends ConsumerWidget {
                   center: const Alignment(0, -0.6),
                   radius: 1.5,
                   colors: <Color>[
-                    Theme.of(context).colorScheme.primaryContainer.withAlpha(150),
+                    Theme.of(
+                      context,
+                    ).colorScheme.primaryContainer.withAlpha(150),
                     Theme.of(context).colorScheme.surface,
                   ],
                   stops: const <double>[0.0, 1.0],

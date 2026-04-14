@@ -5,6 +5,9 @@ abstract class MedicationRepository {
   /// Fetches all medicines for the current user.
   Future<List<Medicine>> getMedicines(String userId);
 
+  /// Streams real-time updates of active medicines for the current user.
+  Stream<List<Medicine>> streamMedicines(String userId);
+
   /// Saves a new medicine or updates an existing one.
   Future<void> saveMedicine(Medicine medicine);
 

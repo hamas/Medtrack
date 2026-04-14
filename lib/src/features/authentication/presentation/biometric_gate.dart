@@ -76,7 +76,8 @@ class _BiometricGateState extends State<BiometricGate>
           e.code == LocalAuthExceptionCode.noBiometricsEnrolled ||
           e.code == LocalAuthExceptionCode.noBiometricHardware ||
           e.code == LocalAuthExceptionCode.noCredentialsSet ||
-          e.code == LocalAuthExceptionCode.biometricHardwareTemporarilyUnavailable;
+          e.code ==
+              LocalAuthExceptionCode.biometricHardwareTemporarilyUnavailable;
       setState(() {
         _isAuthenticated = bypass;
         _isAuthenticating = false;

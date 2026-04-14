@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../services/alarm_service.dart';
 import '../../../../services/local_db_service.dart';
@@ -17,6 +18,23 @@ class MedicationRepositoryImpl implements MedicationRepository {
     final List<Medicine> localMeds = await _localDb.getMedicines();
     unawaited(_syncMedicinesFromFirestore(userId));
     return localMeds;
+  }
+
+  @override
+  Stream<List<Medicine>> streamMedicines(String userId) {
+    return _firestore
+        .collection('medicines')
+        .where('userId', isEqualTo: userId)
+        .where('isActive', isEqualTo: true)
+        .snapshots()
+        .map((QuerySnapshot<Map<String, dynamic>> snapshot) {
+          return snapshot.docs
+              .map(
+                (QueryDocumentSnapshot<Map<String, dynamic>> doc) =>
+                    Medicine.fromJson(doc.data()),
+              )
+              .toList();
+        });
   }
 
   Future<void> _syncMedicinesFromFirestore(String userId) async {
@@ -76,5 +94,3 @@ class MedicationRepositoryImpl implements MedicationRepository {
     }
   }
 }
-
-void unawaited(Future<void> future) {}

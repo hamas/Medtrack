@@ -4,7 +4,7 @@ class MedTrackTheme {
   MedTrackTheme._();
 
   static ThemeData lightTheme() {
-    final ColorScheme lightScheme = const ColorScheme(
+    const ColorScheme lightScheme = ColorScheme(
       brightness: Brightness.light,
       primary: Color(0xFF2563EB), // Vibrant Blue
       onPrimary: Colors.white,
@@ -32,7 +32,8 @@ class MedTrackTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: lightScheme,
-      scaffoldBackgroundColor: Colors.transparent, // Required for global background
+      scaffoldBackgroundColor:
+          Colors.transparent, // Required for global background
       appBarTheme: AppBarTheme(
         centerTitle: true,
         backgroundColor: lightScheme.surface.withAlpha(200),
@@ -47,7 +48,7 @@ class MedTrackTheme {
   }
 
   static ThemeData darkTheme() {
-    final ColorScheme darkScheme = const ColorScheme(
+    const ColorScheme darkScheme = ColorScheme(
       brightness: Brightness.dark,
       primary: Color(0xFF3B82F6),
       onPrimary: Color(0xFFEFF6FF),
@@ -75,7 +76,8 @@ class MedTrackTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: darkScheme,
-      scaffoldBackgroundColor: Colors.transparent, // Required for global background
+      scaffoldBackgroundColor:
+          Colors.transparent, // Required for global background
       appBarTheme: AppBarTheme(
         centerTitle: true,
         backgroundColor: darkScheme.surface.withAlpha(200),
