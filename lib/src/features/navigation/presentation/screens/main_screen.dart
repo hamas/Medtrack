@@ -125,6 +125,7 @@ class MainScreen extends ConsumerWidget {
       bottomNavigationBar: NavigationBar(
         labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
         selectedIndex: currentIndex,
+        indicatorColor: Colors.transparent,
         onDestinationSelected: (int index) =>
             ref.read(navigationProvider.notifier).setIndex(index),
         destinations: <NavigationDestination>[
@@ -151,9 +152,7 @@ class MainScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: currentIndex == 3
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.transparent,
+                  color: Colors.white.withOpacity(0.5),
                   width: 2,
                 ),
               ),
