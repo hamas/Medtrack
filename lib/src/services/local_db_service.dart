@@ -19,7 +19,7 @@ class LocalDbService {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2, // Upgraded version for new fields
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE medicines (
@@ -32,6 +32,8 @@ class LocalDbService {
             scheduleTimes TEXT,
             mealContext TEXT,
             deliveryMethod TEXT,
+            startDate TEXT,
+            endDate TEXT,
             isActive INTEGER,
             createdAt TEXT
           )
@@ -48,6 +50,12 @@ class LocalDbService {
           )
         ''');
       },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('ALTER TABLE medicines ADD COLUMN startDate TEXT');
+          await db.execute('ALTER TABLE medicines ADD COLUMN endDate TEXT');
+        }
+      },
     );
   }
 
@@ -55,9 +63,13 @@ class LocalDbService {
 
   Future<void> insertMedicine(Medicine medicine) async {
     final db = await database;
+    final json = medicine.toJson();
+    json['scheduleTimes'] = medicine.scheduleTimes.join(',');
+    json['isActive'] = medicine.isActive ? 1 : 0;
+    
     await db.insert(
       'medicines',
-      medicine.toJson()..['scheduleTimes'] = medicine.scheduleTimes.join(','),
+      json,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }

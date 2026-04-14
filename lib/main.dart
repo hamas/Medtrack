@@ -8,6 +8,8 @@ import 'package:go_router/go_router.dart';
 import 'src/services/notification_manager.dart';
 import 'src/core/theme.dart';
 import 'src/features/authentication/presentation/biometric_gate.dart';
+import 'src/features/medication_management/presentation/screens/dashboard_screen.dart';
+import 'src/features/medication_management/presentation/screens/add_medicine_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,18 +30,10 @@ void main() async {
 final GoRouter _router = GoRouter(
   initialLocation: '/',
   routes: [
+    GoRoute(path: '/', builder: (context, state) => const DashboardScreen()),
     GoRoute(
-      path: '/',
-      builder: (context, state) => const HomeScreen(),
-      routes: [
-        GoRoute(
-          path: 'medicine/:id',
-          builder: (context, state) {
-            final id = state.pathParameters['id'];
-            return CheckoffScreen(medicineId: id!);
-          },
-        ),
-      ],
+      path: '/add-medicine',
+      builder: (context, state) => const AddMedicineScreen(),
     ),
   ],
 );
@@ -53,7 +47,7 @@ class MedTrackApp extends StatelessWidget {
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         return BiometricGate(
           child: MaterialApp.router(
-            title: 'MedTrack',
+            title: 'Medtrack',
             theme: MedTrackTheme.lightTheme(lightDynamic),
             darkTheme: MedTrackTheme.darkTheme(darkDynamic),
             themeMode: ThemeMode.system,
@@ -61,35 +55,6 @@ class MedTrackApp extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-// Temporary scaffold screens for routing
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('MedTrack Dashboard')),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () => context.go('/medicine/123'),
-          child: const Text('View Medicine 123 check-off'),
-        ),
-      ),
-    );
-  }
-}
-
-class CheckoffScreen extends StatelessWidget {
-  final String medicineId;
-  const CheckoffScreen({super.key, required this.medicineId});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Check-off')),
-      body: Center(child: Text('Check-off history for $medicineId')),
     );
   }
 }

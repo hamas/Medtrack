@@ -2,25 +2,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:medtrack/main.dart';
+import 'package:medtrack/src/features/medication_management/domain/entities/medicine.dart';
+import 'package:medtrack/src/features/medication_management/data/repositories/medication_repository_impl.dart';
+import 'package:medtrack/src/services/local_db_service.dart';
 
 void main() {
-  testWidgets('App smoke test - verifies basic widget rendering', (
-    WidgetTester tester,
-  ) async {
-    // We test a simple scaffold to verify the test environment is healthy
-    // and avoid complex Firebase/Biometric dependencies for this basic check.
-    await tester.pumpWidget(
-      ProviderScope(
-        child: MaterialApp(
-          home: Scaffold(
-            appBar: AppBar(title: const Text('Medtrack')),
-            body: const Center(child: Text('Sanity Check')),
-          ),
-        ),
-      ),
-    );
+  testWidgets('App smoke test - verifies basic widget rendering', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const ProviderScope(child: MedTrackApp()));
 
-    expect(find.text('Medtrack'), findsOneWidget);
-    expect(find.text('Sanity Check'), findsOneWidget);
+    // Verify that the dashboard is shown
+    expect(find.text('Medtrack Dashboard'), findsOneWidget);
   });
 }

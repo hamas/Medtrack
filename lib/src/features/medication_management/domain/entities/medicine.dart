@@ -4,7 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'medicine.freezed.dart';
 part 'medicine.g.dart';
 
-enum IntervalType { daily, weekly, monthly, quarterly, customDays }
+enum IntervalType { daily, weekly, biWeekly, monthly, quarterly, customDays }
 
 enum MealContext { beforeMeal, withMeal, afterMeal, none }
 
@@ -22,6 +22,8 @@ abstract class Medicine with _$Medicine {
     required List<String> scheduleTimes,
     required MealContext mealContext,
     required DeliveryMethod deliveryMethod,
+    required DateTime startDate,
+    DateTime? endDate,
     @Default(true) bool isActive,
     DateTime? createdAt,
   }) = _Medicine;

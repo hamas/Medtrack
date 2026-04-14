@@ -1,53 +1,78 @@
+// Developed by Hamas - Medtrack Project [100% Dart Implementation].
+import 'package:timezone/timezone.dart' as tz;
 import '../entities/medicine.dart';
+import '../entities/dose.dart';
 
 class DoseScheduler {
-  /// Calculates the next 10 dose times for a given medicine.
-  static List<DateTime> calculateNextDoses(
+  /// Calculates the next 10 dose objects for a given medicine.
+  static List<Dose> calculateNextDoses(
     Medicine medicine, {
     DateTime? startAfter,
   }) {
-    final List<DateTime> doses = [];
+    final List<Dose> doses = [];
     final DateTime start = startAfter ?? DateTime.now();
 
     // We iterate forward day by day until we have 10 doses
-    DateTime currentDate = DateTime(start.year, start.month, start.day);
+    // Ensuring we start from the medicine's startDate or the current date
+    DateTime currentDateCandidate = medicine.startDate.isAfter(start)
+        ? medicine.startDate
+        : DateTime(start.year, start.month, start.day);
 
     while (doses.length < 10) {
-      if (_isDoseDay(medicine, currentDate)) {
+      // Check if we passed the endDate
+      if (medicine.endDate != null &&
+          currentDateCandidate.isAfter(medicine.endDate!))
+        break;
+
+      if (_isDoseDay(medicine, currentDateCandidate)) {
         for (final timeStr in medicine.scheduleTimes) {
           final parts = timeStr.split(':');
           final hour = int.parse(parts[0]);
           final minute = int.parse(parts[1]);
 
           final doseDateTime = DateTime(
-            currentDate.year,
-            currentDate.month,
-            currentDate.day,
+            currentDateCandidate.year,
+            currentDateCandidate.month,
+            currentDateCandidate.day,
             hour,
             minute,
           );
 
           if (doseDateTime.isAfter(start)) {
-            doses.add(doseDateTime);
+            // Check endDate again for the specific time
+            if (medicine.endDate != null &&
+                doseDateTime.isAfter(medicine.endDate!))
+              break;
+
+            doses.add(
+              Dose(
+                id: "${medicine.id}_${doseDateTime.millisecondsSinceEpoch}",
+                medicine: medicine,
+                scheduledTime: doseDateTime,
+              ),
+            );
           }
           if (doses.length >= 10) break;
         }
       }
-      currentDate = currentDate.add(const Duration(days: 1));
+      currentDateCandidate = currentDateCandidate.add(const Duration(days: 1));
 
       // Safety limit to prevent infinite loops (e.g., 2 years)
-      if (currentDate.isAfter(start.add(const Duration(days: 730)))) break;
+      if (currentDateCandidate.isAfter(start.add(const Duration(days: 730))))
+        break;
     }
 
     return doses;
   }
 
   static bool _isDoseDay(Medicine medicine, DateTime date) {
-    if (medicine.createdAt == null) return true; // Fallback
-
-    final created = medicine.createdAt!;
-    final createdDay = DateTime(created.year, created.month, created.day);
-    final diffDays = date.difference(createdDay).inDays;
+    final startDay = DateTime(
+      medicine.startDate.year,
+      medicine.startDate.month,
+      medicine.startDate.day,
+    );
+    final currentDay = DateTime(date.year, date.month, date.day);
+    final diffDays = currentDay.difference(startDay).inDays;
 
     if (diffDays < 0) return false;
 
@@ -56,17 +81,17 @@ class DoseScheduler {
         return true;
       case IntervalType.weekly:
         return diffDays % 7 == 0;
+      case IntervalType.biWeekly:
+        return diffDays % 14 == 0;
       case IntervalType.customDays:
         final interval = medicine.customDayInterval ?? 1;
         return diffDays % interval == 0;
       case IntervalType.monthly:
-        // Simplified: same day of the month
-        return date.day == createdDay.day;
+        return date.day == startDay.day;
       case IntervalType.quarterly:
-        // Simplified: every 3 months on the same day
         final monthDiff =
-            (date.year - createdDay.year) * 12 + date.month - createdDay.month;
-        return monthDiff % 3 == 0 && date.day == createdDay.day;
+            (date.year - startDay.year) * 12 + date.month - startDay.month;
+        return monthDiff % 3 == 0 && date.day == startDay.day;
     }
   }
 }

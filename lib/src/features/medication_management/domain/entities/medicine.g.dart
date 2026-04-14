@@ -18,6 +18,10 @@ _Medicine _$MedicineFromJson(Map<String, dynamic> json) => _Medicine(
       .toList(),
   mealContext: $enumDecode(_$MealContextEnumMap, json['mealContext']),
   deliveryMethod: $enumDecode(_$DeliveryMethodEnumMap, json['deliveryMethod']),
+  startDate: DateTime.parse(json['startDate'] as String),
+  endDate: json['endDate'] == null
+      ? null
+      : DateTime.parse(json['endDate'] as String),
   isActive: json['isActive'] as bool? ?? true,
   createdAt: json['createdAt'] == null
       ? null
@@ -34,6 +38,8 @@ Map<String, dynamic> _$MedicineToJson(_Medicine instance) => <String, dynamic>{
   'scheduleTimes': instance.scheduleTimes,
   'mealContext': _$MealContextEnumMap[instance.mealContext]!,
   'deliveryMethod': _$DeliveryMethodEnumMap[instance.deliveryMethod]!,
+  'startDate': instance.startDate.toIso8601String(),
+  'endDate': instance.endDate?.toIso8601String(),
   'isActive': instance.isActive,
   'createdAt': instance.createdAt?.toIso8601String(),
 };
@@ -41,6 +47,7 @@ Map<String, dynamic> _$MedicineToJson(_Medicine instance) => <String, dynamic>{
 const _$IntervalTypeEnumMap = {
   IntervalType.daily: 'daily',
   IntervalType.weekly: 'weekly',
+  IntervalType.biWeekly: 'biWeekly',
   IntervalType.monthly: 'monthly',
   IntervalType.quarterly: 'quarterly',
   IntervalType.customDays: 'customDays',
