@@ -1,0 +1,38 @@
+// Developed by Hamas — Medtrack Project [100% Dart]
+// Developed by Hamas — Medtrack Project [100% Dart Implementation]
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final secureStorageProvider = Provider<SecureStorageService>((ref) {
+  return SecureStorageService();
+});
+
+class SecureStorageService {
+  final FlutterSecureStorage _storage;
+
+  SecureStorageService()
+      : _storage = const FlutterSecureStorage(
+          aOptions: AndroidOptions(
+            encryptedSharedPreferences: true,
+          ),
+          iOptions: IOSOptions(
+            accessibility: KeychainAccessibility.first_unlock,
+          ),
+        );
+
+  Future<void> writeData({required String key, required String value}) async {
+    await _storage.write(key: key, value: value);
+  }
+
+  Future<String?> readData({required String key}) async {
+    return await _storage.read(key: key);
+  }
+
+  Future<void> deleteData({required String key}) async {
+    await _storage.delete(key: key);
+  }
+
+  Future<void> deleteAll() async {
+    await _storage.deleteAll();
+  }
+}

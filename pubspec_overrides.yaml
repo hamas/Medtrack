@@ -1,0 +1,2 @@
+dependency_overrides:
+  analyzer: ^10.0.0
