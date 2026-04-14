@@ -80,6 +80,7 @@ class MainScreen extends ConsumerWidget {
         ],
       ),
       bottomNavigationBar: NavigationBar(
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
         selectedIndex: currentIndex,
         onDestinationSelected: (int index) =>
             ref.read(navigationProvider.notifier).setIndex(index),
