@@ -55,11 +55,12 @@ class MedTrackTheme {
           GoogleFonts.googleSans(fontSize: 12, fontWeight: FontWeight.w500),
         ),
         iconTheme: WidgetStateProperty.all(
-          const IconThemeData(size: 20),
+          const IconThemeData(size: 20, color: Color(0xFFF8FAFC)),
         ),
       ),
       iconTheme: const IconThemeData(
         weight: 600,
+        color: Color(0xFFF8FAFC),
       ),
     );
   }
@@ -115,11 +116,12 @@ class MedTrackTheme {
           GoogleFonts.googleSans(fontSize: 12, fontWeight: FontWeight.w500),
         ),
         iconTheme: WidgetStateProperty.all(
-          const IconThemeData(size: 20),
+          const IconThemeData(size: 20, color: Color(0xFFF8FAFC)),
         ),
       ),
       iconTheme: const IconThemeData(
         weight: 600,
+        color: Color(0xFFF8FAFC),
       ),
     );
   }
