@@ -1,5 +1,14 @@
 // Developed by Hamas — Medtrack Project [100% Dart Implementation]
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-/// Provider to manage the current index of the main navigation shell.
-final navigationProvider = StateProvider<int>((ref) => 0);
+part 'navigation_provider.g.dart';
+
+@riverpod
+class Navigation extends _$Navigation {
+  @override
+  int build() => 0;
+
+  void setIndex(int index) {
+    state = index;
+  }
+}

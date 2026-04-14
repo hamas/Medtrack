@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../providers/navigation_provider.dart';
-import '../../daily_dashboard/presentation/screens/daily_dashboard_screen.dart';
-import '../../medication_management/presentation/screens/medicine_list_screen.dart';
-import '../../history_tracking/presentation/screens/calendar_screen.dart';
+import '../../../daily_dashboard/presentation/screens/daily_dashboard_screen.dart';
+import '../../../medication_management/presentation/screens/medicine_list_screen.dart';
+import '../../../history_tracking/presentation/screens/calendar_screen.dart';
 import 'menu_screen.dart';
 
 class MainScreen extends ConsumerWidget {
@@ -27,7 +27,7 @@ class MainScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
             backgroundImage: user?.photoURL != null ? NetworkImage(user!.photoURL!) : null,
-            child: user?.photoURL == null ? const Icon(Icons.account_circle_filled) : null,
+            child: user?.photoURL == null ? const Icon(Icons.account_circle) : null,
           ),
         ),
         actions: [
@@ -51,7 +51,7 @@ class MainScreen extends ConsumerWidget {
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
-        onDestinationSelected: (index) => ref.read(navigationProvider.notifier).state = index,
+        onDestinationSelected: (index) => ref.read(navigationProvider.notifier).setIndex(index),
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),

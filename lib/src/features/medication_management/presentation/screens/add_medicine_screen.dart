@@ -28,7 +28,7 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
   IntervalUnit _intervalUnit = IntervalUnit.days;
   MealContext _mealContext = MealContext.none;
   DeliveryMethod _deliveryMethod = DeliveryMethod.water;
-  DateTime _startDate = DateTime.now();
+  final DateTime _startDate = DateTime.now();
   int? _durationDays;
   final List<TimeOfDay> _selectedTimes = [const TimeOfDay(hour: 8, minute: 0)];
 
@@ -231,7 +231,7 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
       content: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(

@@ -9,10 +9,10 @@ part of 'daily_timeline_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(dashboardRepository)
-final dashboardRepositoryProvider = DashboardRepositoryProvider._();
+@ProviderFor(dashboardRepo)
+final dashboardRepoProvider = DashboardRepoProvider._();
 
-final class DashboardRepositoryProvider
+final class DashboardRepoProvider
     extends
         $FunctionalProvider<
           DashboardRepository,
@@ -20,19 +20,19 @@ final class DashboardRepositoryProvider
           DashboardRepository
         >
     with $Provider<DashboardRepository> {
-  DashboardRepositoryProvider._()
+  DashboardRepoProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'dashboardRepositoryProvider',
+        name: r'dashboardRepoProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$dashboardRepositoryHash();
+  String debugGetCreateSourceHash() => _$dashboardRepoHash();
 
   @$internal
   @override
@@ -42,7 +42,7 @@ final class DashboardRepositoryProvider
 
   @override
   DashboardRepository create(Ref ref) {
-    return dashboardRepository(ref);
+    return dashboardRepo(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -54,8 +54,7 @@ final class DashboardRepositoryProvider
   }
 }
 
-String _$dashboardRepositoryHash() =>
-    r'e5c9c75dd4a85ab1e4de9216425ecb05cc781d39';
+String _$dashboardRepoHash() => r'950301cd5482b75b9def466a76317e3723f8fcaf';
 
 @ProviderFor(DailyTimeline)
 final dailyTimelineProvider = DailyTimelineProvider._();
@@ -81,7 +80,7 @@ final class DailyTimelineProvider
   DailyTimeline create() => DailyTimeline();
 }
 
-String _$dailyTimelineHash() => r'5e3e8fb88efb4c7098487f573d2693c255173671';
+String _$dailyTimelineHash() => r'15edc08590b5b69aab5120524aa9e08fdf0e2c50';
 
 abstract class _$DailyTimeline extends $AsyncNotifier<List<Dose>> {
   FutureOr<List<Dose>> build();

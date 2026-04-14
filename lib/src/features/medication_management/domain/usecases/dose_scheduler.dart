@@ -1,5 +1,4 @@
 // Developed by Hamas — Medtrack Project [100% Dart Implementation]
-import 'package:timezone/timezone.dart' as tz;
 import '../entities/medicine.dart';
 import '../../../daily_dashboard/domain/entities/dose.dart';
 
@@ -18,8 +17,7 @@ class DoseScheduler {
           ? medicine.startDate.add(Duration(days: medicine.durationDays!)) 
           : null);
 
-    // Use TZ-aware candidate for consistency
-    final localLocation = tz.local;
+    // Use local candiate for consistency
     DateTime currentDateCandidate = medicine.startDate.isAfter(start)
         ? medicine.startDate
         : DateTime(start.year, start.month, start.day);

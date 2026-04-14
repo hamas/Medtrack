@@ -7,7 +7,7 @@ import '../../data/repositories/dashboard_repository_impl.dart';
 part 'daily_timeline_provider.g.dart';
 
 @riverpod
-DashboardRepository dashboardRepository(DashboardRepositoryRef ref) {
+DashboardRepository dashboardRepo(DashboardRepoRef ref) {
   return DashboardRepositoryImpl();
 }
 
@@ -16,7 +16,7 @@ class DailyTimeline extends _$DailyTimeline {
   @override
   FutureOr<List<Dose>> build() async {
     const userId = 'hamas_lead_dev'; // In a real app, this comes from an auth provider
-    final repository = ref.watch(dashboardRepositoryProvider);
+    final repository = ref.watch(dashboardRepoProvider);
     return repository.getDailyTimeline(userId, DateTime.now());
   }
 
@@ -35,9 +35,9 @@ class DailyTimeline extends _$DailyTimeline {
     }
 
     try {
-      final repository = ref.read(dashboardRepositoryProvider);
+      final repository = ref.read(dashboardRepoProvider);
       await repository.recordIntake(dose, DateTime.now());
-    } catch (e, st) {
+    } catch (e) {
       // Rollback on error
       state = previousState;
       rethrow;

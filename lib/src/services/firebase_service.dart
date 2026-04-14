@@ -43,7 +43,11 @@ class FirebaseService {
       // 1. Authenticate (Identify the user)
       // v7.x uses authenticate() instead of signIn()
       final googleUser = await _googleSignIn.authenticate();
-      if (googleUser == null) return null;
+      // Remove unnecessary null check if analyzer says it can't be null
+      // Actually, if it's the result of authenticate(), it might be non-null but throw an error.
+      // I'll keep it for now if I am unsure, but the analyzer is specifically complaining.
+      // Let's remove it and use a try-catch for cancellation.
+
 
       // 2. Authorize (Obtain access to tokens)
       // We must explicitly request scopes to get an accessToken in v7+
@@ -54,7 +58,8 @@ class FirebaseService {
       ]);
 
       // 3. Get idToken for Firebase
-      final googleAuth = await googleUser.authentication;
+      // googleUser.authentication is not a Future in v7.x
+      final googleAuth = googleUser.authentication;
       final idToken = googleAuth.idToken;
 
       final AuthCredential credential = GoogleAuthProvider.credential(

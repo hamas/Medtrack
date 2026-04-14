@@ -57,7 +57,7 @@ class _DashboardItem extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: dose.isTaken 
-          ? theme.colorScheme.surfaceVariant.withOpacity(0.5)
+          ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
           : theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
@@ -97,7 +97,7 @@ class _DashboardItem extends ConsumerWidget {
                 Icon(Icons.info_outline, size: 14, color: theme.colorScheme.primary),
                 const SizedBox(width: 4),
                 Text(
-                  '${_getMealLabel(medicine.mealContext)}',
+                  _getMealLabel(medicine.mealContext),
                   style: TextStyle(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.w500,

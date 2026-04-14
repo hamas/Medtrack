@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:medtrack/src/features/medication_management/domain/entities/medicine.dart';
 import 'package:medtrack/src/features/medication_management/domain/usecases/dose_scheduler.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 
 void main() {
   tz.initializeTimeZones();
