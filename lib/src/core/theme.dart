@@ -49,7 +49,7 @@ class MedTrackTheme {
         scrolledUnderElevation: 0,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        height: 60,
+        height: 70,
         backgroundColor: lightScheme.surface,
         indicatorColor: Colors.white.withValues(alpha: 0.1),
         labelTextStyle: WidgetStateProperty.all(
@@ -111,7 +111,7 @@ class MedTrackTheme {
         scrolledUnderElevation: 0,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        height: 60,
+        height: 70,
         backgroundColor: darkScheme.surface,
         indicatorColor: Colors.white.withValues(alpha: 0.1),
         labelTextStyle: WidgetStateProperty.all(
