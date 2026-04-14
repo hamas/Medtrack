@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MedTrackTheme {
   MedTrackTheme._();
@@ -32,17 +33,27 @@ class MedTrackTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: lightScheme,
+      textTheme: GoogleFonts.googleSansTextTheme(),
       scaffoldBackgroundColor:
           Colors.transparent, // Required for global background
       appBarTheme: AppBarTheme(
         centerTitle: true,
         backgroundColor: lightScheme.surface.withAlpha(200),
+        titleTextStyle: GoogleFonts.googleSans(
+          color: lightScheme.onSurface,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.2,
+        ),
         elevation: 0,
         scrolledUnderElevation: 0,
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: lightScheme.surface.withAlpha(200),
         indicatorColor: lightScheme.primaryContainer,
+        labelTextStyle: WidgetStateProperty.all(
+          GoogleFonts.googleSans(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
       ),
     );
   }
@@ -76,17 +87,27 @@ class MedTrackTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: darkScheme,
+      textTheme: GoogleFonts.googleSansTextTheme(ThemeData.dark().textTheme),
       scaffoldBackgroundColor:
           Colors.transparent, // Required for global background
       appBarTheme: AppBarTheme(
         centerTitle: true,
         backgroundColor: darkScheme.surface.withAlpha(200),
+        titleTextStyle: GoogleFonts.googleSans(
+          color: darkScheme.onSurface,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.2,
+        ),
         elevation: 0,
         scrolledUnderElevation: 0,
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: darkScheme.surface.withAlpha(200),
         indicatorColor: darkScheme.primaryContainer,
+        labelTextStyle: WidgetStateProperty.all(
+          GoogleFonts.googleSans(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
       ),
     );
   }

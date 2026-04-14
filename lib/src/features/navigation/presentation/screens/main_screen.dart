@@ -20,10 +20,7 @@ class MainScreen extends ConsumerWidget {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
-          'Medtrack',
-          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
-        ),
+        title: const Text('Medtrack'),
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
