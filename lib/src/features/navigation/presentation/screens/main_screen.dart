@@ -152,7 +152,7 @@ class MainScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.5),
+                  color: Colors.white.withAlpha(128),
                   width: 2,
                 ),
               ),
