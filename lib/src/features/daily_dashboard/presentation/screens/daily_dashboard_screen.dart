@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 import '../providers/daily_timeline_provider.dart';
 import '../../domain/entities/dose.dart';
 
@@ -12,34 +13,33 @@ class DailyDashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final timelineAsync = ref.watch(dailyTimelineProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Daily Checklist', style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(
-              DateFormat('EEEE, MMMM d').format(DateTime.now()),
-              style: Theme.of(context).textTheme.bodySmall,
+    return timelineAsync.when(
+      data: (doses) => doses.isEmpty
+          ? const Center(child: Text('No doses scheduled for today.'))
+          : Stack(
+              children: [
+                ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: doses.length,
+                  separatorBuilder: (context, index) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final dose = doses[index];
+                    return _DashboardItem(dose: dose);
+                  },
+                ),
+                Positioned(
+                  bottom: 24,
+                  right: 24,
+                  child: FloatingActionButton.extended(
+                    onPressed: () => context.push('/add-medicine'),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Add Medication'),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-      body: timelineAsync.when(
-        data: (doses) => doses.isEmpty
-            ? const Center(child: Text('No doses scheduled for today.'))
-            : ListView.separated(
-                padding: const EdgeInsets.all(16),
-                itemCount: doses.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final dose = doses[index];
-                  return _DashboardItem(dose: dose);
-                },
-              ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
-      ),
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => Center(child: Text('Error: $err')),
     );
   }
 }

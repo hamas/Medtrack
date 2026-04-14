@@ -10,7 +10,7 @@ import 'src/services/notification_manager.dart';
 import 'src/services/firebase_service.dart';
 import 'src/core/theme.dart';
 import 'src/features/authentication/presentation/biometric_gate.dart';
-import 'src/features/daily_dashboard/presentation/screens/daily_dashboard_screen.dart';
+import 'src/features/navigation/presentation/screens/main_screen.dart';
 import 'src/features/medication_management/presentation/screens/add_medicine_screen.dart';
 
 void main() async {
@@ -38,7 +38,7 @@ final GoRouter _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const DailyDashboardScreen(),
+      builder: (context, state) => const MainScreen(),
     ),
     GoRoute(
       path: '/add-medicine',
