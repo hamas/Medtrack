@@ -1,8 +1,8 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation].
+// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import '../domain/entities/medicine.dart';
-import '../domain/entities/adherence_log.dart';
+import '../features/medication_management/domain/entities/medicine.dart';
+import '../features/medication_management/domain/entities/adherence_log.dart';
 
 class LocalDbService {
   static Database? _database;

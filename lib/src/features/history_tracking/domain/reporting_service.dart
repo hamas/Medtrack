@@ -1,4 +1,4 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation].
+ï»¿// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;

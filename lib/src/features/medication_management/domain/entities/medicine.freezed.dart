@@ -15,10 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Medicine {
 
- String get id; String get userId; String get name; String get dosage;// e.g., "500 mg"
- IntervalType get intervalType; int? get customDayInterval;// Used if intervalType == customDays
- List<String> get scheduleTimes;// Time strings like "08:00", "20:00"
- MealContext get mealContext; DeliveryMethod get deliveryMethod; bool get isActive; DateTime? get createdAt;
+ String get id; String get userId; String get name; String get dosage; IntervalType get intervalType; int? get customDayInterval; List<String> get scheduleTimes; MealContext get mealContext; DeliveryMethod get deliveryMethod; bool get isActive; DateTime? get createdAt;
 /// Create a copy of Medicine
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -229,19 +226,15 @@ class _Medicine implements Medicine {
 @override final  String userId;
 @override final  String name;
 @override final  String dosage;
-// e.g., "500 mg"
 @override final  IntervalType intervalType;
 @override final  int? customDayInterval;
-// Used if intervalType == customDays
  final  List<String> _scheduleTimes;
-// Used if intervalType == customDays
 @override List<String> get scheduleTimes {
   if (_scheduleTimes is EqualUnmodifiableListView) return _scheduleTimes;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_scheduleTimes);
 }
 
-// Time strings like "08:00", "20:00"
 @override final  MealContext mealContext;
 @override final  DeliveryMethod deliveryMethod;
 @override@JsonKey() final  bool isActive;

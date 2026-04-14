@@ -1,4 +1,4 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation].
+// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'dart:io';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -31,10 +31,7 @@ class NotificationManager {
     );
 
     await _localNotifications.initialize(
-      initializationSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
-        // Handle notification tap
-      },
+      settings: initializationSettings,
     );
 
     _createHighImportanceChannel();
@@ -79,11 +76,11 @@ class NotificationManager {
     required DateTime scheduledDate,
   }) async {
     await _localNotifications.zonedSchedule(
-      id,
-      title,
-      body,
-      tz.TZDateTime.from(scheduledDate, tz.local),
-      const NotificationDetails(
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
+      notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           'high_importance_medical_alerts',
           'Medical Alerts',
@@ -93,7 +90,6 @@ class NotificationManager {
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 }

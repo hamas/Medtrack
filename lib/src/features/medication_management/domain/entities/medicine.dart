@@ -1,13 +1,11 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation].
+// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'medicine.freezed.dart';
 part 'medicine.g.dart';
 
 enum IntervalType { daily, weekly, monthly, quarterly, customDays }
-
 enum MealContext { beforeMeal, withMeal, afterMeal, none }
-
 enum DeliveryMethod { water, milk, mixed, injection, drops, inhaler, other }
 
 @freezed
@@ -16,10 +14,10 @@ class Medicine with _$Medicine {
     required String id,
     required String userId,
     required String name,
-    required String dosage, // e.g., "500 mg"
+    required String dosage,
     required IntervalType intervalType,
-    int? customDayInterval, // Used if intervalType == customDays
-    required List<String> scheduleTimes, // Time strings like "08:00", "20:00"
+    int? customDayInterval,
+    required List<String> scheduleTimes,
     required MealContext mealContext,
     required DeliveryMethod deliveryMethod,
     @Default(true) bool isActive,

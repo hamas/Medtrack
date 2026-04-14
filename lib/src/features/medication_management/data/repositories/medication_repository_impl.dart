@@ -1,4 +1,4 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation].
+ï»¿// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/repositories/medication_repository.dart';
 import '../../domain/entities/medicine.dart';

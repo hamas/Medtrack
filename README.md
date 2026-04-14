@@ -1,10 +1,10 @@
-# Developed by Hamas — Medtrack Project [100% Dart Implementation]
+﻿# Developed by Hamas â€” Medtrack Project [100% Dart Implementation]
 
 ![Dart](https://img.shields.io/badge/Language-100%25_Dart-0175C2?logo=dart&logoColor=white) 
 ![Verified](https://img.shields.io/badge/DevOps-Verified-success?logo=github-actions&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Android_%7C_Web-blue?logo=android&logoColor=white)
 
-# Medtrack — Professional Medicine Tracking
+# Medtrack â€” Professional Medicine Tracking
 
 **Lead Developer & Architect:** Hamas
 

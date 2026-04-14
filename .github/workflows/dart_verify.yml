@@ -1,4 +1,4 @@
-# Developed by Hamas — Medtrack Project [100% Dart Implementation].
+# Developed by Hamas - Medtrack Project [100% Dart Implementation].
 name: Medtrack Verify
 
 on:
@@ -13,9 +13,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2.16.0
         with:
-          flutter-version: 'latest'
+          flutter-version: 'any'
           channel: 'stable'
       
       - name: Install dependencies

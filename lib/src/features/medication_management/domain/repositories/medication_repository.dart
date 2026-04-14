@@ -1,4 +1,4 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation].
+ï»¿// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import '../entities/medicine.dart';
 import '../entities/adherence_log.dart';
 

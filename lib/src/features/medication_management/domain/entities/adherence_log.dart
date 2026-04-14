@@ -1,4 +1,4 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation].
+ï»¿// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'adherence_log.freezed.dart';

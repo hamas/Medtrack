@@ -1,4 +1,4 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation].
+// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,9 +11,7 @@ class SecureStorageService {
 
   SecureStorageService()
       : _storage = const FlutterSecureStorage(
-          aOptions: AndroidOptions(
-            encryptedSharedPreferences: true,
-          ),
+          aOptions: AndroidOptions(),
           iOptions: IOSOptions(
             accessibility: KeychainAccessibility.first_unlock,
           ),

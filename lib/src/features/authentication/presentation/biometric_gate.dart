@@ -1,4 +1,4 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation].
+// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
@@ -58,10 +58,8 @@ class _BiometricGateState extends State<BiometricGate> with WidgetsBindingObserv
 
       final bool didAuthenticate = await auth.authenticate(
         localizedReason: 'Please authenticate to access your medical logs',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-        ),
+        persistAcrossBackgrounding: true,
+        biometricOnly: true,
       );
 
       setState(() {

@@ -1,4 +1,4 @@
-// Developed by Hamas — Medtrack Project [100% Dart Implementation].
+ï»¿// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/adherence_log.dart';
 
