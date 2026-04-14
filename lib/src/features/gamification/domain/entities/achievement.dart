@@ -15,7 +15,7 @@ enum AchievementType {
 }
 
 @freezed
-class Achievement with _$Achievement {
+abstract class Achievement with _$Achievement {
   const factory Achievement({
     required String id,
     required AchievementType type,

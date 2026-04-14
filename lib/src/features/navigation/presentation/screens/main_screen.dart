@@ -84,7 +84,7 @@ class MainScreen extends ConsumerWidget {
               ],
             ),
             loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (Object err, StackTrace stack) => const SizedBox.shrink(),
           ),
           IconButton(
             icon: Image.asset(

@@ -1,4 +1,4 @@
-import '../domain/entities/user_profile.dart';
+import '../entities/user_profile.dart';
 
 abstract class UserProfileRepository {
   Future<UserProfile> getUserProfile(String uid);

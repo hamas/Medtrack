@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../data/repositories/user_profile_repository_impl.dart';
+import '../../domain/entities/achievement.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../domain/repositories/user_profile_repository.dart';
 
@@ -19,7 +20,7 @@ class UserProfileState extends _$UserProfileState {
   }
 
   Future<void> updateStreak(int newStreak) async {
-    final UserProfile profile = await state.first;
+    final UserProfile profile = await future;
     final UserProfile updated = profile.copyWith(
       currentStreak: newStreak,
       lastCheckoffDate: DateTime.now(),
@@ -31,7 +32,7 @@ class UserProfileState extends _$UserProfileState {
   }
 
   Future<void> awardAchievement(Achievement achievement) async {
-    final UserProfile profile = await state.first;
+    final UserProfile profile = await future;
     if (profile.earnedBadges.any(
       (Achievement a) => a.type == achievement.type,
     )) {

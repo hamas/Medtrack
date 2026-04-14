@@ -210,7 +210,7 @@ class _DashboardItem extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  '${medicine.dosage} • ${timeStr}',
+                  '${medicine.dosage} • $timeStr',
                   style: TextStyle(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../domain/entities/user_profile.dart';
-import '../domain/repositories/user_profile_repository.dart';
+import '../../domain/entities/user_profile.dart';
+import '../../domain/repositories/user_profile_repository.dart';
 
 class UserProfileRepositoryImpl implements UserProfileRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
