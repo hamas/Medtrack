@@ -8,13 +8,11 @@ void main() {
     testWidgets('Add Medicine Form should render basic scaffold', (
       WidgetTester tester,
     ) async {
-       await tester.pumpWidget(
+      await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
-              body: Center(
-                child: Text('Add Medicine Form Placeholder'),
-              ),
+              body: Center(child: Text('Add Medicine Form Placeholder')),
             ),
           ),
         ),

@@ -5,7 +5,9 @@ part 'medicine.freezed.dart';
 part 'medicine.g.dart';
 
 enum IntervalType { daily, weekly, monthly, quarterly, customDays }
+
 enum MealContext { beforeMeal, withMeal, afterMeal, none }
+
 enum DeliveryMethod { water, milk, mixed, injection, drops, inhaler, other }
 
 @freezed
@@ -24,5 +26,6 @@ abstract class Medicine with _$Medicine {
     DateTime? createdAt,
   }) = _Medicine;
 
-  factory Medicine.fromJson(Map<String, dynamic> json) => _$MedicineFromJson(json);
+  factory Medicine.fromJson(Map<String, dynamic> json) =>
+      _$MedicineFromJson(json);
 }

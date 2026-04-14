@@ -17,5 +17,6 @@ abstract class AdherenceLog with _$AdherenceLog {
     String? mealNotes,
   }) = _AdherenceLog;
 
-  factory AdherenceLog.fromJson(Map<String, dynamic> json) => _$AdherenceLogFromJson(json);
+  factory AdherenceLog.fromJson(Map<String, dynamic> json) =>
+      _$AdherenceLogFromJson(json);
 }

@@ -10,7 +10,8 @@ class NotificationManager {
   factory NotificationManager() => _instance;
   NotificationManager._internal();
 
-  final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _localNotifications =
+      FlutterLocalNotificationsPlugin();
 
   Future<void> initialize() async {
     tz.initializeTimeZones();
@@ -20,19 +21,18 @@ class NotificationManager {
 
     const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
-      requestSoundPermission: false,
-      requestBadgePermission: false,
-      requestAlertPermission: false,
-    );
+          requestSoundPermission: false,
+          requestBadgePermission: false,
+          requestAlertPermission: false,
+        );
 
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS,
+        );
 
-    await _localNotifications.initialize(
-      settings: initializationSettings,
-    );
+    await _localNotifications.initialize(settings: initializationSettings);
 
     _createHighImportanceChannel();
   }
@@ -49,7 +49,9 @@ class NotificationManager {
       );
 
       await _localNotifications
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.createNotificationChannel(channel);
     }
   }
@@ -60,12 +62,10 @@ class NotificationManager {
       await Permission.scheduleExactAlarm.request();
     } else if (Platform.isIOS) {
       await _localNotifications
-          .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
     }
   }
 
@@ -84,7 +84,8 @@ class NotificationManager {
         android: AndroidNotificationDetails(
           'high_importance_medical_alerts',
           'Medical Alerts',
-          channelDescription: 'This channel is used for critical medical reminders.',
+          channelDescription:
+              'This channel is used for critical medical reminders.',
           importance: Importance.max,
           priority: Priority.high,
         ),

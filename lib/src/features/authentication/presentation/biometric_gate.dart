@@ -11,7 +11,8 @@ class BiometricGate extends StatefulWidget {
   State<BiometricGate> createState() => _BiometricGateState();
 }
 
-class _BiometricGateState extends State<BiometricGate> with WidgetsBindingObserver {
+class _BiometricGateState extends State<BiometricGate>
+    with WidgetsBindingObserver {
   final LocalAuthentication auth = LocalAuthentication();
   bool _isAuthenticated = false;
   bool _isAuthenticating = false;
@@ -31,7 +32,9 @@ class _BiometricGateState extends State<BiometricGate> with WidgetsBindingObserv
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && !_isAuthenticated && !_isAuthenticating) {
+    if (state == AppLifecycleState.resumed &&
+        !_isAuthenticated &&
+        !_isAuthenticating) {
       _authenticate();
     } else if (state == AppLifecycleState.paused) {
       setState(() {
@@ -46,7 +49,8 @@ class _BiometricGateState extends State<BiometricGate> with WidgetsBindingObserv
     });
     try {
       final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
-      final bool canAuthenticate = canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+      final bool canAuthenticate =
+          canAuthenticateWithBiometrics || await auth.isDeviceSupported();
 
       if (!canAuthenticate) {
         setState(() {

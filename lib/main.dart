@@ -1,4 +1,4 @@
-﻿// Developed by Hamas - Medtrack Project [100% Dart Implementation].
+// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,11 +22,7 @@ void main() async {
   await notificationManager.initialize();
   await notificationManager.requestPermissions();
 
-  runApp(
-    const ProviderScope(
-      child: MedTrackApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: MedTrackApp()));
 }
 
 final GoRouter _router = GoRouter(

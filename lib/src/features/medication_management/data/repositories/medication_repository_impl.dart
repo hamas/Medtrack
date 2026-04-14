@@ -15,10 +15,10 @@ class MedicationRepositoryImpl implements MedicationRepository {
   Future<List<Medicine>> getMedicines(String userId) async {
     // 1. Return local data immediately for Google Task speed
     final localMeds = await _localDb.getMedicines();
-    
+
     // 2. Background sync from Firestore
     _syncMedicinesFromFirestore(userId);
-    
+
     return localMeds;
   }
 
@@ -28,7 +28,7 @@ class MedicationRepositoryImpl implements MedicationRepository {
           .collection('medicines')
           .where('userId', isEqualTo: userId)
           .get();
-          
+
       for (var doc in snapshot.docs) {
         final medicine = Medicine.fromJson(doc.data());
         await _localDb.insertMedicine(medicine);
@@ -43,7 +43,7 @@ class MedicationRepositoryImpl implements MedicationRepository {
     // Last Writer Wins strategy
     // 1. Save locally
     await _localDb.insertMedicine(medicine);
-    
+
     // 2. Sync to cloud
     await _firestore
         .collection('medicines')
@@ -61,10 +61,10 @@ class MedicationRepositoryImpl implements MedicationRepository {
   @override
   Future<List<AdherenceLog>> getAdherenceLogs(String medicineId) async {
     final localLogs = await _localDb.getAdherenceLogs(medicineId);
-    
+
     // Background sync
     _syncLogsFromFirestore(medicineId);
-    
+
     return localLogs;
   }
 
@@ -74,7 +74,7 @@ class MedicationRepositoryImpl implements MedicationRepository {
           .collection('adherence_logs')
           .where('medicineId', isEqualTo: medicineId)
           .get();
-          
+
       for (var doc in snapshot.docs) {
         final log = AdherenceLog.fromJson(doc.data());
         await _localDb.insertAdherenceLog(log);
@@ -87,9 +87,6 @@ class MedicationRepositoryImpl implements MedicationRepository {
   @override
   Future<void> saveAdherenceLog(AdherenceLog log) async {
     await _localDb.insertAdherenceLog(log);
-    await _firestore
-        .collection('adherence_logs')
-        .doc(log.id)
-        .set(log.toJson());
+    await _firestore.collection('adherence_logs').doc(log.id).set(log.toJson());
   }
 }

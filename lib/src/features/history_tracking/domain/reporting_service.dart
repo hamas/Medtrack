@@ -8,7 +8,9 @@ import '../../medication_management/domain/entities/adherence_log.dart';
 
 class ReportingService {
   Future<Uint8List> generateAdherenceReport(
-      Medicine medicine, List<AdherenceLog> logs) async {
+    Medicine medicine,
+    List<AdherenceLog> logs,
+  ) async {
     final pdf = pw.Document();
 
     pdf.addPage(
@@ -20,7 +22,10 @@ class ReportingService {
             children: [
               pw.Text(
                 'Adherence Report: ${medicine.name}',
-                style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
+                style: pw.TextStyle(
+                  fontSize: 24,
+                  fontWeight: pw.FontWeight.bold,
+                ),
               ),
               pw.SizedBox(height: 16),
               pw.Text('Dosage: ${medicine.dosage}'),
@@ -28,16 +33,24 @@ class ReportingService {
               pw.SizedBox(height: 32),
               pw.TableHelper.fromTextArray(
                 context: context,
-                data: const <List<String>>[
-                  <String>['Date', 'Scheduled', 'Taken', 'Status', 'Notes'],
-                  // Data rows will be injected here
-                ] + logs.map((l) => [
-                  l.scheduledTime.toString().split(' ')[0], // Date
-                  '${l.scheduledTime.hour}:${l.scheduledTime.minute}',
-                  l.takenTime != null ? '${l.takenTime!.hour}:${l.takenTime!.minute}' : '-',
-                  l.status.name,
-                  l.mealNotes ?? '-',
-                ]).toList(),
+                data:
+                    const <List<String>>[
+                      <String>['Date', 'Scheduled', 'Taken', 'Status', 'Notes'],
+                      // Data rows will be injected here
+                    ] +
+                    logs
+                        .map(
+                          (l) => [
+                            l.scheduledTime.toString().split(' ')[0], // Date
+                            '${l.scheduledTime.hour}:${l.scheduledTime.minute}',
+                            l.takenTime != null
+                                ? '${l.takenTime!.hour}:${l.takenTime!.minute}'
+                                : '-',
+                            l.status.name,
+                            l.mealNotes ?? '-',
+                          ],
+                        )
+                        .toList(),
               ),
             ],
           );
