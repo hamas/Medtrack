@@ -56,7 +56,7 @@ class MedTrackTheme {
         ),
       ),
       iconTheme: const IconThemeData(
-        weight: 400,
+        weight: 600,
       ),
     );
   }
@@ -113,7 +113,7 @@ class MedTrackTheme {
         ),
       ),
       iconTheme: const IconThemeData(
-        weight: 400,
+        weight: 600,
       ),
     );
   }
