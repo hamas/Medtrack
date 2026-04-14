@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 
 class BiometricGate extends StatefulWidget {
@@ -10,8 +9,9 @@ class BiometricGate extends StatefulWidget {
   State<BiometricGate> createState() => _BiometricGateState();
 }
 
-class _BiometricGateState extends State<BiometricGate> with WidgetsBindingObserver {
-  final LocalAuthentication auth = LocalAuthentication();
+class _BiometricGateState extends State<BiometricGate>
+    with WidgetsBindingObserver {
+  final LocalAuthentication _auth = LocalAuthentication();
   bool _isAuthenticated = false;
   bool _isAuthenticating = false;
 
@@ -30,7 +30,9 @@ class _BiometricGateState extends State<BiometricGate> with WidgetsBindingObserv
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && !_isAuthenticated && !_isAuthenticating) {
+    if (state == AppLifecycleState.resumed &&
+        !_isAuthenticated &&
+        !_isAuthenticating) {
       _authenticate();
     } else if (state == AppLifecycleState.paused) {
       setState(() {
@@ -40,35 +42,33 @@ class _BiometricGateState extends State<BiometricGate> with WidgetsBindingObserv
   }
 
   Future<void> _authenticate() async {
-    setState(() {
-      _isAuthenticating = true;
-    });
+    setState(() => _isAuthenticating = true);
     try {
-      final bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
-      final bool canAuthenticate = canAuthenticateWithBiometrics || await auth.isDeviceSupported();
+      final bool canCheckBiometrics = await _auth.canCheckBiometrics;
+      final bool isDeviceSupported = await _auth.isDeviceSupported();
 
-      if (!canAuthenticate) {
+      if (!canCheckBiometrics && !isDeviceSupported) {
+        // No biometric support: grant access automatically as a fallback.
         setState(() {
-          _isAuthenticated = true; // Fallback if no biometrics supported
+          _isAuthenticated = true;
           _isAuthenticating = false;
         });
         return;
       }
 
-      final bool didAuthenticate = await auth.authenticate(
-        localizedReason: 'Please authenticate to access your medical logs',
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-        ),
+      // local_auth v3 API: flat named parameters, no AuthenticationOptions wrapper.
+      final bool didAuthenticate = await _auth.authenticate(
+        localizedReason: 'Please authenticate to access your medical data.',
+        biometricOnly: true,
+        persistAcrossBackgrounding: true,
       );
 
       setState(() {
         _isAuthenticated = didAuthenticate;
         _isAuthenticating = false;
       });
-    } on PlatformException catch (e) {
-      debugPrint('Biometric Error: $e');
+    } on LocalAuthException catch (e) {
+      debugPrint('Biometric auth error: ${e.code}');
       setState(() {
         _isAuthenticated = false;
         _isAuthenticating = false;
@@ -86,16 +86,29 @@ class _BiometricGateState extends State<BiometricGate> with WidgetsBindingObserv
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Icon(Icons.lock, size: 64, color: Colors.grey),
-            const SizedBox(height: 16),
-            const Text('App Locked', style: TextStyle(fontSize: 24)),
-            const SizedBox(height: 32),
-            if (!_isAuthenticating)
-              ElevatedButton(
+            const Icon(Icons.health_and_safety, size: 72, color: Colors.grey),
+            const SizedBox(height: 20),
+            Text(
+              'Medtrack',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Authentication required',
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 48),
+            if (_isAuthenticating)
+              const CircularProgressIndicator()
+            else
+              FilledButton.icon(
                 onPressed: _authenticate,
-                child: const Text('Unlock with Biometrics'),
+                icon: const Icon(Icons.fingerprint),
+                label: const Text('Unlock with Biometrics'),
               ),
-            if (_isAuthenticating) const CircularProgressIndicator(),
           ],
         ),
       ),

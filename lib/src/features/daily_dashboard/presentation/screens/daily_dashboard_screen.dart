@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../medication_management/domain/entities/medicine.dart';
 import '../../domain/entities/dose.dart';
-import '../../domain/entities/medicine.dart';
 import '../providers/daily_timeline_provider.dart';
 
 class DailyDashboardScreen extends ConsumerWidget {

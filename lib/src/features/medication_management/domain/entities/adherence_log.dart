@@ -6,7 +6,7 @@ part 'adherence_log.g.dart';
 enum AdherenceStatus { taken, skipped, missed }
 
 @freezed
-class AdherenceLog with _$AdherenceLog {
+abstract class AdherenceLog with _$AdherenceLog {
   const factory AdherenceLog({
     required String id,
     required String medicineId,
@@ -16,5 +16,6 @@ class AdherenceLog with _$AdherenceLog {
     String? mealNotes,
   }) = _AdherenceLog;
 
-  factory AdherenceLog.fromJson(Map<String, dynamic> json) => _$AdherenceLogFromJson(json);
+  factory AdherenceLog.fromJson(Map<String, dynamic> json) =>
+      _$AdherenceLogFromJson(json);
 }
