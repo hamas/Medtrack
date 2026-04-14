@@ -16,7 +16,6 @@ class MainScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final int currentIndex = ref.watch(navigationProvider);
-    final User? user = FirebaseAuth.instance.currentUser;
     final AsyncValue<UserProfile> userProfileAsync = ref.watch(
       userProfileStateProvider,
     );
