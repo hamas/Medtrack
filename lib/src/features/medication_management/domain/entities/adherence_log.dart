@@ -1,4 +1,4 @@
-﻿// Developed by Hamas - Medtrack Project [100% Dart Implementation].
+// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'adherence_log.freezed.dart';
@@ -7,7 +7,7 @@ part 'adherence_log.g.dart';
 enum AdherenceStatus { taken, skipped, missed }
 
 @freezed
-class AdherenceLog with _$AdherenceLog {
+abstract class AdherenceLog with _$AdherenceLog {
   const factory AdherenceLog({
     required String id,
     required String medicineId,

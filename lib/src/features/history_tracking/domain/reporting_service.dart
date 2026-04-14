@@ -1,4 +1,4 @@
-﻿// Developed by Hamas - Medtrack Project [100% Dart Implementation].
+// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -26,7 +26,7 @@ class ReportingService {
               pw.Text('Dosage: ${medicine.dosage}'),
               pw.Text('Interval: ${medicine.intervalType.name}'),
               pw.SizedBox(height: 32),
-              pw.Table.fromTextArray(
+              pw.TableHelper.fromTextArray(
                 context: context,
                 data: const <List<String>>[
                   <String>['Date', 'Scheduled', 'Taken', 'Status', 'Notes'],

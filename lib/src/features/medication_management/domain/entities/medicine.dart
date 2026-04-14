@@ -9,7 +9,7 @@ enum MealContext { beforeMeal, withMeal, afterMeal, none }
 enum DeliveryMethod { water, milk, mixed, injection, drops, inhaler, other }
 
 @freezed
-class Medicine with _$Medicine {
+abstract class Medicine with _$Medicine {
   const factory Medicine({
     required String id,
     required String userId,

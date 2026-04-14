@@ -1,5 +1,3 @@
-﻿// Developed by Hamas - Medtrack Project [100% Dart Implementation].
-import 'package:timezone/timezone.dart' as tz;
 import '../entities/medicine.dart';
 
 class DoseScheduler {
@@ -65,8 +63,6 @@ class DoseScheduler {
         // Simplified: every 3 months on the same day
         final monthDiff = (date.year - createdDay.year) * 12 + date.month - createdDay.month;
         return monthDiff % 3 == 0 && date.day == createdDay.day;
-      default:
-        return false;
     }
   }
 }

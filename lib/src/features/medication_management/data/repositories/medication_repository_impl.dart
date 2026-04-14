@@ -1,4 +1,4 @@
-﻿// Developed by Hamas - Medtrack Project [100% Dart Implementation].
+// Developed by Hamas - Medtrack Project [100% Dart Implementation].
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/repositories/medication_repository.dart';
 import '../../domain/entities/medicine.dart';
@@ -79,7 +79,9 @@ class MedicationRepositoryImpl implements MedicationRepository {
         final log = AdherenceLog.fromJson(doc.data());
         await _localDb.insertAdherenceLog(log);
       }
-    } catch (e) {}
+    } catch (e) {
+      // Background sync failed; fallback to local data is already active.
+    }
   }
 
   @override
