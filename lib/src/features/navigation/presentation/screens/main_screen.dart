@@ -34,7 +34,11 @@ class MainScreen extends ConsumerWidget {
         ),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.notifications_sharp),
+            icon: Image.asset(
+              'assets/icons/notification_bell.png',
+              width: 28,
+              height: 28,
+            ),
             onPressed: () {
               // Notification center logic
             },
