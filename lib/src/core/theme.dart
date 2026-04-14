@@ -50,7 +50,7 @@ class MedTrackTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: lightScheme.surface,
-        indicatorColor: lightScheme.primaryContainer,
+        indicatorColor: Colors.white.withValues(alpha: 0.05),
         labelTextStyle: WidgetStateProperty.all(
           GoogleFonts.googleSans(fontSize: 12, fontWeight: FontWeight.w500),
         ),
@@ -111,7 +111,7 @@ class MedTrackTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: darkScheme.surface,
-        indicatorColor: darkScheme.primaryContainer,
+        indicatorColor: Colors.white.withValues(alpha: 0.05),
         labelTextStyle: WidgetStateProperty.all(
           GoogleFonts.googleSans(fontSize: 12, fontWeight: FontWeight.w500),
         ),
