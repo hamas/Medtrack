@@ -122,7 +122,7 @@ class _DoseCard extends ConsumerWidget {
           onChanged: (value) async {
             if (value == true) {
               await ref
-                  .read(checkoffNotifierProvider(medicine.id).notifier)
+                  .read(checkoffProvider(medicine.id).notifier)
                   .checkOffMedicine(
                     scheduledTime: dose.scheduledTime,
                     status: AdherenceStatus.taken,

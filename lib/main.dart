@@ -5,7 +5,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:go_router/go_router.dart';
 
+import 'firebase_options.dart';
 import 'src/services/notification_manager.dart';
+import 'src/services/firebase_service.dart';
 import 'src/core/theme.dart';
 import 'src/features/authentication/presentation/biometric_gate.dart';
 import 'src/features/medication_management/presentation/screens/dashboard_screen.dart';
@@ -15,7 +17,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    await Firebase.initializeApp();
+    // 1. Initialize Firebase with Custom Options
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    
+    // 2. Initialize Firebase Sign-In (v7+ requirement)
+    final firebaseService = FirebaseService();
+    await firebaseService.initialize();
+    
   } catch (e) {
     debugPrint('Firebase initialization failed. Error: $e');
   }
@@ -30,7 +40,10 @@ void main() async {
 final GoRouter _router = GoRouter(
   initialLocation: '/',
   routes: [
-    GoRoute(path: '/', builder: (context, state) => const DashboardScreen()),
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const DashboardScreen(),
+    ),
     GoRoute(
       path: '/add-medicine',
       builder: (context, state) => const AddMedicineScreen(),
