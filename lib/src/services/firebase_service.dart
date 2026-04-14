@@ -36,8 +36,8 @@ class FirebaseService {
   }
 
   Future<UserCredential?> signInWithGoogle() async {
+    // authenticate() in v7+ is non-nullable; cancellation throws an exception
     final googleUser = await _googleSignIn.authenticate();
-    if (googleUser == null) return null;
 
     // In v7+, we get individual tokens via authentication or authorizationClient
     final googleAuth = googleUser.authentication;
