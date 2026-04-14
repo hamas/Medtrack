@@ -25,20 +25,9 @@ class MainScreen extends ConsumerWidget {
       extendBody: true,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        centerTitle: true,
+        centerTitle: false,
+        toolbarHeight: 52,
         title: const Text('Medtrack'),
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            radius: 11,
-            backgroundImage: user?.photoURL != null
-                ? NetworkImage(user!.photoURL!)
-                : null,
-            child: user?.photoURL == null
-                ? const Icon(Symbols.account_circle_rounded, size: 22)
-                : null,
-          ),
-        ),
         actions: <Widget>[
           userProfileAsync.when(
             data: (UserProfile profile) => Row(
@@ -155,9 +144,9 @@ class MainScreen extends ConsumerWidget {
             label: 'Calendar',
           ),
           NavigationDestination(
-            icon: Icon(Symbols.dashboard_rounded, fill: 0),
-            selectedIcon: Icon(Symbols.dashboard_rounded, fill: 1),
-            label: 'Menu',
+            icon: Icon(Symbols.person_rounded, fill: 0),
+            selectedIcon: Icon(Symbols.person_rounded, fill: 1),
+            label: 'Profile',
           ),
         ],
       ),
