@@ -59,10 +59,7 @@ class MedTrackTheme {
           const IconThemeData(size: 20, color: Color(0xFFF8FAFC)),
         ),
       ),
-      iconTheme: const IconThemeData(
-        weight: 600,
-        color: Color(0xFFF8FAFC),
-      ),
+      iconTheme: const IconThemeData(weight: 600, color: Color(0xFFF8FAFC)),
     );
   }
 
@@ -121,10 +118,7 @@ class MedTrackTheme {
           const IconThemeData(size: 20, color: Color(0xFFF8FAFC)),
         ),
       ),
-      iconTheme: const IconThemeData(
-        weight: 600,
-        color: Color(0xFFF8FAFC),
-      ),
+      iconTheme: const IconThemeData(weight: 600, color: Color(0xFFF8FAFC)),
     );
   }
 }

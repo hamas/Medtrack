@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import '../../../daily_dashboard/presentation/screens/daily_dashboard_screen.dart';
+import '../../../gamification/domain/entities/user_profile.dart';
+import '../../../gamification/presentation/providers/user_profile_provider.dart';
 import '../../../history_tracking/presentation/screens/calendar_screen.dart';
 import '../../../medication_management/presentation/screens/medicine_list_screen.dart';
 import '../providers/navigation_provider.dart';
@@ -15,6 +17,9 @@ class MainScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final int currentIndex = ref.watch(navigationProvider);
     final User? user = FirebaseAuth.instance.currentUser;
+    final AsyncValue<UserProfile> userProfileAsync = ref.watch(
+      userProfileStateProvider,
+    );
 
     return Scaffold(
       extendBody: true,
@@ -35,6 +40,52 @@ class MainScreen extends ConsumerWidget {
           ),
         ),
         actions: <Widget>[
+          userProfileAsync.when(
+            data: (UserProfile profile) => Row(
+              children: <Widget>[
+                // Streak Flame
+                if (profile.currentStreak > 0) ...<Widget>[
+                  const Icon(
+                    Symbols.local_fire_department_rounded,
+                    color: Colors.orange,
+                    size: 20,
+                    fill: 1,
+                  ),
+                  const SizedBox(width: 2),
+                  Text(
+                    '${profile.currentStreak}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Colors.orange,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                ],
+                // Badge Count
+                if (profile.earnedBadges.isNotEmpty) ...<Widget>[
+                  const Icon(
+                    Symbols.rewarded_ads_rounded,
+                    color: Colors.amber,
+                    size: 20,
+                    fill: 1,
+                  ),
+                  const SizedBox(width: 2),
+                  Text(
+                    '${profile.earnedBadges.length}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Colors.amber,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                ],
+              ],
+            ),
+            loading: () => const SizedBox.shrink(),
+            error: (_, __) => const SizedBox.shrink(),
+          ),
           IconButton(
             icon: Image.asset(
               'assets/icons/notification_bell.png',
