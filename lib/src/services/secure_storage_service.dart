@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final Provider<SecureStorageService> secureStorageProvider = Provider<SecureStorageService>((Ref ref) {
-  return SecureStorageService();
-});
+final Provider<SecureStorageService> secureStorageProvider =
+    Provider<SecureStorageService>((Ref ref) {
+      return SecureStorageService();
+    });
 
 class SecureStorageService {
   SecureStorageService()

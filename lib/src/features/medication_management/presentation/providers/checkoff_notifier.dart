@@ -10,7 +10,9 @@ class CheckoffNotifier extends _$CheckoffNotifier {
   @override
   FutureOr<List<AdherenceLog>> build(String medicineId) async {
     final LocalDbService localDb = LocalDbService();
-    final MedicationRepositoryImpl repository = MedicationRepositoryImpl(localDb);
+    final MedicationRepositoryImpl repository = MedicationRepositoryImpl(
+      localDb,
+    );
     return repository.getAdherenceLogs(medicineId);
   }
 
@@ -29,11 +31,16 @@ class CheckoffNotifier extends _$CheckoffNotifier {
     );
 
     final List<AdherenceLog> currentData = state.value ?? <AdherenceLog>[];
-    state = AsyncValue<List<AdherenceLog>>.data(<AdherenceLog>[...currentData, newLog]);
+    state = AsyncValue<List<AdherenceLog>>.data(<AdherenceLog>[
+      ...currentData,
+      newLog,
+    ]);
 
     try {
       final LocalDbService localDb = LocalDbService();
-      final MedicationRepositoryImpl repository = MedicationRepositoryImpl(localDb);
+      final MedicationRepositoryImpl repository = MedicationRepositoryImpl(
+        localDb,
+      );
       await repository.saveAdherenceLog(newLog);
     } catch (e, st) {
       state = AsyncValue<List<AdherenceLog>>.error(e, st);

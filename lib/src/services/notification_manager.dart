@@ -9,16 +9,17 @@ class NotificationManager {
   NotificationManager._internal();
   static final NotificationManager _instance = NotificationManager._internal();
 
-  final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _localNotifications =
+      FlutterLocalNotificationsPlugin();
 
   Future<void> initialize() async {
     tz.initializeTimeZones();
 
-    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-    );
+    const InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
 
     await _localNotifications.initialize(settings: initializationSettings);
 
@@ -37,7 +38,9 @@ class NotificationManager {
       );
 
       await _localNotifications
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.createNotificationChannel(channel);
     }
   }
@@ -64,7 +67,8 @@ class NotificationManager {
         android: AndroidNotificationDetails(
           'high_importance_medical_alerts',
           'Medical Alerts',
-          channelDescription: 'This channel is used for critical medical reminders.',
+          channelDescription:
+              'This channel is used for critical medical reminders.',
           importance: Importance.max,
           priority: Priority.high,
         ),

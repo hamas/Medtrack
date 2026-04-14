@@ -90,10 +90,9 @@ class _BiometricGateState extends State<BiometricGate>
             const SizedBox(height: 20),
             Text(
               'Medtrack',
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const Text(

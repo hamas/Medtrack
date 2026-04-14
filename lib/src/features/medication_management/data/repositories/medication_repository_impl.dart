@@ -26,7 +26,8 @@ class MedicationRepositoryImpl implements MedicationRepository {
           .where('userId', isEqualTo: userId)
           .get();
 
-      for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
+      for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+          in snapshot.docs) {
         final Medicine medicine = Medicine.fromJson(doc.data());
         await _localDb.insertMedicine(medicine);
         await _alarmService.scheduleNextAlarm(medicine);

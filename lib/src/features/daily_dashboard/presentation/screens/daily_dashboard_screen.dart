@@ -12,7 +12,9 @@ class DailyDashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<Dose>> timelineAsync = ref.watch(dailyTimelineProvider);
+    final AsyncValue<List<Dose>> timelineAsync = ref.watch(
+      dailyTimelineProvider,
+    );
 
     return timelineAsync.when(
       data: (List<Dose> doses) => doses.isEmpty
@@ -22,7 +24,8 @@ class DailyDashboardScreen extends ConsumerWidget {
                 ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: doses.length,
-                  separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 12),
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const SizedBox(height: 12),
                   itemBuilder: (BuildContext context, int index) {
                     final Dose dose = doses[index];
                     return _DashboardItem(dose: dose);
@@ -40,7 +43,8 @@ class DailyDashboardScreen extends ConsumerWidget {
               ],
             ),
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (Object err, StackTrace stack) => Center(child: Text('Error: $err')),
+      error: (Object err, StackTrace stack) =>
+          Center(child: Text('Error: $err')),
     );
   }
 }
@@ -54,29 +58,29 @@ class _DashboardItem extends ConsumerWidget {
     final ThemeData theme = Theme.of(context);
     final Medicine medicine = dose.medicine;
     final String timeStr = DateFormat('hh:mm a').format(dose.scheduledTime);
-    
+
     return Container(
       decoration: BoxDecoration(
-        color: dose.isTaken 
-          ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
-          : theme.colorScheme.surface,
+        color: dose.isTaken
+            ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
+            : theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.1),
-        ),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CircleAvatar(
-          backgroundColor: dose.isTaken 
-            ? theme.colorScheme.primaryContainer 
-            : theme.colorScheme.secondaryContainer,
+          backgroundColor: dose.isTaken
+              ? theme.colorScheme.primaryContainer
+              : theme.colorScheme.secondaryContainer,
           child: Text(
             timeStr.split(' ')[0],
             style: TextStyle(
-              fontSize: 12, 
+              fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: dose.isTaken ? theme.colorScheme.onPrimaryContainer : theme.colorScheme.onSecondaryContainer,
+              color: dose.isTaken
+                  ? theme.colorScheme.onPrimaryContainer
+                  : theme.colorScheme.onSecondaryContainer,
             ),
           ),
         ),
@@ -91,11 +95,17 @@ class _DashboardItem extends ConsumerWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('${medicine.dosage} • ${medicine.deliveryMethod.name.toUpperCase()}'),
+            Text(
+              '${medicine.dosage} • ${medicine.deliveryMethod.name.toUpperCase()}',
+            ),
             const SizedBox(height: 4),
             Row(
               children: <Widget>[
-                Icon(Icons.info_outline, size: 14, color: theme.colorScheme.primary),
+                Icon(
+                  Icons.info_outline,
+                  size: 14,
+                  color: theme.colorScheme.primary,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   _getMealLabel(medicine.mealContext),
@@ -111,11 +121,13 @@ class _DashboardItem extends ConsumerWidget {
         ),
         trailing: Checkbox(
           value: dose.isTaken,
-          onChanged: dose.isTaken ? null : (bool? value) {
-            if (value == true) {
-              ref.read(dailyTimelineProvider.notifier).checkOffDose(dose);
-            }
-          },
+          onChanged: dose.isTaken
+              ? null
+              : (bool? value) {
+                  if (value == true) {
+                    ref.read(dailyTimelineProvider.notifier).checkOffDose(dose);
+                  }
+                },
           shape: const CircleBorder(),
         ),
       ),
@@ -124,10 +136,14 @@ class _DashboardItem extends ConsumerWidget {
 
   String _getMealLabel(MealContext context) {
     switch (context) {
-      case MealContext.beforeMeal: return 'Take Before Meal';
-      case MealContext.withMeal: return 'Take With Meal';
-      case MealContext.afterMeal: return 'Take After Meal';
-      case MealContext.none: return 'No meal instructions';
+      case MealContext.beforeMeal:
+        return 'Take Before Meal';
+      case MealContext.withMeal:
+        return 'Take With Meal';
+      case MealContext.afterMeal:
+        return 'Take After Meal';
+      case MealContext.none:
+        return 'No meal instructions';
     }
   }
 }

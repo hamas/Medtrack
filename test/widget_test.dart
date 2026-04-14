@@ -8,7 +8,9 @@ void main() {
     tz.initializeTimeZones();
   });
 
-  testWidgets('App smoke test - verifies basic widget rendering', (WidgetTester tester) async {
+  testWidgets('App smoke test - verifies basic widget rendering', (
+    WidgetTester tester,
+  ) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const ProviderScope(child: MedTrackApp()));
 

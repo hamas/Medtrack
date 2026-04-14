@@ -6,7 +6,8 @@ class MedTrackTheme {
   static final Color _brandBlue = Colors.blueAccent.shade700;
 
   static ThemeData lightTheme(ColorScheme? lightDynamic) {
-    final ColorScheme scheme = lightDynamic ??
+    final ColorScheme scheme =
+        lightDynamic ??
         ColorScheme.fromSeed(
           seedColor: _brandBlue,
           brightness: Brightness.light,
@@ -19,7 +20,8 @@ class MedTrackTheme {
   }
 
   static ThemeData darkTheme(ColorScheme? darkDynamic) {
-    final ColorScheme scheme = darkDynamic ??
+    final ColorScheme scheme =
+        darkDynamic ??
         ColorScheme.fromSeed(
           seedColor: _brandBlue,
           brightness: Brightness.dark,

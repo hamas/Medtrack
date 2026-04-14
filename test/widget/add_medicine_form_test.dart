@@ -5,13 +5,11 @@ import 'package:medtrack/src/features/medication_management/presentation/screens
 
 void main() {
   group('Add Medicine Form Widget Tests', () {
-    testWidgets('Add Medicine Form should render basic scaffold', (WidgetTester tester) async {
+    testWidgets('Add Medicine Form should render basic scaffold', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(
-            home: AddMedicineScreen(),
-          ),
-        ),
+        const ProviderScope(child: MaterialApp(home: AddMedicineScreen())),
       );
 
       expect(find.text('Add Medication'), findsOneWidget);

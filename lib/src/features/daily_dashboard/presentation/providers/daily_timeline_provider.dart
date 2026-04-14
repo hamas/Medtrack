@@ -22,7 +22,7 @@ class DailyTimeline extends _$DailyTimeline {
 
   Future<void> checkOffDose(Dose dose) async {
     final AsyncValue<List<Dose>> previousState = state;
-    
+
     if (state.hasValue) {
       final List<Dose> updatedList = state.value!.map((Dose d) {
         if (d.id == dose.id) {

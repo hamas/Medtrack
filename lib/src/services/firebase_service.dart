@@ -13,7 +13,10 @@ class FirebaseService {
     await _googleSignIn.initialize();
   }
 
-  Future<UserCredential?> registerWithEmail(String email, String password) async {
+  Future<UserCredential?> registerWithEmail(
+    String email,
+    String password,
+  ) async {
     try {
       return await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -38,12 +41,10 @@ class FirebaseService {
   Future<UserCredential?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
-      
-      final GoogleSignInClientAuthorization authResult = await googleUser.authorizationClient.authorizeScopes(<String>[
-        'email',
-        'profile',
-        'openid',
-      ]);
+
+      final GoogleSignInClientAuthorization authResult = await googleUser
+          .authorizationClient
+          .authorizeScopes(<String>['email', 'profile', 'openid']);
 
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
       final String? idToken = googleAuth.idToken;

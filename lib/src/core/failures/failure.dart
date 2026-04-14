@@ -1,8 +1,8 @@
 sealed class Failure {
+  const Failure(this.message, [this.exception]);
+
   final String message;
   final Exception? exception;
-
-  const Failure(this.message, [this.exception]);
 }
 
 class NetworkFailure extends Failure {
@@ -20,6 +20,3 @@ class AuthenticationFailure extends Failure {
 class UnknownFailure extends Failure {
   const UnknownFailure(super.message, [super.exception]);
 }
-
-// Example usage returning an Either with fpdart
-// Future<Either<Failure, Medicine>> getMedicine(String id) async { ... }

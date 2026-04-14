@@ -25,8 +25,12 @@ class MainScreen extends ConsumerWidget {
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
-            backgroundImage: user?.photoURL != null ? NetworkImage(user!.photoURL!) : null,
-            child: user?.photoURL == null ? const Icon(Icons.account_circle) : null,
+            backgroundImage: user?.photoURL != null
+                ? NetworkImage(user!.photoURL!)
+                : null,
+            child: user?.photoURL == null
+                ? const Icon(Icons.account_circle)
+                : null,
           ),
         ),
         actions: <Widget>[
@@ -50,7 +54,8 @@ class MainScreen extends ConsumerWidget {
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
-        onDestinationSelected: (int index) => ref.read(navigationProvider.notifier).setIndex(index),
+        onDestinationSelected: (int index) =>
+            ref.read(navigationProvider.notifier).setIndex(index),
         destinations: const <NavigationDestination>[
           NavigationDestination(
             icon: Icon(Icons.home_outlined),

@@ -65,7 +65,7 @@ class LocalDbService {
     final Map<String, dynamic> json = medicine.toJson();
     json['scheduleTimes'] = medicine.scheduleTimes.join(',');
     json['isActive'] = medicine.isActive ? 1 : 0;
-    
+
     await db.insert(
       'medicines',
       json,
@@ -100,6 +100,8 @@ class LocalDbService {
       where: 'medicineId = ?',
       whereArgs: <Object>[medicineId],
     );
-    return maps.map((Map<String, dynamic> json) => AdherenceLog.fromJson(json)).toList();
+    return maps
+        .map((Map<String, dynamic> json) => AdherenceLog.fromJson(json))
+        .toList();
   }
 }

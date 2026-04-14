@@ -37,11 +37,13 @@ final GoRouter _router = GoRouter(
   routes: <RouteBase>[
     GoRoute(
       path: '/',
-      builder: (BuildContext context, GoRouterState state) => const MainScreen(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const MainScreen(),
     ),
     GoRoute(
       path: '/add-medicine',
-      builder: (BuildContext context, GoRouterState state) => const AddMedicineScreen(),
+      builder: (BuildContext context, GoRouterState state) =>
+          const AddMedicineScreen(),
     ),
   ],
 );

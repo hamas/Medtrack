@@ -11,17 +11,19 @@ class DoseScheduler {
     final List<Dose> doses = <Dose>[];
     final DateTime start = startAfter ?? DateTime.now();
 
-    final DateTime? effectiveEndDate = medicine.endDate ?? 
-        (medicine.durationDays != null 
-          ? medicine.startDate.add(Duration(days: medicine.durationDays!)) 
-          : null);
+    final DateTime? effectiveEndDate =
+        medicine.endDate ??
+        (medicine.durationDays != null
+            ? medicine.startDate.add(Duration(days: medicine.durationDays!))
+            : null);
 
     DateTime currentDateCandidate = medicine.startDate.isAfter(start)
         ? medicine.startDate
         : DateTime(start.year, start.month, start.day);
 
     while (doses.length < 10) {
-      if (effectiveEndDate != null && currentDateCandidate.isAfter(effectiveEndDate)) {
+      if (effectiveEndDate != null &&
+          currentDateCandidate.isAfter(effectiveEndDate)) {
         break;
       }
 
@@ -40,7 +42,8 @@ class DoseScheduler {
           );
 
           if (doseDateTime.isAfter(start)) {
-            if (effectiveEndDate != null && doseDateTime.isAfter(effectiveEndDate)) {
+            if (effectiveEndDate != null &&
+                doseDateTime.isAfter(effectiveEndDate)) {
               break;
             }
 
@@ -89,8 +92,10 @@ class DoseScheduler {
         if (medicine.intervalCount == 1) {
           return date.day == startDay.day;
         } else {
-          final int monthDiff = (date.year - startDay.year) * 12 + date.month - startDay.month;
-          return monthDiff % medicine.intervalCount == 0 && date.day == startDay.day;
+          final int monthDiff =
+              (date.year - startDay.year) * 12 + date.month - startDay.month;
+          return monthDiff % medicine.intervalCount == 0 &&
+              date.day == startDay.day;
         }
       case IntervalType.custom:
         switch (medicine.intervalUnit) {
@@ -99,8 +104,10 @@ class DoseScheduler {
           case IntervalUnit.weeks:
             return diffDays % (7 * medicine.intervalCount) == 0;
           case IntervalUnit.months:
-            final int monthDiff = (date.year - startDay.year) * 12 + date.month - startDay.month;
-            return monthDiff % medicine.intervalCount == 0 && date.day == startDay.day;
+            final int monthDiff =
+                (date.year - startDay.year) * 12 + date.month - startDay.month;
+            return monthDiff % medicine.intervalCount == 0 &&
+                date.day == startDay.day;
         }
     }
   }

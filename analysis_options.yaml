@@ -1,4 +1,4 @@
-include: package:flutter_lints/recommended.yaml
+include: package:flutter_lints/flutter.yaml
 
 analyzer:
   language:
@@ -14,25 +14,23 @@ analyzer:
 
 linter:
   rules:
-    - always_specify_types
-    - avoid_dynamic_calls
-    - unawaited_futures
-    - always_declare_return_types
-    - cancel_subscriptions
-    - close_sinks
-    - comment_references
-    - prefer_final_fields
-    - prefer_final_locals
-    - cast_nullable_to_non_nullable
-    - prefer_const_constructors
-    - prefer_const_constructors_in_immutables
-    - prefer_const_declarations
-    - prefer_const_literals_to_create_immutables
-    - sort_constructors_first
-    - sort_pub_dependencies
-    - type_annotate_public_apis
-    - use_super_parameters
-    - use_string_buffers
-    - use_named_constants
-    - library_private_types_in_public_api: false
-    - public_member_api_docs: false
+    always_specify_types: true
+    always_declare_return_types: true
+    avoid_dynamic_calls: true
+    cancel_subscriptions: true
+    cast_nullable_to_non_nullable: true
+    close_sinks: true
+    prefer_const_constructors: true
+    prefer_const_constructors_in_immutables: true
+    prefer_const_declarations: true
+    prefer_const_literals_to_create_immutables: true
+    prefer_final_fields: true
+    prefer_final_locals: true
+    sort_constructors_first: true
+    type_annotate_public_apis: true
+    unawaited_futures: true
+    use_named_constants: true
+    use_super_parameters: true
+    use_string_buffers: true
+    library_private_types_in_public_api: false
+    public_member_api_docs: false
