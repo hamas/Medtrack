@@ -1,5 +1,4 @@
-// Developed by Hamas — Medtrack Project [100% Dart]
-// Developed by Hamas — Medtrack Project [100% Dart Implementation]
+// Developed by Hamas — Medtrack Project [100% Dart Implementation].
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';

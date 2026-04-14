@@ -1,5 +1,4 @@
-// Developed by Hamas — Medtrack Project [100% Dart]
-// Developed by Hamas — Medtrack Project [100% Dart Implementation]
+// Developed by Hamas — Medtrack Project [100% Dart Implementation].
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'medicine.freezed.dart';

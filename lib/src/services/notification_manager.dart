@@ -1,5 +1,4 @@
-// Developed by Hamas — Medtrack Project [100% Dart]
-// Developed by Hamas — Medtrack Project [100% Dart Implementation]
+// Developed by Hamas — Medtrack Project [100% Dart Implementation].
 import 'dart:io';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;

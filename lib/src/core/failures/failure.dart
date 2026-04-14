@@ -1,5 +1,4 @@
-// Developed by Hamas — Medtrack Project [100% Dart]
-// Developed by Hamas — Medtrack Project [100% Dart Implementation]
+// Developed by Hamas — Medtrack Project [100% Dart Implementation].
 sealed class Failure {
   final String message;
   final Exception? exception;

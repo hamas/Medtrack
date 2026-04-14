@@ -1,5 +1,4 @@
-// Developed by Hamas — Medtrack Project [100% Dart]
-// Developed by Hamas â€” Medtrack Project [100% Dart]
+// Developed by Hamas — Medtrack Project [100% Dart Implementation].
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
