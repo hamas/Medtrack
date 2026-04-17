@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -146,8 +147,8 @@ class _ViewSegmentedControl extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           _SegmentItem(label: 'Today', isActive: true),
-          _SegmentItem(label: 'Week', isActive: false),
-          _SegmentItem(label: 'Month', isActive: false),
+          const _SegmentItem(label: 'Week', isActive: false),
+          const _SegmentItem(label: 'Month', isActive: false),
         ],
       ),
     );
