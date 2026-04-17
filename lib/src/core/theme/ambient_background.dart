@@ -30,14 +30,14 @@ class _AmbientBackgroundState extends State<AmbientBackground>
     _shapes.addAll(<_AmbientShape>[
       // One massive vibrant Purple circle (800px) - Bottom Half
       _AmbientShape(
-        color: const Color(0xFFF0ABFF).withAlpha(160),
+        color: const Color.fromARGB(255, 255, 34, 248).withAlpha(160),
         size: 800.0,
         isCircle: true,
         isTopHalf: false,
       ),
       // One massive vibrant Blue circle (800px) - Top Half
       _AmbientShape(
-        color: const Color(0xFF38BDF8).withAlpha(150),
+        color: const Color.fromARGB(255, 17, 203, 254).withAlpha(150),
         size: 800.0,
         isCircle: true,
         isTopHalf: true,
@@ -59,7 +59,7 @@ class _AmbientBackgroundState extends State<AmbientBackground>
           // 1. Pure black background layer
           const Positioned.fill(
             child: DecoratedBox(
-              decoration: BoxDecoration(color: Colors.black),
+              decoration: BoxDecoration(color: Color.fromARGB(255, 7, 35, 0)),
             ),
           ),
           // 2. The Drifting Shapes layer (Nebula blobs - 400px)
@@ -86,7 +86,7 @@ class _AmbientBackgroundState extends State<AmbientBackground>
               filter: ImageFilter.blur(sigmaX: 40.0, sigmaY: 40.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.black.withAlpha(230), // ~90% opacity
+                  color: Colors.black.withAlpha(128), // 50% opacity
                 ),
               ),
             ),
