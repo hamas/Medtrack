@@ -15,7 +15,7 @@ DashboardRepository dashboardRepo(Ref ref) {
   return DashboardRepositoryImpl();
 }
 
-final selectedDateProvider = StateProvider<DateTime>((ref) => DateTime.now());
+final selectedDateProvider = StateProvider<DateTime>((StateProviderRef<DateTime> ref) => DateTime.now());
 
 @riverpod
 class DailyTimeline extends _$DailyTimeline {
