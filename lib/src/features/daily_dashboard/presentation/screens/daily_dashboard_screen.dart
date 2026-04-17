@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import '../../../gamification/domain/entities/user_profile.dart';
+import '../../../gamification/presentation/providers/user_profile_provider.dart';
 import '../../../medication_management/domain/entities/medicine.dart';
 import '../../domain/entities/dose.dart';
 import '../providers/daily_timeline_provider.dart';
