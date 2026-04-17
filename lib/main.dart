@@ -8,6 +8,7 @@ import 'src/core/theme.dart';
 import 'src/features/authentication/presentation/biometric_gate.dart';
 import 'src/features/medication_management/presentation/screens/add_medicine_screen.dart';
 import 'src/features/navigation/presentation/screens/main_screen.dart';
+import 'src/features/onboarding/presentation/screens/splash_screen.dart';
 import 'src/services/firebase_service.dart';
 import 'src/services/notification_manager.dart';
 
@@ -33,8 +34,13 @@ Future<void> main() async {
 }
 
 final GoRouter _router = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/splash',
   routes: <RouteBase>[
+    GoRoute(
+      path: '/splash',
+      builder: (BuildContext context, GoRouterState state) =>
+          const SplashScreen(),
+    ),
     ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) =>
           BiometricGate(child: child),

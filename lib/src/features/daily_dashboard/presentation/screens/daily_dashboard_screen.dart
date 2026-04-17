@@ -149,7 +149,7 @@ class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
     final DateTime lastDayOfMonth = DateTime(today.year, today.month + 1, 0);
     final int daysCount = lastDayOfMonth.difference(today).inDays + 1;
 
-    final DateTime selectedDate = ref.watch(selectedDateNotifierProvider);
+    final DateTime selectedDate = ref.watch(selectedDateProvider);
 
     return Column(
       children: <Widget>[
@@ -175,7 +175,7 @@ class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
 
                 return GestureDetector(
                   onTap: () {
-                    ref.read(selectedDateNotifierProvider.notifier).set(date);
+                    ref.read(selectedDateProvider.notifier).set(date);
                     _scrollToIndex(index);
                   },
                   child: _DateItem(date: date, isSelected: isSelected),
@@ -192,18 +192,18 @@ class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
 }
 
 class _ViewSegmentedControl extends StatelessWidget {
-  const _ViewSegmentedControl();
+  const _ViewSegmentedControl({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           _SegmentItem(label: 'Today', isActive: true),
-          const _SegmentItem(label: 'Week', isActive: false),
-          const _SegmentItem(label: 'Month', isActive: false),
+          _SegmentItem(label: 'Week', isActive: false),
+          _SegmentItem(label: 'Month', isActive: false),
         ],
       ),
     );
