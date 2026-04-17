@@ -63,46 +63,36 @@ class DailyDashboardScreen extends ConsumerWidget {
 class _GreetingHeader extends ConsumerWidget {
   const _GreetingHeader();
 
-  String _getGreeting() {
-    final int hour = DateTime.now().hour;
-    if (hour < 12) return 'Good Morning';
-    if (hour < 17) return 'Good Afternoon';
-    return 'Good Evening';
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<UserProfile> profileAsync = ref.watch(userProfileStateProvider);
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 64, 24, 16),
-      child: Column(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          profileAsync.when(
-            data: (UserProfile profile) => Text(
-              '${_getGreeting()}, ${profile.name} ❤️',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-            loading: () => const SizedBox.shrink(),
-            error: (Object error, StackTrace stackTrace) => Text(
-              '${_getGreeting()}, User ❤️',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+          Text(
+            'Your Medicines\nReminder',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w300,
+              fontSize: 32,
+              height: 1.2,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            'You have doses to take today.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(
-                context,
-              ).colorScheme.onSurface.withValues(alpha: 0.7),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
+              ),
+            ),
+            child: Icon(
+              Symbols.notifications_rounded,
+              color: Theme.of(context).colorScheme.primary,
+              size: 24,
             ),
           ),
         ],
@@ -119,22 +109,80 @@ class _HorizontalDatePicker extends StatelessWidget {
     final DateTime now = DateTime.now();
     final DateTime startOfWeek = now.subtract(Duration(days: now.weekday % 7));
 
-    return SizedBox(
-      height: 90,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: 7,
-        itemBuilder: (BuildContext context, int index) {
-          final DateTime date = startOfWeek.add(Duration(days: index));
-          final bool isToday =
-              date.year == now.year &&
-              date.month == now.month &&
-              date.day == now.day;
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 110,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: 7,
+            itemBuilder: (BuildContext context, int index) {
+              final DateTime date = startOfWeek.add(Duration(days: index));
+              final bool isToday =
+                  date.year == now.year &&
+                  date.month == now.month &&
+                  date.day == now.day;
 
-          return _DateItem(date: date, isToday: isToday);
-        },
+              return _DateItem(date: date, isToday: isToday);
+            },
+          ),
+        ),
+        const SizedBox(height: 16),
+        const _ViewSegmentedControl(),
+      ],
+    );
+  }
+}
+
+class _ViewSegmentedControl extends StatelessWidget {
+  const _ViewSegmentedControl();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          _SegmentItem(label: 'Today', isActive: true),
+          _SegmentItem(label: 'Week', isActive: false),
+          _SegmentItem(label: 'Month', isActive: false),
+        ],
       ),
+    );
+  }
+}
+
+class _SegmentItem extends StatelessWidget {
+  const _SegmentItem({required this.label, required this.isActive});
+  final String label;
+  final bool isActive;
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    return Column(
+      children: <Widget>[
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+            color: isActive ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.4),
+          ),
+        ),
+        const SizedBox(height: 4),
+        if (isActive)
+          Container(
+            width: 24,
+            height: 3,
+            decoration: BoxDecoration(
+              color: colorScheme.primary,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+      ],
     );
   }
 }
@@ -149,35 +197,44 @@ class _DateItem extends StatelessWidget {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      width: 60,
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      width: 65,
+      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       decoration: BoxDecoration(
         color: isToday
             ? colorScheme.primary
             : colorScheme.surface.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(32),
         border: isToday
             ? null
-            : Border.all(color: colorScheme.outline.withValues(alpha: 0.2)),
+            : Border.all(color: colorScheme.outline.withValues(alpha: 0.1)),
+        boxShadow: isToday
+            ? <BoxShadow>[
+                BoxShadow(
+                  color: colorScheme.primary.withValues(alpha: 0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : null,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
-            DateFormat('E').format(date).toUpperCase(),
+            date.day.toString(),
             style: TextStyle(
-              fontSize: 12,
-              fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
               color: isToday ? colorScheme.onPrimary : colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text(
-            date.day.toString(),
+            DateFormat('E').format(date),
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: isToday ? colorScheme.onPrimary : colorScheme.onSurface,
+              fontSize: 13,
+              fontWeight: isToday ? FontWeight.w500 : FontWeight.w400,
+              color: isToday ? colorScheme.onPrimary : colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],
@@ -197,80 +254,131 @@ class _DashboardItem extends ConsumerWidget {
     final String timeStr = DateFormat('hh:mm a').format(dose.scheduledTime);
 
     return Container(
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: dose.isTaken
-            ? theme.colorScheme.surface.withValues(alpha: 0.05)
-            : theme.colorScheme.surface.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(12),
+        color: theme.colorScheme.surface.withValues(alpha: 0.2), // Glassmorphic base
+        borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
         ),
       ),
+      clipBehavior: Clip.antiAlias,
       child: Stack(
         children: <Widget>[
-          ListTile(
-            contentPadding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-            title: Text(
-              medicine.name,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                decoration: dose.isTaken ? TextDecoration.lineThrough : null,
-                color: dose.isTaken
-                    ? theme.colorScheme.onSurface.withValues(alpha: 0.4)
-                    : theme.colorScheme.onSurface,
-              ),
+          // Glassmorphism Blur
+          Positioned.fill(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: const SizedBox.expand(),
             ),
-            subtitle: Column(
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  '${medicine.dosage} • $timeStr',
-                  style: TextStyle(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                // 3D Medication Asset
+                Container(
+                  width: 80,
+                  height: 80,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.6),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Image.asset(
+                    'assets/images/medication_3d.png',
+                    fit: BoxFit.contain,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  children: <Widget>[
-                    Image.asset(
-                      'assets/icons/notification_bell.png',
-                      width: 14,
-                      height: 14,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      _getMealLabel(medicine.mealContext),
-                      style: TextStyle(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.8),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
+                const SizedBox(width: 16),
+                // Details
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                              medicine.name,
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Icon(
+                            Symbols.more_vert_rounded,
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        '${medicine.dosage}, 1 ${medicine.deliveryMethod.name}',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Time Chips
+                      Wrap(
+                        spacing: 8,
+                        children: <Widget>[
+                          _TimeChip(
+                            label: _getMealLabel(medicine.mealContext),
+                            color: const Color(0xFFE0F7F6),
+                            textColor: const Color(0xFF0D9488),
+                          ),
+                          _TimeChip(
+                            label: timeStr,
+                            color: const Color(0xFFE0E7FF),
+                            textColor: const Color(0xFF4338CA),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-            trailing: dose.isTaken
-                ? Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Icon(
-                      Symbols.check_circle_rounded,
-                      color: theme.colorScheme.primary,
-                      fill: 1,
-                    ),
-                  )
-                : Checkbox(
-                    value: dose.isTaken,
-                    onChanged: (bool? value) {
-                      if (value == true) {
-                        ref
-                            .read(dailyTimelineProvider.notifier)
-                            .checkOffDose(dose);
-                      }
-                    },
-                    shape: const CircleBorder(),
-                  ),
           ),
+          // Interaction Layer
+          Positioned.fill(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  if (!dose.isTaken) {
+                    ref.read(dailyTimelineProvider.notifier).checkOffDose(dose);
+                  }
+                },
+              ),
+            ),
+          ),
+          // Taken indicator
+          if (dose.isTaken)
+            Positioned(
+              right: 12,
+              bottom: 12,
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Symbols.check_rounded,
+                  color: Colors.white,
+                  size: 16,
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -287,5 +395,31 @@ class _DashboardItem extends ConsumerWidget {
       case MealContext.none:
         return 'Anytime';
     }
+  }
+}
+
+class _TimeChip extends StatelessWidget {
+  const _TimeChip({required this.label, required this.color, required this.textColor});
+  final String label;
+  final Color color;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: textColor,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
   }
 }

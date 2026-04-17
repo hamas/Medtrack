@@ -52,3 +52,4 @@ flutter:
   assets:
     - assets/icons/notification_bell.png
     - assets/images/default_avatar.png
+    - assets/images/medication_3d.png
