@@ -38,7 +38,7 @@ class MedTrackTheme {
           Colors.transparent, // Required for global background
       appBarTheme: AppBarTheme(
         centerTitle: true,
-        backgroundColor: lightScheme.surface,
+        backgroundColor: Colors.transparent,
         titleTextStyle: GoogleFonts.googleSans(
           color: lightScheme.onSurface,
           fontSize: 20,
@@ -50,7 +50,8 @@ class MedTrackTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         height: 70,
-        backgroundColor: lightScheme.surface,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         indicatorColor: Colors.white.withValues(alpha: 0.1),
         labelTextStyle: WidgetStateProperty.all(
           GoogleFonts.googleSans(fontSize: 12, fontWeight: FontWeight.w500),
@@ -97,7 +98,7 @@ class MedTrackTheme {
           Colors.transparent, // Required for global background
       appBarTheme: AppBarTheme(
         centerTitle: true,
-        backgroundColor: darkScheme.surface,
+        backgroundColor: Colors.transparent,
         titleTextStyle: GoogleFonts.googleSans(
           color: darkScheme.onSurface,
           fontSize: 20,
@@ -109,7 +110,8 @@ class MedTrackTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         height: 70,
-        backgroundColor: darkScheme.surface,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         indicatorColor: Colors.white.withValues(alpha: 0.1),
         labelTextStyle: WidgetStateProperty.all(
           GoogleFonts.googleSans(fontSize: 12, fontWeight: FontWeight.w500),

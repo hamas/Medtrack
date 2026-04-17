@@ -31,14 +31,14 @@ class _AmbientBackgroundState extends State<AmbientBackground>
       // One massive vibrant Pink-Purple circle (800px) - Bottom Half
       _AmbientShape(
         color: const Color(0xFFFE81D4).withAlpha(160),
-        size: 800.0,
+        size: 200.0,
         isCircle: true,
         isTopHalf: false,
       ),
       // One massive vibrant Sky Blue circle (800px) - Top Half
       _AmbientShape(
         color: const Color(0xFF53CBF3).withAlpha(150),
-        size: 800.0,
+        size: 600.0,
         isCircle: true,
         isTopHalf: true,
       ),
@@ -59,7 +59,7 @@ class _AmbientBackgroundState extends State<AmbientBackground>
           // 1. Pure black background layer
           const Positioned.fill(
             child: DecoratedBox(
-              decoration: BoxDecoration(color: Color.fromARGB(255, 7, 35, 0)),
+              decoration: BoxDecoration(color: Color.fromARGB(255, 0, 0, 0)),
             ),
           ),
           // 2. The Drifting Shapes layer (Nebula blobs - 400px)
