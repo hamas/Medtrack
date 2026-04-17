@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import '../../../core/theme/ambient_background.dart';
+import 'package:medtrack/src/core/theme/ambient_background.dart';
 import '../../../daily_dashboard/presentation/screens/daily_dashboard_screen.dart';
 import '../../../gamification/domain/entities/user_profile.dart';
 import '../../../gamification/presentation/providers/user_profile_provider.dart';
