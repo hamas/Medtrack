@@ -80,7 +80,7 @@ class _GreetingHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 100, 24, 16),
+      padding: const EdgeInsets.fromLTRB(24, 140, 24, 16),
       child: Text(
         'Welcome',
         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
