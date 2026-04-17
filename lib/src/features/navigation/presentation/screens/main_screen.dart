@@ -45,7 +45,7 @@ class MainScreen extends ConsumerWidget {
                   Text(
                     '${profile.currentStreak}',
                     style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                       fontSize: 14,
                       color: Colors.orange,
                     ),
@@ -64,7 +64,7 @@ class MainScreen extends ConsumerWidget {
                   Text(
                     '${profile.earnedBadges.length}',
                     style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                       fontSize: 14,
                       color: Colors.amber,
                     ),
