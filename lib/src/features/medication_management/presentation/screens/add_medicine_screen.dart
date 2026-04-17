@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:uuid/uuid.dart';
@@ -206,27 +207,27 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
                           children: <Widget>[
                             _TypeOption(
                               label: 'Tablet',
-                              asset: 'assets/images/medicine_bottle_3d.png',
+                              asset: 'assets/images/tablet.svg',
                               isSelected: _selectedType == 'Tablet',
                               onTap: () => setState(() => _selectedType = 'Tablet'),
                             ),
                             _TypeOption(
                               label: 'Capsule',
-                              asset: 'assets/images/capsule_3d.png',
+                              asset: 'assets/images/capsule.svg',
                               isSelected: _selectedType == 'Capsule',
                               onTap: () => setState(() => _selectedType = 'Capsule'),
                             ),
                             _TypeOption(
                               label: 'Syringe',
-                              asset: 'assets/images/syringe_3d.png',
+                              asset: 'assets/images/syringe.svg',
                               isSelected: _selectedType == 'Syringe',
                               onTap: () => setState(() => _selectedType = 'Syringe'),
                             ),
                             _TypeOption(
-                              label: 'Other',
-                              asset: 'assets/images/medication_3d.png',
-                              isSelected: _selectedType == 'Other',
-                              onTap: () => setState(() => _selectedType = 'Other'),
+                              label: 'Syrup',
+                              asset: 'assets/images/syrup.svg',
+                              isSelected: _selectedType == 'Syrup',
+                              onTap: () => setState(() => _selectedType = 'Syrup'),
                             ),
                           ],
                         ),
@@ -432,12 +433,14 @@ class _TypeOption extends StatelessWidget {
         ),
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Image.asset(
+            padding: const EdgeInsets.all(18.0),
+            child: SvgPicture.asset(
               asset,
               fit: BoxFit.contain,
-              color: isSelected ? Colors.white.withValues(alpha: 0.2) : null,
-              colorBlendMode: isSelected ? BlendMode.overlay : null,
+              colorFilter: ColorFilter.mode(
+                isSelected ? Colors.white : colorScheme.onSurface.withValues(alpha: 0.6),
+                BlendMode.srcIn,
+              ),
             ),
           ),
         ),
