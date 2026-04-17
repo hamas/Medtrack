@@ -28,21 +28,19 @@ class _AmbientBackgroundState extends State<AmbientBackground>
   void _initializeShapes() {
     // Exactly 2 massive elements as requested for a dual-tone nebula
     _shapes.addAll(<_AmbientShape>[
-      // One massive vibrant Purple circle (800px)
+      // One massive vibrant Purple circle (800px) - Bottom Half
       _AmbientShape(
         color: const Color(0xFFF0ABFF).withAlpha(160),
         size: 800.0,
         isCircle: true,
-        offset: const Offset(0.3, 0.4),
-        velocity: const Offset(0.04, 0.06),
+        isTopHalf: false,
       ),
-      // One massive vibrant Blue circle (800px)
+      // One massive vibrant Blue circle (800px) - Top Half
       _AmbientShape(
         color: const Color(0xFF38BDF8).withAlpha(150),
         size: 800.0,
         isCircle: true,
-        offset: const Offset(0.7, 0.6),
-        velocity: const Offset(-0.05, -0.04),
+        isTopHalf: true,
       ),
     ]);
   }
@@ -104,23 +102,30 @@ class _AmbientShape {
     required this.color,
     required this.size,
     required this.isCircle,
-    required this.offset,
-    required this.velocity,
+    required this.isTopHalf,
   });
   final Color color;
   final double size;
   final bool isCircle;
-  final Offset offset;
-  final Offset velocity;
+  final bool isTopHalf;
 
   Offset getCurrentOffset(double progress, Size screenSize) {
-    // Non-linear drifting logic using Sine curves for natural feel
-    final double xBase = offset.dx + velocity.dx * progress * 5;
-    final double yBase = offset.dy + velocity.dy * progress * 5;
+    // Partitioned drift: No overlay, each stays in its 50% half
+    double x;
+    double y;
 
-    // Add some organic drift
-    final double x = (xBase + 0.05 * math.sin(progress * 2 * math.pi)) % 1.0;
-    final double y = (yBase + 0.05 * math.cos(progress * 2 * math.pi)) % 1.0;
+    if (isTopHalf) {
+      // Blue: Left to Right on Top Side
+      x = (0.1 + progress * 0.8) % 1.0;
+      // Drift vertically only within the top 40% (staying in top 50%)
+      y = 0.2 + 0.1 * math.sin(progress * 2 * math.pi);
+    } else {
+      // Purple: Right to Left on Bottom Side
+      x = (0.9 - progress * 0.8) % 1.0;
+      if (x < 0) x += 1.0;
+      // Drift vertically only within the bottom 40% (staying in bottom 50%)
+      y = 0.8 + 0.1 * math.cos(progress * 2 * math.pi);
+    }
 
     return Offset(x * screenSize.width, y * screenSize.height);
   }
