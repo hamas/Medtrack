@@ -141,11 +141,20 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Image.asset(
-                                  'assets/images/medication_3d.png',
-                                  fit: BoxFit.contain,
-                                  height: 180,
-                                ),
+                                if (_selectedType == 'Tablet')
+                                  SvgPicture.asset('assets/images/tablet.svg', height: 180)
+                                else if (_selectedType == 'Capsule')
+                                  SvgPicture.asset('assets/images/capsule.svg', height: 180)
+                                else if (_selectedType == 'Syringe')
+                                  SvgPicture.asset('assets/images/syringe.svg', height: 180)
+                                else if (_selectedType == 'Syrup')
+                                  SvgPicture.asset('assets/images/syrup.svg', height: 180)
+                                else
+                                  Image.asset(
+                                    'assets/images/medication_3d.png',
+                                    fit: BoxFit.contain,
+                                    height: 180,
+                                  ),
                               ],
                             ),
                           ),
