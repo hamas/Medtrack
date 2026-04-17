@@ -20,8 +20,22 @@ class DailyDashboardScreen extends ConsumerWidget {
 
     return Column(
       children: <Widget>[
-        const _GreetingHeader(),
-        const _HorizontalDatePicker(),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.05),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(32),
+              bottomRight: Radius.circular(32),
+            ),
+          ),
+          child: const Column(
+            children: <Widget>[
+              _GreetingHeader(),
+              _HorizontalDatePicker(),
+              SizedBox(height: 24),
+            ],
+          ),
+        ),
         Expanded(
           child: timelineAsync.when(
             data: (List<Dose> doses) => doses.isEmpty
