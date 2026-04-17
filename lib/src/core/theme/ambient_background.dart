@@ -20,8 +20,8 @@ class _AmbientBackgroundState extends State<AmbientBackground>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 20),
-    )..repeat();
+      duration: const Duration(seconds: 50),
+    )..repeat(reverse: true);
 
     _initializeShapes();
   }
@@ -29,21 +29,21 @@ class _AmbientBackgroundState extends State<AmbientBackground>
   void _initializeShapes() {
     final math.Random random = math.Random();
     final List<Color> colors = <Color>[
-      const Color(0xFF9333EA).withValues(alpha: 0.4), // Deep Purple
-      const Color(0xFF10B981).withValues(alpha: 0.3), // Vibrant Green
-      const Color(0xFF3B82F6).withValues(alpha: 0.3), // Soft Blue
+      const Color(0xFFF0ABFF).withValues(alpha: 0.6), // Neon Purple
+      const Color(0xFF4ADE80).withValues(alpha: 0.5), // Neon Green
+      const Color(0xFF38BDF8).withValues(alpha: 0.5), // Neon Blue
     ];
 
     for (int i = 0; i < _shapeCount; i++) {
       _shapes.add(
         _AmbientShape(
           color: colors[random.nextInt(colors.length)],
-          size: 150.0 + random.nextDouble() * 200.0,
+          size: 250.0 + random.nextDouble() * 350.0, // Massive shapes
           isCircle: random.nextBool(),
           offset: Offset(random.nextDouble(), random.nextDouble()),
           velocity: Offset(
-            (random.nextDouble() - 0.5) * 0.2,
-            (random.nextDouble() - 0.5) * 0.2,
+            (random.nextDouble() - 0.5) * 0.4,
+            (random.nextDouble() - 0.5) * 0.4,
           ),
         ),
       );
@@ -65,10 +65,16 @@ class _AmbientBackgroundState extends State<AmbientBackground>
           AnimatedBuilder(
             animation: _controller,
             builder: (BuildContext context, Widget? child) {
+              // Ensure nonlinear drift
+              final double curvedValue = CurvedAnimation(
+                parent: _controller,
+                curve: Curves.easeInOut,
+              ).value;
+
               return CustomPaint(
                 painter: _AmbientPainter(
                   shapes: _shapes,
-                  progress: _controller.value,
+                  progress: curvedValue,
                 ),
                 size: Size.infinite,
               );
@@ -81,7 +87,7 @@ class _AmbientBackgroundState extends State<AmbientBackground>
               child: const SizedBox.expand(),
             ),
           ),
-          // Dark Veil: Black at 90% opacity
+          // Dark Veil: Black at 90% opacity (High-intensity neon survives this)
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
