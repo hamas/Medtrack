@@ -12,44 +12,40 @@ class AmbientBackground extends StatefulWidget {
 }
 
 class _AmbientBackgroundState extends State<AmbientBackground>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  final List<_AmbientShape> _shapes = <_AmbientShape>[];
+    with TickerProviderStateMixin {
+  late AnimationController _lickController;
+  late AnimationController _flickerController;
+  final math.Random _random = math.Random();
+  final List<_Spark> _sparks = <_Spark>[];
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    // Slow 8.5s loop for organic flame motion ("Lick")
+    _lickController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 60),
+      duration: const Duration(milliseconds: 8500),
     )..repeat(reverse: true);
 
-    _initializeShapes();
+    // High-speed jitter for fire flicker
+    _flickerController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    )..repeat();
+
+    _initializeSparks();
   }
 
-  void _initializeShapes() {
-    // Exactly 2 massive elements as requested for a dual-tone nebula
-    _shapes.addAll(<_AmbientShape>[
-      // One massive vibrant Pink-Purple circle (800px) - Bottom Half
-      _AmbientShape(
-        color: const Color(0xFFFE81D4).withAlpha(160),
-        size: 200.0,
-        isCircle: true,
-        isTopHalf: false,
-      ),
-      // One massive vibrant Sky Blue circle (800px) - Top Half
-      _AmbientShape(
-        color: const Color(0xFF53CBF3).withAlpha(150),
-        size: 600.0,
-        isCircle: true,
-        isTopHalf: true,
-      ),
-    ]);
+  void _initializeSparks() {
+    for (int i = 0; i < 15; i++) {
+      _sparks.add(_Spark(random: _random));
+    }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _lickController.dispose();
+    _flickerController.dispose();
     super.dispose();
   }
 
@@ -58,41 +54,45 @@ class _AmbientBackgroundState extends State<AmbientBackground>
     return RepaintBoundary(
       child: Stack(
         children: <Widget>[
-          // 1. Pure black background layer
+          // 1. Foundation: Deepest Navy/Lavender base layer
           const Positioned.fill(
             child: DecoratedBox(
-              decoration: BoxDecoration(color: Color.fromARGB(255, 0, 0, 0)),
+              decoration: BoxDecoration(color: Color(0xFF090A1A)),
             ),
           ),
-          // 2. The Drifting Shapes layer (Nebula blobs - 400px)
-          AnimatedBuilder(
-            animation: _controller,
-            builder: (BuildContext context, Widget? child) {
-              final double curvedValue = CurvedAnimation(
-                parent: _controller,
-                curve: Curves.easeInOut,
-              ).value;
 
+          // 2. The Midnight Inferno: Animated Flames & Sparks
+          AnimatedBuilder(
+            animation: Listenable.merge(<AnimationController>[_lickController, _flickerController]),
+            builder: (BuildContext context, Widget? child) {
               return CustomPaint(
-                painter: _AmbientPainter(
-                  shapes: _shapes,
-                  progress: curvedValue,
+                painter: _MidnightInfernoPainter(
+                  lickProgress: _lickController.value,
+                  flickerValue: _random.nextDouble(),
+                  sparks: _sparks,
+                  random: _random,
                 ),
                 size: Size.infinite,
               );
             },
           ),
-          // 3. Overlay: Extreme Hyper-Blur (80.0) with Transparent Mask
+
+          // 3. Extreme Glassmorphism: Gaussian Hyper-Blur
           Positioned.fill(
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 80.0, sigmaY: 80.0),
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.transparent, // Removed overlay tint
-                ),
-              ),
+              filter: ImageFilter.blur(sigmaX: 200.0, sigmaY: 200.0),
+              child: const SizedBox.shrink(),
             ),
           ),
+
+          // 4. Midnight Veil: 80% Black Overlay
+          Positioned.fill(
+            child: Container(
+              color: Colors.black.withValues(alpha: 0.8),
+            ),
+          ),
+
+          // 5. Content Slot
           if (widget.child != null) Positioned.fill(child: widget.child!),
         ],
       ),
@@ -100,70 +100,105 @@ class _AmbientBackgroundState extends State<AmbientBackground>
   }
 }
 
-class _AmbientShape {
-  _AmbientShape({
-    required this.color,
-    required this.size,
-    required this.isCircle,
-    required this.isTopHalf,
+class _MidnightInfernoPainter extends CustomPainter {
+  _MidnightInfernoPainter({
+    required this.lickProgress,
+    required this.flickerValue,
+    required this.sparks,
+    required this.random,
   });
-  final Color color;
-  final double size;
-  final bool isCircle;
-  final bool isTopHalf;
 
-  Offset getCurrentOffset(double progress, Size screenSize) {
-    // Partitioned drift: No overlay, each stays in its 50% half
-    double x;
-    double y;
-
-    if (isTopHalf) {
-      // Blue: Left to Right on Top Side
-      x = (0.1 + progress * 0.8) % 1.0;
-      // Drift vertically only within the top 40% (staying in top 50%)
-      y = 0.2 + 0.1 * math.sin(progress * 2 * math.pi);
-    } else {
-      // Purple: Right to Left on Bottom Side
-      x = (0.9 - progress * 0.8) % 1.0;
-      if (x < 0) x += 1.0;
-      // Drift vertically only within the bottom 40% (staying in bottom 50%)
-      y = 0.8 + 0.1 * math.cos(progress * 2 * math.pi);
-    }
-
-    return Offset(x * screenSize.width, y * screenSize.height);
-  }
-}
-
-class _AmbientPainter extends CustomPainter {
-  _AmbientPainter({required this.shapes, required this.progress});
-  final List<_AmbientShape> shapes;
-  final double progress;
+  final double lickProgress;
+  final double flickerValue;
+  final List<_Spark> sparks;
+  final math.Random random;
 
   @override
   void paint(Canvas canvas, Size size) {
-    for (final _AmbientShape shape in shapes) {
-      final Paint paint = Paint()
-        ..color = shape.color
-        ..style = PaintingStyle.fill
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 80.0);
+    // Colors from visualizer
+    const Color indigo = Color(0xFF6367FF);
+    const Color navyLavender = Color(0xFF15173D);
 
-      final Offset center = shape.getCurrentOffset(progress, size);
+    // Flicker jitter: Affects global brightness/opacity slightly
+    final double flickerAlpha = 0.7 + (flickerValue * 0.3);
 
-      if (shape.isCircle) {
-        canvas.drawCircle(center, shape.size / 2, paint);
-      } else {
-        final double s = shape.size;
-        canvas.drawRRect(
-          RRect.fromRectAndRadius(
-            Rect.fromCenter(center: center, width: s, height: s),
-            const Radius.circular(32),
-          ),
-          paint,
-        );
-      }
+    final Paint flamePaint = Paint()
+      ..style = PaintingStyle.fill
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 50.0);
+
+    // Draw 7 Overlapping Tongues of Light at Bottom Center
+    for (int i = 0; i < 7; i++) {
+      final double phase = (i / 7) * math.pi * 2;
+      final double individualScale = 1.0 + 0.2 * math.sin(lickProgress * math.pi * 2 + phase);
+      
+      // Dynamic color blending for each tongue
+      flamePaint.color = Color.lerp(navyLavender, indigo, (i / 7))!
+          .withValues(alpha: 0.4 * flickerAlpha);
+
+      final Path path = Path();
+      final double centerX = size.width / 2;
+      final double bottomY = size.height;
+      
+      // Tongue dimensions
+      final double width = (size.width * 0.4) * (1.0 - (i * 0.05));
+      final double height = (size.height * 0.6) * individualScale;
+
+      // Organic Bezier "Tongue" shape
+      path.moveTo(centerX - (width / 2), bottomY);
+      path.quadraticBezierTo(
+        centerX, 
+        bottomY - (height * 1.2), 
+        centerX + (width / 2), 
+        bottomY,
+      );
+      path.close();
+
+      canvas.drawPath(path, flamePaint);
+    }
+
+    // Paint Spark Particles
+    final Paint sparkPaint = Paint()..color = Colors.white;
+    for (final _Spark spark in sparks) {
+      spark.update(size);
+      sparkPaint.color = Colors.white.withValues(alpha: spark.opacity);
+      canvas.drawCircle(spark.position, spark.size, sparkPaint);
     }
   }
 
   @override
-  bool shouldRepaint(_AmbientPainter oldDelegate) => true;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
+
+class _Spark {
+  _Spark({required this.random}) {
+    _reset();
+  }
+
+  final math.Random random;
+  late Offset position;
+  late double velocityY;
+  late double size;
+  late double opacity;
+
+  void _reset() {
+    position = Offset(random.nextDouble() * 1000, 1000); // Temporary large off-screen
+    velocityY = 1.0 + random.nextDouble() * 3.0;
+    size = 0.5 + random.nextDouble() * 2.0;
+    opacity = 0.0;
+  }
+
+  void update(Size screenSize) {
+    if (opacity <= 0.0) {
+      // Re-spawn spark at bottom center area
+      position = Offset(
+        (screenSize.width / 2) + (random.nextDouble() - 0.5) * (screenSize.width * 0.6),
+        screenSize.height,
+      );
+      opacity = 0.5 + random.nextDouble() * 0.5;
+    } else {
+      position = Offset(position.dx, position.dy - velocityY);
+      opacity -= 0.005; // Fade out as they ascend
+    }
+  }
+}
+

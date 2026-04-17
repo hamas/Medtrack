@@ -91,9 +91,11 @@ class MainScreen extends ConsumerWidget {
       ),
       body: Stack(
         children: <Widget>[
-          // Ambient Drifting Background
+          // Ambient Drifting Background: Isolated for performance
           const Positioned.fill(
-            child: AmbientBackground(),
+            child: RepaintBoundary(
+              child: AmbientBackground(),
+            ),
           ),
           // Content Layer
           IndexedStack(
