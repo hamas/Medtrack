@@ -149,7 +149,7 @@ class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
     final DateTime lastDayOfMonth = DateTime(today.year, today.month + 1, 0);
     final int daysCount = lastDayOfMonth.difference(today).inDays + 1;
 
-    final DateTime selectedDate = ref.watch(selectedDateProvider);
+    final DateTime selectedDate = ref.watch(selectedDateNotifierProvider);
 
     return Column(
       children: <Widget>[
@@ -168,14 +168,8 @@ class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
               padding: const EdgeInsets.symmetric(horizontal: _padding),
               itemCount: daysCount,
               itemBuilder: (BuildContext context, int index) {
-                final DateTime date = today.add(Duration(days: index));
-                final bool isSelected = date.year == selectedDate.year &&
-                    date.month == selectedDate.month &&
-                    date.day == selectedDate.day;
-
-                return GestureDetector(
                   onTap: () {
-                    ref.read(selectedDateProvider.notifier).update((DateTime state) => date);
+                    ref.read(selectedDateNotifierProvider.notifier).set(date);
                     _scrollToIndex(index);
                   },
                   child: _DateItem(date: date, isSelected: isSelected),

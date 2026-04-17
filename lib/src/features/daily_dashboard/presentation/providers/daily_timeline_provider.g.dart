@@ -80,7 +80,7 @@ final class DailyTimelineProvider
   DailyTimeline create() => DailyTimeline();
 }
 
-String _$dailyTimelineHash() => r'e0595e11d9e38ac6578e5afffc440022acad8560';
+String _$dailyTimelineHash() => r'9b707bb4f7b0b6ef19012232cdd2f3f9e0895268';
 
 abstract class _$DailyTimeline extends $AsyncNotifier<List<Dose>> {
   FutureOr<List<Dose>> build();
