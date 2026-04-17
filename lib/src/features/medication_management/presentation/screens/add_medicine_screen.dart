@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:uuid/uuid.dart';
 
@@ -25,13 +24,13 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
   // Selections
   String _selectedType = 'Capsule'; // Tablet, Capsule, Syringe
   final List<String> _selectedTimes = <String>['After Breakfast', 'After Dinner'];
-  String _duration = '1 Month';
-  String _frequency = 'Daily';
+  final String _duration = '1 Month';
+  final String _frequency = 'Daily';
 
   // State for database mapping
-  IntervalType _intervalType = IntervalType.daily;
-  MealContext _mealContext = MealContext.none;
-  DeliveryMethod _deliveryMethod = DeliveryMethod.water;
+  final IntervalType _intervalType = IntervalType.daily;
+  final MealContext _mealContext = MealContext.none;
+  final DeliveryMethod _deliveryMethod = DeliveryMethod.water;
 
   @override
   void dispose() {
@@ -74,8 +73,6 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -136,9 +133,15 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
                         child: Container(
                           height: 200,
                           margin: const EdgeInsets.symmetric(vertical: 24),
-                          child: Image.asset(
-                            'assets/images/medication_3d.png',
-                            fit: BoxFit.contain,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Image.asset(
+                                'assets/images/medication_3d.png',
+                                fit: BoxFit.contain,
+                                height: 180,
+                              ),
+                            ],
                           ),
                         ),
                       ),
