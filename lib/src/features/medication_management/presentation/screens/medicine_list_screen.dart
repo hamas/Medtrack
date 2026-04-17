@@ -28,7 +28,7 @@ class MedicineListScreen extends ConsumerWidget {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 100, 24, 32),
+            padding: const EdgeInsets.fromLTRB(24, 160, 24, 32),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
