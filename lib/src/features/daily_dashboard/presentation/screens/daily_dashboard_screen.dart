@@ -66,35 +66,14 @@ class _GreetingHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 64, 24, 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            'Your Medicines\nReminder',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+      child: Text(
+        'Welcome',
+        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.w300,
               fontSize: 32,
               height: 1.2,
               color: Theme.of(context).colorScheme.onSurface,
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
-              ),
-            ),
-            child: Icon(
-              Symbols.notifications_rounded,
-              color: Theme.of(context).colorScheme.primary,
-              size: 24,
-            ),
-          ),
-        ],
       ),
     );
   }
