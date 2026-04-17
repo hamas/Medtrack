@@ -168,6 +168,12 @@ class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
               padding: const EdgeInsets.symmetric(horizontal: _padding),
               itemCount: daysCount,
               itemBuilder: (BuildContext context, int index) {
+                final DateTime date = today.add(Duration(days: index));
+                final bool isSelected = date.year == selectedDate.year &&
+                    date.month == selectedDate.month &&
+                    date.day == selectedDate.day;
+
+                return GestureDetector(
                   onTap: () {
                     ref.read(selectedDateNotifierProvider.notifier).set(date);
                     _scrollToIndex(index);
