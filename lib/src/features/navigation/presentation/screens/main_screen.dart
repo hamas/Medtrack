@@ -148,14 +148,7 @@ class MainScreen extends ConsumerWidget {
                 backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 backgroundImage: user?.photoURL != null
                     ? NetworkImage(user!.photoURL!)
-                    : null,
-                child: user?.photoURL == null
-                    ? Icon(
-                        Symbols.person_rounded,
-                        size: 24,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      )
-                    : null,
+                    : const AssetImage('assets/images/default_avatar.png'),
               ),
             ),
             label: 'Profile',
