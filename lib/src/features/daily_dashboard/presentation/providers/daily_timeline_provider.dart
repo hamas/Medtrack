@@ -14,6 +14,8 @@ DashboardRepository dashboardRepo(Ref ref) {
   return DashboardRepositoryImpl();
 }
 
+final selectedDateProvider = StateProvider<DateTime>((ref) => DateTime.now());
+
 @riverpod
 class DailyTimeline extends _$DailyTimeline {
   @override
@@ -21,8 +23,9 @@ class DailyTimeline extends _$DailyTimeline {
     final String? userId = ref.watch(currentUidProvider);
     if (userId == null) return <Dose>[];
 
+    final date = ref.watch(selectedDateProvider);
     final DashboardRepository repository = ref.watch(dashboardRepoProvider);
-    return repository.getDailyTimeline(userId, DateTime.now());
+    return repository.getDailyTimeline(userId, date);
   }
 
   Future<void> checkOffDose(Dose dose) async {

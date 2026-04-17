@@ -187,9 +187,9 @@ class _SegmentItem extends StatelessWidget {
 }
 
 class _DateItem extends StatelessWidget {
-  const _DateItem({required this.date, required this.isToday});
+  const _DateItem({required this.date, required this.isSelected});
   final DateTime date;
-  final bool isToday;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -199,14 +199,14 @@ class _DateItem extends StatelessWidget {
       width: 65,
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       decoration: BoxDecoration(
-        color: isToday
+        color: isSelected
             ? colorScheme.primary
             : colorScheme.surface.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(32),
-        border: isToday
+        border: isSelected
             ? null
             : Border.all(color: colorScheme.outline.withValues(alpha: 0.1)),
-        boxShadow: isToday
+        boxShadow: isSelected
             ? <BoxShadow>[
                 BoxShadow(
                   color: colorScheme.primary.withValues(alpha: 0.3),
@@ -224,7 +224,7 @@ class _DateItem extends StatelessWidget {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w600,
-              color: isToday ? colorScheme.onPrimary : colorScheme.onSurface,
+              color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 2),
@@ -232,8 +232,8 @@ class _DateItem extends StatelessWidget {
             DateFormat('E').format(date),
             style: TextStyle(
               fontSize: 13,
-              fontWeight: isToday ? FontWeight.w500 : FontWeight.w400,
-              color: isToday ? colorScheme.onPrimary : colorScheme.onSurface.withValues(alpha: 0.6),
+              fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+              color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],
