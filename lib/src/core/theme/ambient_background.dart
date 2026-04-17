@@ -21,10 +21,10 @@ class _AmbientBackgroundState extends State<AmbientBackground>
   @override
   void initState() {
     super.initState();
-    // Slow 8.5s loop for organic flame motion ("Lick")
+    // Ultra-slow 12.5s loop for immersive atmospheric motion
     _lickController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 8500),
+      duration: const Duration(milliseconds: 12500),
     )..repeat(reverse: true);
 
     // High-speed jitter for fire flicker
@@ -127,9 +127,9 @@ class _MidnightInfernoPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 50.0);
 
-    // Draw 7 Overlapping Tongues of Light at Bottom Center
-    for (int i = 0; i < 7; i++) {
-      final double phase = (i / 7) * math.pi * 2;
+    // Draw 10 Overlapping Tongues of Light distributed across the baseline
+    for (int i = 0; i < 10; i++) {
+      final double phase = (i / 10) * math.pi * 2;
       final double individualScale =
           1.0 + 0.2 * math.sin(lickProgress * math.pi * 2 + phase);
 
@@ -137,23 +137,23 @@ class _MidnightInfernoPainter extends CustomPainter {
       flamePaint.color = Color.lerp(
         navyLavender,
         indigo,
-        (i / 7),
-      )!.withValues(alpha: 0.4 * flickerAlpha);
+        (i / 10),
+      )!.withValues(alpha: 0.35 * flickerAlpha);
 
       final Path path = Path();
-      final double centerX = size.width / 2;
+      // Distribute centered points across the full screen width
+      final double xPos = (size.width * 0.1) + (size.width * 0.8 * (i / 9));
       final double bottomY = size.height;
 
-      // Tongue dimensions
-      final double width = (size.width * 0.4) * (1.0 - (i * 0.05));
-      final double height = (size.height * 0.6) * individualScale;
+      // Tongue dimensions - varied for organic distribution
+      final double width = (size.width * 0.3) * (0.8 + 0.4 * random.nextDouble());
+      final double height = (size.height * 0.55) * individualScale;
 
-      // Organic Bezier "Tongue" shape
-      path.moveTo(centerX - (width / 2), bottomY);
+      path.moveTo(xPos - (width / 2), bottomY);
       path.quadraticBezierTo(
-        centerX,
-        bottomY - (height * 1.2),
-        centerX + (width / 2),
+        xPos,
+        bottomY - (height * 1.3),
+        xPos + (width / 2),
         bottomY,
       );
       path.close();
