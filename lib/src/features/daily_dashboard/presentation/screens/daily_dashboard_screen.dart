@@ -77,7 +77,7 @@ class DailyDashboardScreen extends ConsumerWidget {
 
 
 class _HorizontalDatePicker extends ConsumerStatefulWidget {
-  const _HorizontalDatePicker({super.key});
+  const _HorizontalDatePicker();
 
   @override
   ConsumerState<_HorizontalDatePicker> createState() => _HorizontalDatePickerState();
@@ -196,7 +196,7 @@ class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
 }
 
 class _ViewSegmentedControl extends StatelessWidget {
-  const _ViewSegmentedControl({super.key});
+  const _ViewSegmentedControl();
 
   @override
   Widget build(BuildContext context) {
@@ -248,7 +248,7 @@ class _SegmentItem extends StatelessWidget {
 }
 
 class _DateItem extends StatelessWidget {
-  const _DateItem({required this.date, required this.isSelected, super.key});
+  const _DateItem({required this.date, required this.isSelected});
   final DateTime date;
   final bool isSelected;
 
