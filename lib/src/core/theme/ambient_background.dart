@@ -63,7 +63,10 @@ class _AmbientBackgroundState extends State<AmbientBackground>
 
           // 2. The Midnight Inferno: Animated Flames & Sparks
           AnimatedBuilder(
-            animation: Listenable.merge(<AnimationController>[_lickController, _flickerController]),
+            animation: Listenable.merge(<AnimationController>[
+              _lickController,
+              _flickerController,
+            ]),
             builder: (BuildContext context, Widget? child) {
               return CustomPaint(
                 painter: _MidnightInfernoPainter(
@@ -87,9 +90,7 @@ class _AmbientBackgroundState extends State<AmbientBackground>
 
           // 4. Midnight Veil: 80% Black Overlay
           Positioned.fill(
-            child: Container(
-              color: Colors.black.withValues(alpha: 0.8),
-            ),
+            child: Container(color: Colors.black.withValues(alpha: 0.2)),
           ),
 
           // 5. Content Slot
@@ -129,16 +130,20 @@ class _MidnightInfernoPainter extends CustomPainter {
     // Draw 7 Overlapping Tongues of Light at Bottom Center
     for (int i = 0; i < 7; i++) {
       final double phase = (i / 7) * math.pi * 2;
-      final double individualScale = 1.0 + 0.2 * math.sin(lickProgress * math.pi * 2 + phase);
-      
+      final double individualScale =
+          1.0 + 0.2 * math.sin(lickProgress * math.pi * 2 + phase);
+
       // Dynamic color blending for each tongue
-      flamePaint.color = Color.lerp(navyLavender, indigo, (i / 7))!
-          .withValues(alpha: 0.4 * flickerAlpha);
+      flamePaint.color = Color.lerp(
+        navyLavender,
+        indigo,
+        (i / 7),
+      )!.withValues(alpha: 0.4 * flickerAlpha);
 
       final Path path = Path();
       final double centerX = size.width / 2;
       final double bottomY = size.height;
-      
+
       // Tongue dimensions
       final double width = (size.width * 0.4) * (1.0 - (i * 0.05));
       final double height = (size.height * 0.6) * individualScale;
@@ -146,9 +151,9 @@ class _MidnightInfernoPainter extends CustomPainter {
       // Organic Bezier "Tongue" shape
       path.moveTo(centerX - (width / 2), bottomY);
       path.quadraticBezierTo(
-        centerX, 
-        bottomY - (height * 1.2), 
-        centerX + (width / 2), 
+        centerX,
+        bottomY - (height * 1.2),
+        centerX + (width / 2),
         bottomY,
       );
       path.close();
@@ -181,7 +186,10 @@ class _Spark {
   late double opacity;
 
   void _reset() {
-    position = Offset(random.nextDouble() * 1000, 1000); // Temporary large off-screen
+    position = Offset(
+      random.nextDouble() * 1000,
+      1000,
+    ); // Temporary large off-screen
     velocityY = 1.0 + random.nextDouble() * 3.0;
     size = 0.5 + random.nextDouble() * 2.0;
     opacity = 0.0;
@@ -191,7 +199,8 @@ class _Spark {
     if (opacity <= 0.0) {
       // Re-spawn spark at bottom center area
       position = Offset(
-        (screenSize.width / 2) + (random.nextDouble() - 0.5) * (screenSize.width * 0.6),
+        (screenSize.width / 2) +
+            (random.nextDouble() - 0.5) * (screenSize.width * 0.6),
         screenSize.height,
       );
       opacity = 0.5 + random.nextDouble() * 0.5;
@@ -201,4 +210,3 @@ class _Spark {
     }
   }
 }
-
