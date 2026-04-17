@@ -175,7 +175,7 @@ class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
 
                 return GestureDetector(
                   onTap: () {
-                    ref.read(selectedDateProvider.notifier).state = date;
+                    ref.read(selectedDateProvider.notifier).update((DateTime state) => date);
                     _scrollToIndex(index);
                   },
                   child: _DateItem(date: date, isSelected: isSelected),
