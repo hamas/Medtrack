@@ -31,7 +31,7 @@ class DailyDashboardScreen extends ConsumerWidget {
           child: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox(height: 120),
+              SizedBox(height: 160),
               _HorizontalDatePicker(),
               SizedBox(height: 24),
             ],
@@ -92,6 +92,12 @@ class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+    
+    // Auto-scroll to today after layout
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final int todayIndex = DateTime.now().day - 1;
+      _scrollToIndex(todayIndex);
+    });
   }
 
   @override
@@ -121,14 +127,29 @@ class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
 
   @override
   Widget build(BuildContext context) {
-    final DateTime today = DateTime.now();
-    final DateTime lastDayOfMonth = DateTime(today.year, today.month + 1, 0);
-    final int daysCount = lastDayOfMonth.difference(today).inDays + 1;
+    final DateTime now = DateTime.now();
+    final DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
+    final DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+    final int daysCount = lastDayOfMonth.day;
 
     final DateTime selectedDate = ref.watch(selectedDateProvider);
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            DateFormat('MMMM').format(now).toUpperCase(),
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 1.2,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
         SizedBox(
           height: 110,
           child: NotificationListener<ScrollNotification>(
@@ -144,7 +165,7 @@ class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
               padding: const EdgeInsets.symmetric(horizontal: _padding),
               itemCount: daysCount,
               itemBuilder: (BuildContext context, int index) {
-                final DateTime date = today.add(Duration(days: index));
+                final DateTime date = firstDayOfMonth.add(Duration(days: index));
                 final bool isSelected = date.year == selectedDate.year &&
                     date.month == selectedDate.month &&
                     date.day == selectedDate.day;
