@@ -28,16 +28,16 @@ class _AmbientBackgroundState extends State<AmbientBackground>
   void _initializeShapes() {
     // Exactly 2 massive elements as requested for a dual-tone nebula
     _shapes.addAll(<_AmbientShape>[
-      // One massive vibrant Purple circle (800px) - Bottom Half
+      // One massive vibrant Pink-Purple circle (800px) - Bottom Half
       _AmbientShape(
-        color: const Color.fromARGB(255, 255, 34, 248).withAlpha(160),
+        color: const Color(0xFFFE81D4).withAlpha(160),
         size: 800.0,
         isCircle: true,
         isTopHalf: false,
       ),
-      // One massive vibrant Blue circle (800px) - Top Half
+      // One massive vibrant Sky Blue circle (800px) - Top Half
       _AmbientShape(
-        color: const Color.fromARGB(255, 17, 203, 254).withAlpha(150),
+        color: const Color(0xFF53CBF3).withAlpha(150),
         size: 800.0,
         isCircle: true,
         isTopHalf: true,
