@@ -15,33 +15,77 @@ class MedicineListScreen extends ConsumerWidget {
     );
     final ThemeData theme = Theme.of(context);
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: medicinesAsync.when(
-        data: (List<Medicine> medicines) {
-          if (medicines.isEmpty) {
-            return _buildEmptyState(context, theme);
-          }
-          return ListView.separated(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-            itemCount: medicines.length,
-            separatorBuilder: (BuildContext context, int index) =>
-                const SizedBox(height: 12),
-            itemBuilder: (BuildContext context, int index) {
-              final Medicine medicine = medicines[index];
-              return _MedicineCard(medicine: medicine);
+    return Column(
+      children: <Widget>[
+        // Cinematic Header
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.1),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(56),
+              bottomRight: Radius.circular(56),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 100, 24, 32),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  'Your Medicines',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 28,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => context.push('/add-medicine'),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: theme.colorScheme.outline.withValues(alpha: 0.1),
+                      ),
+                    ),
+                    child: Icon(
+                      Symbols.add_rounded,
+                      color: theme.colorScheme.primary,
+                      size: 24,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        // List Content
+        Expanded(
+          child: medicinesAsync.when(
+            data: (List<Medicine> medicines) {
+              if (medicines.isEmpty) {
+                return _buildEmptyState(context, theme);
+              }
+              return ListView.separated(
+                padding: const EdgeInsets.fromLTRB(16, 24, 16, 120),
+                itemCount: medicines.length,
+                separatorBuilder: (BuildContext context, int index) =>
+                    const SizedBox(height: 16),
+                itemBuilder: (BuildContext context, int index) {
+                  final Medicine medicine = medicines[index];
+                  return _MedicineCard(medicine: medicine);
+                },
+              );
             },
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (Object err, StackTrace stack) =>
-            Center(child: Text('Error: $err')),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push('/add-medicine'),
-        icon: const Icon(Symbols.add_rounded),
-        label: const Text('New Medication'),
-      ),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (Object err, StackTrace stack) =>
+                Center(child: Text('Error: $err')),
+          ),
+        ),
+      ],
     );
   }
 
@@ -55,7 +99,7 @@ class MedicineListScreen extends ConsumerWidget {
             Icon(
               Symbols.medication_liquid_rounded,
               size: 80,
-              color: theme.colorScheme.primary.withAlpha(100),
+              color: theme.colorScheme.primary.withValues(alpha: 0.4),
             ),
             const SizedBox(height: 24),
             Text(
@@ -70,7 +114,7 @@ class MedicineListScreen extends ConsumerWidget {
             Text(
               'Add your prescriptions here to track your daily doses and health journey.',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(180),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),
@@ -106,86 +150,97 @@ class _MedicineCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withAlpha(220),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: theme.colorScheme.outline.withAlpha(50)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withAlpha(10),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {
-            // Navigate to details in future expansion
-          },
-          borderRadius: BorderRadius.circular(20),
+          onTap: () {},
+          borderRadius: BorderRadius.circular(28),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    CircleAvatar(
-                      backgroundColor: theme.colorScheme.primaryContainer,
-                      child: Icon(
-                        _getDeliveryIcon(medicine.deliveryMethod),
-                        color: theme.colorScheme.onPrimaryContainer,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                // 3D Visual
+                Container(
+                  width: 90,
+                  height: 90,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF9FAFB),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Image.asset(
+                    'assets/images/medication_3d.png',
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // Textual Info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text(
-                            medicine.name,
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
+                          Expanded(
+                            child: Text(
+                              medicine.name,
+                              style: const TextStyle(
+                                color: Color(0xFF1F2937),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 20,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          Text(
-                            medicine.dosage,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
+                          Icon(
+                            Symbols.more_vert_rounded,
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                           ),
                         ],
                       ),
-                    ),
-                    Icon(
-                      Symbols.chevron_right_rounded,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                const Divider(height: 1),
-                const SizedBox(height: 16),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: <Widget>[
-                    _buildChip(
-                      context,
-                      _getIntervalLabel(medicine.intervalType),
-                      Symbols.repeat_rounded,
-                      theme.colorScheme.secondaryContainer,
-                      theme.colorScheme.onSecondaryContainer,
-                    ),
-                    _buildChip(
-                      context,
-                      _getMealLabel(medicine.mealContext),
-                      Symbols.restaurant_menu_rounded,
-                      theme.colorScheme.tertiaryContainer,
-                      theme.colorScheme.onTertiaryContainer,
-                    ),
-                  ],
+                      const SizedBox(height: 2),
+                      Text(
+                        '${medicine.dosage}, 1 ${medicine.deliveryMethod.name}',
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Timing Chips
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: <Widget>[
+                          _TimingChip(
+                            label: _getMealLabel(medicine.mealContext),
+                            color: const Color(0xFFE0F2F1),
+                            textColor: const Color(0xFF00796B),
+                          ),
+                          if (medicine.scheduleTimes.isNotEmpty)
+                            _TimingChip(
+                              label: 'Daily: ${medicine.scheduleTimes.length} doses',
+                              color: const Color(0xFFE8EAF6),
+                              textColor: const Color(0xFF3F51B5),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -193,67 +248,6 @@ class _MedicineCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Widget _buildChip(
-    BuildContext context,
-    String label,
-    IconData icon,
-    Color bgColor,
-    Color fgColor,
-  ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(icon, size: 14, color: fgColor),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color: fgColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  IconData _getDeliveryIcon(DeliveryMethod method) {
-    switch (method) {
-      case DeliveryMethod.water:
-        return Symbols.water_drop_rounded;
-      case DeliveryMethod.milk:
-        return Symbols.egg_rounded;
-      case DeliveryMethod.injection:
-        return Symbols.vaccines_rounded;
-      case DeliveryMethod.drops:
-        return Symbols.opacity_rounded;
-      case DeliveryMethod.inhaler:
-        return Symbols.air_rounded;
-      default:
-        return Symbols.medication_rounded;
-    }
-  }
-
-  String _getIntervalLabel(IntervalType type) {
-    switch (type) {
-      case IntervalType.daily:
-        return 'Daily';
-      case IntervalType.weekly:
-        return 'Weekly';
-      case IntervalType.monthly:
-        return 'Monthly';
-      case IntervalType.custom:
-        return 'Custom Schedule';
-    }
   }
 
   String _getMealLabel(MealContext context) {
@@ -265,7 +259,38 @@ class _MedicineCard extends StatelessWidget {
       case MealContext.afterMeal:
         return 'After Meal';
       case MealContext.none:
-        return 'Flexible Timing';
+        return 'Anytime';
     }
   }
 }
+
+class _TimingChip extends StatelessWidget {
+  const _TimingChip({
+    required this.label,
+    required this.color,
+    required this.textColor,
+  });
+  final String label;
+  final Color color;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: textColor,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
