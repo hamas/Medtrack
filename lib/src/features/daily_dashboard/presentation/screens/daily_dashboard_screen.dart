@@ -58,7 +58,7 @@ class DailyDashboardScreen extends ConsumerWidget {
   }
 }
 
-class _GreetingHeader extends StatelessWidget {
+class _GreetingHeader extends ConsumerWidget {
   const _GreetingHeader();
 
   String _getGreeting() {
@@ -69,17 +69,29 @@ class _GreetingHeader extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<UserProfile> profileAsync = ref.watch(userProfileStateProvider);
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 64, 24, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            '${_getGreeting()}, Hamas ❤️',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface,
+          profileAsync.when(
+            data: (UserProfile profile) => Text(
+              '${_getGreeting()}, ${profile.name} ❤️',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            loading: () => const SizedBox.shrink(),
+            error: (_, __) => Text(
+              '${_getGreeting()}, User ❤️',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
           ),
           const SizedBox(height: 4),
