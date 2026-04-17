@@ -74,25 +74,7 @@ class DailyDashboardScreen extends ConsumerWidget {
   }
 }
 
-class _GreetingHeader extends ConsumerWidget {
-  const _GreetingHeader();
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 140, 16, 16),
-      child: Text(
-        'Welcome',
-        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.w300,
-              fontSize: 32,
-              height: 1.2,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-      ),
-    );
-  }
-}
 
 class _HorizontalDatePicker extends ConsumerStatefulWidget {
   const _HorizontalDatePicker({super.key});
