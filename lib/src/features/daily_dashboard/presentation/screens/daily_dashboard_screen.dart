@@ -86,7 +86,6 @@ class _HorizontalDatePicker extends ConsumerStatefulWidget {
 class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
   late final ScrollController _scrollController;
   static const double _itemWidth = 65.0 + (6.0 * 2); // width + margin
-  static const double _padding = 16.0;
 
   @override
   void initState() {
@@ -114,9 +113,7 @@ class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
 
   void _scrollToIndex(int index) {
     if (!_scrollController.hasClients) return;
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double targetOffset =
-        (index * _itemWidth) - (screenWidth / 2) + (_itemWidth / 2) + _padding;
+    final double targetOffset = index * _itemWidth;
 
     _scrollController.animateTo(
       targetOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
@@ -127,10 +124,20 @@ class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double lateralPadding = (screenWidth - _itemWidth) / 2;
+
     final DateTime now = DateTime.now();
     final DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
     final DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
     final int daysCount = lastDayOfMonth.day;
+
+    // Center today instantly on first load
+    if (_scrollController.hasClients && _scrollController.offset == 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController.jumpTo((now.day - 1) * _itemWidth);
+      });
+    }
 
     final DateTime selectedDate = ref.watch(selectedDateProvider);
 
@@ -162,7 +169,7 @@ class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
             child: ListView.builder(
               controller: _scrollController,
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: _padding),
+              padding: EdgeInsets.symmetric(horizontal: lateralPadding),
               itemCount: daysCount,
               itemBuilder: (BuildContext context, int index) {
                 final DateTime date = firstDayOfMonth.add(Duration(days: index));
