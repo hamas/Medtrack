@@ -248,26 +248,36 @@ class _SegmentItem extends StatelessWidget {
 }
 
 class _DateItem extends StatelessWidget {
-  const _DateItem({required this.date, required this.isSelected});
+  const _DateItem({required this.date, required this.isSelected, super.key});
   final DateTime date;
   final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final DateTime now = DateTime.now();
+    final bool isToday = date.day == now.day && 
+                        date.month == now.month && 
+                        date.year == now.year;
+
+    final Color bgColor = isToday
+        ? colorScheme.primary
+        : (isSelected
+            ? Colors.black.withValues(alpha: 0.4)
+            : colorScheme.surface.withValues(alpha: 0.1));
+
+    final bool hasHighlight = isToday || isSelected;
 
     return Container(
       width: 65,
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       decoration: BoxDecoration(
-        color: isSelected
-            ? colorScheme.primary
-            : colorScheme.surface.withValues(alpha: 0.1),
+        color: bgColor,
         borderRadius: BorderRadius.circular(32),
-        border: isSelected
+        border: hasHighlight
             ? null
             : Border.all(color: colorScheme.outline.withValues(alpha: 0.1)),
-        boxShadow: isSelected
+        boxShadow: isToday
             ? <BoxShadow>[
                 BoxShadow(
                   color: colorScheme.primary.withValues(alpha: 0.3),
@@ -285,7 +295,9 @@ class _DateItem extends StatelessWidget {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w600,
-              color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
+              color: isToday
+                  ? colorScheme.onPrimary
+                  : (isSelected ? Colors.white : colorScheme.onSurface),
             ),
           ),
           const SizedBox(height: 2),
@@ -293,8 +305,12 @@ class _DateItem extends StatelessWidget {
             DateFormat('E').format(date),
             style: TextStyle(
               fontSize: 13,
-              fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-              color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface.withValues(alpha: 0.6),
+              fontWeight: hasHighlight ? FontWeight.w500 : FontWeight.w400,
+              color: isToday
+                  ? colorScheme.onPrimary
+                  : (isSelected
+                      ? Colors.white.withValues(alpha: 0.8)
+                      : colorScheme.onSurface.withValues(alpha: 0.6)),
             ),
           ),
         ],
