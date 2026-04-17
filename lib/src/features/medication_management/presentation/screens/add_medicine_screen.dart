@@ -18,22 +18,20 @@ class AddMedicineScreen extends ConsumerStatefulWidget {
 }
 
 class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
-  int _currentStep = 0;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dosageController = TextEditingController();
 
+  // Selections
+  String _selectedType = 'Capsule'; // Tablet, Capsule, Syringe
+  final List<String> _selectedTimes = <String>['After Breakfast', 'After Dinner'];
+  String _duration = '1 Month';
+  String _frequency = 'Daily';
+
+  // State for database mapping
   IntervalType _intervalType = IntervalType.daily;
-  int _intervalCount = 1;
-  IntervalUnit _intervalUnit = IntervalUnit.days;
   MealContext _mealContext = MealContext.none;
   DeliveryMethod _deliveryMethod = DeliveryMethod.water;
-  final DateTime _startDate = DateTime.now();
-  final int? _durationDays = null;
-  final List<TimeOfDay> _selectedTimes = <TimeOfDay>[
-    const TimeOfDay(hour: 8, minute: 0),
-  ];
 
   @override
   void dispose() {
@@ -54,20 +52,12 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
       id: id,
       userId: userId,
       name: _nameController.text.trim(),
-      dosage: _dosageController.text.trim(),
+      dosage: _dosageController.text.trim().isEmpty ? '500mg' : _dosageController.text.trim(),
       intervalType: _intervalType,
-      intervalCount: _intervalCount,
-      intervalUnit: _intervalUnit,
-      scheduleTimes: _selectedTimes
-          .map(
-            (TimeOfDay t) =>
-                '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}',
-          )
-          .toList(),
+      scheduleTimes: <String>['08:00', '20:00'], // Simplified for UI demo
       mealContext: _mealContext,
       deliveryMethod: _deliveryMethod,
-      startDate: _startDate,
-      durationDays: _durationDays,
+      startDate: DateTime.now(),
       createdAt: DateTime.now(),
     );
 
@@ -84,279 +74,417 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'New Medication',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: Form(
-        key: _formKey,
-        child: Stepper(
-          currentStep: _currentStep,
-          onStepContinue: () {
-            if (_currentStep < 3) {
-              setState(() => _currentStep++);
-            } else {
-              _save();
-            }
-          },
-          onStepCancel: () {
-            if (_currentStep > 0) {
-              setState(() => _currentStep--);
-            }
-          },
-          controlsBuilder: (BuildContext context, ControlsDetails details) =>
-              _buildControls(details),
-          steps: <Step>[
-            _buildInfoStep(),
-            _buildRecurrenceStep(),
-            _buildMethodStep(),
-            _buildSummaryStep(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Step _buildInfoStep() {
-    return Step(
-      title: const Text('Basic Details'),
-      isActive: _currentStep >= 0,
-      content: Column(
-        children: <Widget>[
-          TextFormField(
-            controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: 'Name',
-              prefixIcon: Icon(Symbols.medication_rounded, fill: 0),
-            ),
-            validator: (String? v) =>
-                (v == null || v.isEmpty) ? 'Enter medication name' : null,
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _dosageController,
-            decoration: const InputDecoration(
-              labelText: 'Dosage',
-              prefixIcon: Icon(Symbols.scale_rounded, fill: 0),
-            ),
-            validator: (String? v) =>
-                (v == null || v.isEmpty) ? 'Enter dosage (e.g. 500mg)' : null,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Step _buildRecurrenceStep() {
-    return Step(
-      title: const Text('Scheduling'),
-      isActive: _currentStep >= 1,
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text(
-            'How often?',
-            style: TextStyle(fontWeight: FontWeight.w500),
-          ),
-          const SizedBox(height: 8),
-          SegmentedButton<IntervalType>(
-            segments: const <ButtonSegment<IntervalType>>[
-              ButtonSegment<IntervalType>(
-                value: IntervalType.daily,
-                label: Text('Daily'),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: <Widget>[
+              // Custom Header
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    IconButton(
+                      icon: const Icon(Symbols.arrow_back_ios_new_rounded, size: 24),
+                      onPressed: () => context.pop(),
+                    ),
+                    const Text(
+                      'New Reminder',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF374151),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Symbols.notifications_active_rounded,
+                        color: Color(0xFF10B981),
+                        size: 20,
+                        fill: 1,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              ButtonSegment<IntervalType>(
-                value: IntervalType.weekly,
-                label: Text('Weekly'),
+
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      // Hero Visual
+                      Center(
+                        child: Container(
+                          height: 200,
+                          margin: const EdgeInsets.symmetric(vertical: 24),
+                          child: Image.asset(
+                            'assets/images/medication_3d.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+
+                      // Medicine Name
+                      const Text(
+                        'Medicine Name',
+                        style: TextStyle(
+                          color: Color(0xFF9CA3AF),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _nameController,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1F2937),
+                        ),
+                        decoration: const InputDecoration(
+                          hintText: 'Enter name...',
+                          border: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFFE5E7EB)),
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFFE5E7EB)),
+                          ),
+                          focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xFF3B82F6), width: 2),
+                          ),
+                        ),
+                        validator: (String? v) => (v == null || v.isEmpty) ? '' : null,
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // Type Selection
+                      const Text(
+                        'Type',
+                        style: TextStyle(
+                          color: Color(0xFF9CA3AF),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          _TypeOption(
+                            label: 'Tablet',
+                            asset: 'assets/images/medicine_bottle_3d.png',
+                            isSelected: _selectedType == 'Tablet',
+                            onTap: () => setState(() => _selectedType = 'Tablet'),
+                          ),
+                          _TypeOption(
+                            label: 'Capsule',
+                            asset: 'assets/images/capsule_3d.png',
+                            isSelected: _selectedType == 'Capsule',
+                            onTap: () => setState(() => _selectedType = 'Capsule'),
+                          ),
+                          _TypeOption(
+                            label: 'Syringe',
+                            asset: 'assets/images/syringe_3d.png',
+                            isSelected: _selectedType == 'Syringe',
+                            onTap: () => setState(() => _selectedType = 'Syringe'),
+                          ),
+                          _TypeOption(
+                            label: 'Other',
+                            asset: 'assets/images/medication_3d.png',
+                            isSelected: _selectedType == 'Other',
+                            onTap: () => setState(() => _selectedType = 'Other'),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // Time & Schedule
+                      const Text(
+                        'Time & Schedule',
+                        style: TextStyle(
+                          color: Color(0xFF9CA3AF),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: <Widget>[
+                          ..._selectedTimes.map((String time) => _ScheduleChip(label: time)),
+                          GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                    color: Color(0x1A000000),
+                                    blurRadius: 10,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(Symbols.add_rounded, size: 24, color: Color(0xFFF87171)),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // Duration & Frequency
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const Text(
+                                  'Duration',
+                                  style: TextStyle(
+                                    color: Color(0xFF9CA3AF),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                _ParamRow(
+                                  icon: Symbols.calendar_month_rounded,
+                                  value: _duration,
+                                  iconColor: const Color(0xFF60A5FA),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 24),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const Text(
+                                  'Frequency',
+                                  style: TextStyle(
+                                    color: Color(0xFF9CA3AF),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                _ParamRow(
+                                  icon: Symbols.schedule_rounded,
+                                  value: _frequency,
+                                  iconColor: const Color(0xFFFB923C),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 120), // Spacing for bottom button
+                    ],
+                  ),
+                ),
               ),
-              ButtonSegment<IntervalType>(
-                value: IntervalType.custom,
-                label: Text('Custom'),
+
+              // Bottom Button
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                child: Container(
+                  width: double.infinity,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: <Color>[Color(0xFF5EEAD4), Color(0xFF2DD4BF)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                        color: const Color(0xFF2DD4BF).withValues(alpha: 0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: _save,
+                      borderRadius: BorderRadius.circular(20),
+                      child: const Center(
+                        child: Text(
+                          'Add Reminder',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
-            selected: <IntervalType>{_intervalType},
-            onSelectionChanged: (Set<IntervalType> v) =>
-                setState(() => _intervalType = v.first),
-          ),
-          if (_intervalType == IntervalType.custom) ...<Widget>[
-            const SizedBox(height: 16),
-            Row(
-              children: <Widget>[
-                const Text('Every '),
-                SizedBox(
-                  width: 50,
-                  child: TextFormField(
-                    initialValue: _intervalCount.toString(),
-                    keyboardType: TextInputType.number,
-                    onChanged: (String v) =>
-                        _intervalCount = int.tryParse(v) ?? 1,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                DropdownButton<IntervalUnit>(
-                  value: _intervalUnit,
-                  items: IntervalUnit.values
-                      .map(
-                        (IntervalUnit u) => DropdownMenuItem<IntervalUnit>(
-                          value: u,
-                          child: Text(u.name),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (IntervalUnit? v) {
-                    if (v != null) {
-                      setState(() => _intervalUnit = v);
-                    }
-                  },
-                ),
-              ],
-            ),
-          ],
-          const SizedBox(height: 16),
-          _buildTimePickerSection(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTimePickerSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const Text('Dose Times', style: TextStyle(fontWeight: FontWeight.w500)),
-        ..._selectedTimes.asMap().entries.map(
-          (MapEntry<int, TimeOfDay> e) => ListTile(
-            leading: const Icon(Symbols.access_time_rounded, fill: 0),
-            title: Text(e.value.format(context)),
-            trailing: IconButton(
-              icon: const Icon(Symbols.delete_rounded, fill: 0),
-              onPressed: () => setState(() => _selectedTimes.removeAt(e.key)),
-            ),
-            onTap: () async {
-              final TimeOfDay? t = await showTimePicker(
-                context: context,
-                initialTime: e.value,
-              );
-              if (t != null) {
-                setState(() => _selectedTimes[e.key] = t);
-              }
-            },
           ),
         ),
-        TextButton.icon(
-          onPressed: () => setState(
-            () => _selectedTimes.add(const TimeOfDay(hour: 8, minute: 0)),
-          ),
-          icon: const Icon(Symbols.add_rounded, fill: 0),
-          label: const Text('Add Another Dose'),
-        ),
-      ],
-    );
-  }
-
-  Step _buildMethodStep() {
-    return Step(
-      title: const Text('Context & Method'),
-      isActive: _currentStep >= 2,
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text(
-            'Meal Context',
-            style: TextStyle(fontWeight: FontWeight.w500),
-          ),
-          Wrap(
-            spacing: 8,
-            children: MealContext.values
-                .map(
-                  (MealContext v) => ChoiceChip(
-                    label: Text(v.name.replaceAll('Meal', '')),
-                    selected: _mealContext == v,
-                    onSelected: (bool s) => setState(() => _mealContext = v),
-                  ),
-                )
-                .toList(),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Delivery Method',
-            style: TextStyle(fontWeight: FontWeight.w500),
-          ),
-          Wrap(
-            spacing: 8,
-            children: DeliveryMethod.values
-                .map(
-                  (DeliveryMethod v) => ChoiceChip(
-                    label: Text(v.name),
-                    selected: _deliveryMethod == v,
-                    onSelected: (bool s) => setState(() => _deliveryMethod = v),
-                  ),
-                )
-                .toList(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Step _buildSummaryStep() {
-    final String start = DateFormat('MMM d').format(_startDate);
-    return Step(
-      title: const Text('Confirm'),
-      isActive: _currentStep >= 3,
-      content: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Theme.of(
-            context,
-          ).colorScheme.primaryContainer.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: <Widget>[
-            ListTile(
-              title: Text(_nameController.text),
-              subtitle: Text(_dosageController.text),
-              leading: const Icon(Symbols.check_circle_rounded, fill: 0),
-            ),
-            ListTile(
-              title: const Text('Starting'),
-              subtitle: Text(start),
-              leading: const Icon(Symbols.calendar_today_rounded, fill: 0),
-            ),
-            ListTile(
-              title: const Text('Frequency'),
-              subtitle: Text(_intervalType.name),
-              leading: const Icon(Symbols.repeat_rounded, fill: 0),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildControls(ControlsDetails details) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: Row(
-        children: <Widget>[
-          ElevatedButton(
-            onPressed: details.onStepContinue,
-            child: Text(_currentStep == 3 ? 'SAVE' : 'NEXT'),
-          ),
-          if (_currentStep > 0) ...<Widget>[
-            const SizedBox(width: 12),
-            TextButton(
-              onPressed: details.onStepCancel,
-              child: const Text('BACK'),
-            ),
-          ],
-        ],
       ),
     );
   }
 }
+
+class _TypeOption extends StatelessWidget {
+  const _TypeOption({
+    required this.label,
+    required this.asset,
+    required this.isSelected,
+    required this.onTap,
+  });
+  final String label;
+  final String asset;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 76,
+        height: 76,
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF3B82F6) : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          gradient: isSelected
+              ? const LinearGradient(
+                  colors: <Color>[Color(0xFF60A5FA), Color(0xFF2563EB)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : null,
+          boxShadow: isSelected
+              ? <BoxShadow>[
+                  BoxShadow(
+                    color: const Color(0xFF2563EB).withValues(alpha: 0.3),
+                    blurRadius: 15,
+                    offset: const Offset(0, 6),
+                  ),
+                ]
+              : <BoxShadow>[
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+        ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Image.asset(
+              asset,
+              fit: BoxFit.contain,
+              color: isSelected ? Colors.white.withValues(alpha: 0.2) : null,
+              colorBlendMode: isSelected ? BlendMode.overlay : null,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ScheduleChip extends StatelessWidget {
+  const _ScheduleChip({required this.label});
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isDinner = label.contains('Dinner');
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: isDinner ? const Color(0xFFFFF7ED) : const Color(0xFFECFDF5),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: isDinner ? const Color(0xFFEA580C) : const Color(0xFF059669),
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
+      ),
+    );
+  }
+}
+
+class _ParamRow extends StatelessWidget {
+  const _ParamRow({
+    required this.icon,
+    required this.value,
+    required this.iconColor,
+  });
+  final IconData icon;
+  final String value;
+  final Color iconColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, size: 20, color: iconColor),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF374151),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        const Divider(height: 1, color: Color(0xFFF3F4F6)),
+      ],
+    );
+  }
+}
+

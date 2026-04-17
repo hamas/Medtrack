@@ -54,3 +54,6 @@ flutter:
     - assets/images/default_avatar.png
     - assets/images/medication_3d.png
     - assets/images/splash_logo.png
+    - assets/images/medicine_bottle_3d.png
+    - assets/images/capsule_3d.png
+    - assets/images/syringe_3d.png
