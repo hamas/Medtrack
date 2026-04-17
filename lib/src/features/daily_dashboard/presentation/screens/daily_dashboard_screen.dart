@@ -55,7 +55,7 @@ class DailyDashboardScreen extends ConsumerWidget {
                       ),
                       Positioned(
                         bottom: 80, // Elevation for FAB alignment with nav bar
-                        right: 24,
+                        right: 16,
                         child: FloatingActionButton.extended(
                           onPressed: () => context.push('/add-medicine'),
                           icon: const Icon(Symbols.add_rounded),
@@ -80,7 +80,7 @@ class _GreetingHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 140, 24, 16),
+      padding: const EdgeInsets.fromLTRB(16, 140, 16, 16),
       child: Text(
         'Welcome',
         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -191,7 +191,7 @@ class _ViewSegmentedControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
