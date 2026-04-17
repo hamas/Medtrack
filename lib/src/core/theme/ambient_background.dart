@@ -19,38 +19,38 @@ class _AmbientBackgroundState extends State<AmbientBackground>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 50),
+      duration: const Duration(seconds: 60),
     )..repeat(reverse: true);
 
     _initializeShapes();
   }
 
   void _initializeShapes() {
-    // Exactly 3 massive elements as requested
+    // Nebula Canvas: Exactly 3 massive elements (600px–800px)
     _shapes.addAll(<_AmbientShape>[
       // One vibrant Purple circle
       _AmbientShape(
-        color: const Color(0xFFF0ABFF).withAlpha(150),
-        size: 550.0,
+        color: const Color(0xFFF0ABFF).withAlpha(160),
+        size: 700.0,
         isCircle: true,
         offset: const Offset(0.2, 0.3),
-        velocity: const Offset(0.08, 0.1),
+        velocity: const Offset(0.06, 0.08),
       ),
       // One vibrant Green square
       _AmbientShape(
-        color: const Color(0xFF4ADE80).withAlpha(120),
-        size: 600.0,
+        color: const Color(0xFF4ADE80).withAlpha(140),
+        size: 800.0,
         isCircle: false,
         offset: const Offset(0.8, 0.1),
-        velocity: const Offset(-0.06, 0.12),
+        velocity: const Offset(-0.04, 0.1),
       ),
       // One vibrant Blue circle
       _AmbientShape(
-        color: const Color(0xFF38BDF8).withAlpha(130),
-        size: 520.0,
+        color: const Color(0xFF38BDF8).withAlpha(150),
+        size: 650.0,
         isCircle: true,
         offset: const Offset(0.5, 0.8),
-        velocity: const Offset(-0.1, -0.08),
+        velocity: const Offset(-0.08, -0.06),
       ),
     ]);
   }
@@ -66,7 +66,7 @@ class _AmbientBackgroundState extends State<AmbientBackground>
     return RepaintBoundary(
       child: Stack(
         children: <Widget>[
-          // The Drifting Shapes layer
+          // The Drifting Shapes layer (Nebula blobs)
           AnimatedBuilder(
             animation: _controller,
             builder: (BuildContext context, Widget? child) {
@@ -84,14 +84,14 @@ class _AmbientBackgroundState extends State<AmbientBackground>
               );
             },
           ),
-          // Deep Glassmorphism: Heavy Gaussian Blur (Increased to 30.0)
+          // Extreme Glassmorphism: Extreme Gaussian Blur (40.0)
           Positioned.fill(
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 30.0, sigmaY: 30.0),
+              filter: ImageFilter.blur(sigmaX: 40.0, sigmaY: 40.0),
               child: const SizedBox.expand(),
             ),
           ),
-          // Dark Veil: Black at 90% opacity (High-intensity neon survives this)
+          // Deep Dark Veil: Solid black at 90% opacity
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
