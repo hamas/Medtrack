@@ -13,7 +13,7 @@ class _AmbientBackgroundState extends State<AmbientBackground>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   final List<_AmbientShape> _shapes = <_AmbientShape>[];
-  final int _shapeCount = 8;
+  final int _shapeCount = 3;
 
   @override
   void initState() {
@@ -27,27 +27,33 @@ class _AmbientBackgroundState extends State<AmbientBackground>
   }
 
   void _initializeShapes() {
-    final math.Random random = math.Random();
-    final List<Color> colors = <Color>[
-      const Color(0xFFF0ABFF).withValues(alpha: 0.6), // Neon Purple
-      const Color(0xFF4ADE80).withValues(alpha: 0.5), // Neon Green
-      const Color(0xFF38BDF8).withValues(alpha: 0.5), // Neon Blue
-    ];
-
-    for (int i = 0; i < _shapeCount; i++) {
-      _shapes.add(
-        _AmbientShape(
-          color: colors[random.nextInt(colors.length)],
-          size: 250.0 + random.nextDouble() * 350.0, // Massive shapes
-          isCircle: random.nextBool(),
-          offset: Offset(random.nextDouble(), random.nextDouble()),
-          velocity: Offset(
-            (random.nextDouble() - 0.5) * 0.4,
-            (random.nextDouble() - 0.5) * 0.4,
-          ),
-        ),
-      );
-    }
+    // Exactly 3 massive elements as requested
+    _shapes.addAll(<_AmbientShape>[
+      // One vibrant Purple circle
+      _AmbientShape(
+        color: const Color(0xFFF0ABFF).withAlpha(150),
+        size: 550.0,
+        isCircle: true,
+        offset: const Offset(0.2, 0.3),
+        velocity: const Offset(0.08, 0.1),
+      ),
+      // One vibrant Green square
+      _AmbientShape(
+        color: const Color(0xFF4ADE80).withAlpha(120),
+        size: 600.0,
+        isCircle: false,
+        offset: const Offset(0.8, 0.1),
+        velocity: const Offset(-0.06, 0.12),
+      ),
+      // One vibrant Blue circle
+      _AmbientShape(
+        color: const Color(0xFF38BDF8).withAlpha(130),
+        size: 520.0,
+        isCircle: true,
+        offset: const Offset(0.5, 0.8),
+        velocity: const Offset(-0.1, -0.08),
+      ),
+    ]);
   }
 
   @override
@@ -65,7 +71,6 @@ class _AmbientBackgroundState extends State<AmbientBackground>
           AnimatedBuilder(
             animation: _controller,
             builder: (BuildContext context, Widget? child) {
-              // Ensure nonlinear drift
               final double curvedValue = CurvedAnimation(
                 parent: _controller,
                 curve: Curves.easeInOut,
@@ -80,10 +85,10 @@ class _AmbientBackgroundState extends State<AmbientBackground>
               );
             },
           ),
-          // Glassmorphism: Gaussian Blur
+          // Deep Glassmorphism: Heavy Gaussian Blur (Increased to 30.0)
           Positioned.fill(
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+              filter: ImageFilter.blur(sigmaX: 30.0, sigmaY: 30.0),
               child: const SizedBox.expand(),
             ),
           ),
@@ -91,7 +96,7 @@ class _AmbientBackgroundState extends State<AmbientBackground>
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.9),
+                color: Colors.black.withAlpha(230), // ~90% opacity
               ),
             ),
           ),
