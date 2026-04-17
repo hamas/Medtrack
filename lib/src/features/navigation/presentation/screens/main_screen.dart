@@ -96,16 +96,14 @@ class MainScreen extends ConsumerWidget {
             child: AmbientBackground(),
           ),
           // Content Layer
-          SafeArea(
-            child: IndexedStack(
-              index: currentIndex,
-              children: const <Widget>[
-                DailyDashboardScreen(),
-                MedicineListScreen(),
-                CalendarScreen(),
-                MenuScreen(),
-              ],
-            ),
+          IndexedStack(
+            index: currentIndex,
+            children: const <Widget>[
+              DailyDashboardScreen(),
+              MedicineListScreen(),
+              CalendarScreen(),
+              MenuScreen(),
+            ],
           ),
         ],
       ),

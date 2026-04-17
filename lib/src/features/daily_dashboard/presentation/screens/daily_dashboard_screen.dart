@@ -22,10 +22,10 @@ class DailyDashboardScreen extends ConsumerWidget {
       children: <Widget>[
         Container(
           decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: 0.1),
             borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(32),
-              bottomRight: Radius.circular(32),
+              bottomLeft: Radius.circular(56),
+              bottomRight: Radius.circular(56),
             ),
           ),
           child: const Column(
@@ -80,7 +80,7 @@ class _GreetingHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 64, 24, 16),
+      padding: const EdgeInsets.fromLTRB(24, 100, 24, 16),
       child: Text(
         'Welcome',
         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
