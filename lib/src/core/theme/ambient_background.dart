@@ -141,7 +141,8 @@ class _AmbientPainter extends CustomPainter {
     for (final _AmbientShape shape in shapes) {
       final Paint paint = Paint()
         ..color = shape.color
-        ..style = PaintingStyle.fill;
+        ..style = PaintingStyle.fill
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 80.0);
 
       final Offset center = shape.getCurrentOffset(progress, size);
 
