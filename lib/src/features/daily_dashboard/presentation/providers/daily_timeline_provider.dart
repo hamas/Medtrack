@@ -31,7 +31,7 @@ class DailyTimeline extends _$DailyTimeline {
     final String? userId = ref.watch(currentUidProvider);
     if (userId == null) return <Dose>[];
 
-    final date = ref.watch(selectedDateNotifierProvider);
+    final DateTime date = ref.watch(selectedDateProvider);
     final DashboardRepository repository = ref.watch(dashboardRepoProvider);
     return repository.getDailyTimeline(userId, date);
   }
