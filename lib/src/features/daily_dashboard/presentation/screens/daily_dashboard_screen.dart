@@ -31,7 +31,7 @@ class DailyDashboardScreen extends ConsumerWidget {
           child: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _GreetingHeader(),
+              SizedBox(height: 120),
               _HorizontalDatePicker(),
               SizedBox(height: 24),
             ],
