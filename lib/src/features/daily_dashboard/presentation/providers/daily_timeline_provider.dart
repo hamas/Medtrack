@@ -15,7 +15,14 @@ DashboardRepository dashboardRepo(Ref ref) {
   return DashboardRepositoryImpl();
 }
 
-final selectedDateProvider = StateProvider<DateTime>((StateProviderRef<DateTime> ref) => DateTime.now());
+@riverpod
+class SelectedDateNotifier extends _$SelectedDateNotifier {
+  @override
+  DateTime build() => DateTime.now();
+
+  void set(DateTime date) => state = date;
+}
+
 
 @riverpod
 class DailyTimeline extends _$DailyTimeline {
@@ -24,7 +31,7 @@ class DailyTimeline extends _$DailyTimeline {
     final String? userId = ref.watch(currentUidProvider);
     if (userId == null) return <Dose>[];
 
-    final date = ref.watch(selectedDateProvider);
+    final date = ref.watch(selectedDateNotifierProvider);
     final DashboardRepository repository = ref.watch(dashboardRepoProvider);
     return repository.getDailyTimeline(userId, date);
   }

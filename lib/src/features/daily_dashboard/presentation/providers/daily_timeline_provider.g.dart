@@ -56,6 +56,59 @@ final class DashboardRepoProvider
 
 String _$dashboardRepoHash() => r'b5a4c13a15911d2498158d4f0fbc9b524d56033a';
 
+@ProviderFor(SelectedDateNotifier)
+final selectedDateProvider = SelectedDateNotifierProvider._();
+
+final class SelectedDateNotifierProvider
+    extends $NotifierProvider<SelectedDateNotifier, DateTime> {
+  SelectedDateNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'selectedDateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$selectedDateNotifierHash();
+
+  @$internal
+  @override
+  SelectedDateNotifier create() => SelectedDateNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DateTime value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DateTime>(value),
+    );
+  }
+}
+
+String _$selectedDateNotifierHash() =>
+    r'b92ab1bc3384fb3614910c53000ab97b352e7b90';
+
+abstract class _$SelectedDateNotifier extends $Notifier<DateTime> {
+  DateTime build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<DateTime, DateTime>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<DateTime, DateTime>,
+              DateTime,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(DailyTimeline)
 final dailyTimelineProvider = DailyTimelineProvider._();
 
@@ -80,7 +133,7 @@ final class DailyTimelineProvider
   DailyTimeline create() => DailyTimeline();
 }
 
-String _$dailyTimelineHash() => r'9b707bb4f7b0b6ef19012232cdd2f3f9e0895268';
+String _$dailyTimelineHash() => r'547f282a290c1df91963b21dbe88290f93acd3d3';
 
 abstract class _$DailyTimeline extends $AsyncNotifier<List<Dose>> {
   FutureOr<List<Dose>> build();
