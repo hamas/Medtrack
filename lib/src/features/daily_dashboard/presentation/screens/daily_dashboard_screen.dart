@@ -100,31 +100,88 @@ class _GreetingHeader extends ConsumerWidget {
   }
 }
 
-class _HorizontalDatePicker extends StatelessWidget {
-  const _HorizontalDatePicker();
+class _HorizontalDatePicker extends ConsumerStatefulWidget {
+  const _HorizontalDatePicker({super.key});
+
+  @override
+  ConsumerState<_HorizontalDatePicker> createState() => _HorizontalDatePickerState();
+}
+
+class _HorizontalDatePickerState extends ConsumerState<_HorizontalDatePicker> {
+  late final ScrollController _scrollController;
+  static const double _itemWidth = 65.0 + (6.0 * 2); // width + margin
+  static const double _padding = 16.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _snapToClosest(double offset) {
+    if (!_scrollController.hasClients) return;
+    final int index = (offset / _itemWidth).round();
+    _scrollToIndex(index);
+  }
+
+  void _scrollToIndex(int index) {
+    if (!_scrollController.hasClients) return;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double targetOffset =
+        (index * _itemWidth) - (screenWidth / 2) + (_itemWidth / 2) + _padding;
+
+    _scrollController.animateTo(
+      targetOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final DateTime now = DateTime.now();
-    final DateTime startOfWeek = now.subtract(Duration(days: now.weekday % 7));
+    final DateTime today = DateTime.now();
+    final DateTime lastDayOfMonth = DateTime(today.year, today.month + 1, 0);
+    final int daysCount = lastDayOfMonth.difference(today).inDays + 1;
+
+    final DateTime selectedDate = ref.watch(selectedDateProvider);
 
     return Column(
       children: <Widget>[
         SizedBox(
           height: 110,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: 7,
-            itemBuilder: (BuildContext context, int index) {
-              final DateTime date = startOfWeek.add(Duration(days: index));
-              final bool isToday =
-                  date.year == now.year &&
-                  date.month == now.month &&
-                  date.day == now.day;
-
-              return _DateItem(date: date, isToday: isToday);
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification notification) {
+              if (notification is ScrollEndNotification) {
+                _snapToClosest(notification.metrics.pixels);
+              }
+              return false;
             },
+            child: ListView.builder(
+              controller: _scrollController,
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: _padding),
+              itemCount: daysCount,
+              itemBuilder: (BuildContext context, int index) {
+                final DateTime date = today.add(Duration(days: index));
+                final bool isSelected = date.year == selectedDate.year &&
+                    date.month == selectedDate.month &&
+                    date.day == selectedDate.day;
+
+                return GestureDetector(
+                  onTap: () {
+                    ref.read(selectedDateProvider.notifier).state = date;
+                    _scrollToIndex(index);
+                  },
+                  child: _DateItem(date: date, isSelected: isSelected),
+                );
+              },
+            ),
           ),
         ),
         const SizedBox(height: 16),
