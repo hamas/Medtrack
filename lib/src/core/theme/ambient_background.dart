@@ -80,13 +80,13 @@ class _AmbientBackgroundState extends State<AmbientBackground>
               );
             },
           ),
-          // 3. Overlay: Deep Gaussian Blur (50.0) combined with 70% black tint
+          // 3. Overlay: Extreme Hyper-Blur (80.0) with Transparent Mask
           Positioned.fill(
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 50.0, sigmaY: 50.0),
+              filter: ImageFilter.blur(sigmaX: 80.0, sigmaY: 80.0),
               child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withAlpha(179), // 70% opacity
+                decoration: const BoxDecoration(
+                  color: Colors.transparent, // Removed overlay tint
                 ),
               ),
             ),
