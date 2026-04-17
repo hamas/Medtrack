@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import '../../../core/theme/ambient_background.dart';
 import '../../../daily_dashboard/presentation/screens/daily_dashboard_screen.dart';
 import '../../../gamification/domain/entities/user_profile.dart';
 import '../../../gamification/presentation/providers/user_profile_provider.dart';
@@ -90,23 +91,9 @@ class MainScreen extends ConsumerWidget {
       ),
       body: Stack(
         children: <Widget>[
-          // Background Layer
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: const Alignment(0, -0.6),
-                  radius: 1.5,
-                  colors: <Color>[
-                    Theme.of(
-                      context,
-                    ).colorScheme.primaryContainer.withAlpha(80),
-                    Theme.of(context).colorScheme.surface,
-                  ],
-                  stops: const <double>[0.0, 1.0],
-                ),
-              ),
-            ),
+          // Ambient Drifting Background
+          const Positioned.fill(
+            child: AmbientBackground(),
           ),
           // Content Layer
           SafeArea(
