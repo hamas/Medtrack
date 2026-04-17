@@ -26,12 +26,11 @@ class _AmbientBackgroundState extends State<AmbientBackground>
   }
 
   void _initializeShapes() {
-    // Nebula Canvas: Exactly 3 massive elements (600px–800px)
     _shapes.addAll(<_AmbientShape>[
       // One vibrant Purple circle
       _AmbientShape(
         color: const Color(0xFFF0ABFF).withAlpha(160),
-        size: 700.0,
+        size: 400.0,
         isCircle: true,
         offset: const Offset(0.2, 0.3),
         velocity: const Offset(0.06, 0.08),
@@ -39,7 +38,7 @@ class _AmbientBackgroundState extends State<AmbientBackground>
       // One vibrant Green square
       _AmbientShape(
         color: const Color(0xFF4ADE80).withAlpha(140),
-        size: 800.0,
+        size: 400.0,
         isCircle: false,
         offset: const Offset(0.8, 0.1),
         velocity: const Offset(-0.04, 0.1),
@@ -47,7 +46,7 @@ class _AmbientBackgroundState extends State<AmbientBackground>
       // One vibrant Blue circle
       _AmbientShape(
         color: const Color(0xFF38BDF8).withAlpha(150),
-        size: 650.0,
+        size: 400.0,
         isCircle: true,
         offset: const Offset(0.5, 0.8),
         velocity: const Offset(-0.08, -0.06),
@@ -66,7 +65,13 @@ class _AmbientBackgroundState extends State<AmbientBackground>
     return RepaintBoundary(
       child: Stack(
         children: <Widget>[
-          // The Drifting Shapes layer (Nebula blobs)
+          // 1. Pure black background layer
+          const Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(color: Colors.black),
+            ),
+          ),
+          // 2. The Drifting Shapes layer (Nebula blobs - 400px)
           AnimatedBuilder(
             animation: _controller,
             builder: (BuildContext context, Widget? child) {
@@ -84,18 +89,14 @@ class _AmbientBackgroundState extends State<AmbientBackground>
               );
             },
           ),
-          // Extreme Glassmorphism: Extreme Gaussian Blur (40.0)
+          // 3. Overlay: Heavy Gaussian Blur (40.0) combined with 90% black tint
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 40.0, sigmaY: 40.0),
-              child: const SizedBox.expand(),
-            ),
-          ),
-          // Deep Dark Veil: Solid black at 90% opacity
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.black.withAlpha(230), // ~90% opacity
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withAlpha(230), // ~90% opacity
+                ),
               ),
             ),
           ),
