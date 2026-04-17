@@ -88,7 +88,7 @@ class _GreetingHeader extends ConsumerWidget {
               ),
             ),
             loading: () => const SizedBox.shrink(),
-            error: (_, __) => Text(
+            error: (Object error, StackTrace stackTrace) => Text(
               '${_getGreeting()}, User ❤️',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
