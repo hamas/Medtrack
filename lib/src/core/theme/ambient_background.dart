@@ -26,30 +26,23 @@ class _AmbientBackgroundState extends State<AmbientBackground>
   }
 
   void _initializeShapes() {
+    // Exactly 2 massive elements as requested for a dual-tone nebula
     _shapes.addAll(<_AmbientShape>[
-      // One vibrant Purple circle
+      // One massive vibrant Purple circle (800px)
       _AmbientShape(
         color: const Color(0xFFF0ABFF).withAlpha(160),
-        size: 400.0,
+        size: 800.0,
         isCircle: true,
-        offset: const Offset(0.2, 0.3),
-        velocity: const Offset(0.06, 0.08),
+        offset: const Offset(0.3, 0.4),
+        velocity: const Offset(0.04, 0.06),
       ),
-      // One vibrant Green square
-      _AmbientShape(
-        color: const Color(0xFF4ADE80).withAlpha(140),
-        size: 400.0,
-        isCircle: false,
-        offset: const Offset(0.8, 0.1),
-        velocity: const Offset(-0.04, 0.1),
-      ),
-      // One vibrant Blue circle
+      // One massive vibrant Blue circle (800px)
       _AmbientShape(
         color: const Color(0xFF38BDF8).withAlpha(150),
-        size: 400.0,
+        size: 800.0,
         isCircle: true,
-        offset: const Offset(0.5, 0.8),
-        velocity: const Offset(-0.08, -0.06),
+        offset: const Offset(0.7, 0.6),
+        velocity: const Offset(-0.05, -0.04),
       ),
     ]);
   }
