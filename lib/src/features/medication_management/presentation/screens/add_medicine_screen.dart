@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../services/local_db_service.dart';
 import '../../../daily_dashboard/presentation/providers/daily_timeline_provider.dart';
+import '../../../core/theme/ambient_background.dart';
 import '../../data/repositories/medication_repository_impl.dart';
 import '../../domain/entities/medicine.dart';
 
