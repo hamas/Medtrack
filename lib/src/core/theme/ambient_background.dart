@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class AmbientBackground extends StatefulWidget {
-  const AmbientBackground({super.key});
+  const AmbientBackground({super.key, this.child});
+
+  final Widget? child;
 
   @override
   State<AmbientBackground> createState() => _AmbientBackgroundState();
@@ -91,6 +93,7 @@ class _AmbientBackgroundState extends State<AmbientBackground>
               ),
             ),
           ),
+          if (widget.child != null) Positioned.fill(child: widget.child!),
         ],
       ),
     );
