@@ -433,14 +433,10 @@ class _TypeOption extends StatelessWidget {
         ),
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(18.0),
+            padding: const EdgeInsets.all(14.0),
             child: SvgPicture.asset(
               asset,
               fit: BoxFit.contain,
-              colorFilter: ColorFilter.mode(
-                isSelected ? Colors.white : colorScheme.onSurface.withValues(alpha: 0.6),
-                BlendMode.srcIn,
-              ),
             ),
           ),
         ),
