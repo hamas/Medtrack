@@ -13,7 +13,6 @@ class _AmbientBackgroundState extends State<AmbientBackground>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   final List<_AmbientShape> _shapes = <_AmbientShape>[];
-  final int _shapeCount = 3;
 
   @override
   void initState() {
