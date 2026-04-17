@@ -73,289 +73,300 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              // Custom Header
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    IconButton(
-                      icon: const Icon(Symbols.arrow_back_ios_new_rounded, size: 24),
-                      onPressed: () => context.pop(),
-                    ),
-                    const Text(
-                      'New Reminder',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF374151),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Symbols.notifications_active_rounded,
-                        color: Color(0xFF10B981),
-                        size: 20,
-                        fill: 1,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: Colors.transparent,
+      body: AmbientBackground(
+        child: SafeArea(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                // Custom Header
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      // Hero Visual
-                      Center(
-                        child: Container(
-                          height: 200,
-                          margin: const EdgeInsets.symmetric(vertical: 24),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Image.asset(
-                                'assets/images/medication_3d.png',
-                                fit: BoxFit.contain,
-                                height: 180,
+                      IconButton(
+                        icon: Icon(
+                          Symbols.arrow_back_ios_new_rounded,
+                          size: 24,
+                          color: colorScheme.onSurface,
+                        ),
+                        onPressed: () => context.pop(),
+                      ),
+                      Text(
+                        'New Reminder',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surface.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: colorScheme.outline.withValues(alpha: 0.1),
+                          ),
+                        ),
+                        child: Icon(
+                          Symbols.notifications_active_rounded,
+                          color: colorScheme.tertiary,
+                          size: 20,
+                          fill: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        // Hero Visual
+                        Center(
+                          child: Container(
+                            height: 200,
+                            margin: const EdgeInsets.symmetric(vertical: 24),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Image.asset(
+                                  'assets/images/medication_3d.png',
+                                  fit: BoxFit.contain,
+                                  height: 180,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        // Medicine Name
+                        Text(
+                          'Medicine Name',
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: colorScheme.onSurface.withValues(alpha: 0.5),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _nameController,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Enter name...',
+                            hintStyle: TextStyle(
+                              color: colorScheme.onSurface.withValues(alpha: 0.2),
+                            ),
+                            border: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: colorScheme.outline.withValues(alpha: 0.2),
                               ),
-                            ],
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: colorScheme.outline.withValues(alpha: 0.2),
+                              ),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: colorScheme.primary,
+                                width: 2,
+                              ),
+                            ),
                           ),
+                          validator: (String? v) => (v == null || v.isEmpty) ? '' : null,
                         ),
-                      ),
 
-                      // Medicine Name
-                      const Text(
-                        'Medicine Name',
-                        style: TextStyle(
-                          color: Color(0xFF9CA3AF),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        controller: _nameController,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1F2937),
-                        ),
-                        decoration: const InputDecoration(
-                          hintText: 'Enter name...',
-                          border: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFFE5E7EB)),
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFFE5E7EB)),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFF3B82F6), width: 2),
-                          ),
-                        ),
-                        validator: (String? v) => (v == null || v.isEmpty) ? '' : null,
-                      ),
+                        const SizedBox(height: 32),
 
-                      const SizedBox(height: 32),
-
-                      // Type Selection
-                      const Text(
-                        'Type',
-                        style: TextStyle(
-                          color: Color(0xFF9CA3AF),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                        // Type Selection
+                        Text(
+                          'Type',
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: colorScheme.onSurface.withValues(alpha: 0.5),
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          _TypeOption(
-                            label: 'Tablet',
-                            asset: 'assets/images/medicine_bottle_3d.png',
-                            isSelected: _selectedType == 'Tablet',
-                            onTap: () => setState(() => _selectedType = 'Tablet'),
-                          ),
-                          _TypeOption(
-                            label: 'Capsule',
-                            asset: 'assets/images/capsule_3d.png',
-                            isSelected: _selectedType == 'Capsule',
-                            onTap: () => setState(() => _selectedType = 'Capsule'),
-                          ),
-                          _TypeOption(
-                            label: 'Syringe',
-                            asset: 'assets/images/syringe_3d.png',
-                            isSelected: _selectedType == 'Syringe',
-                            onTap: () => setState(() => _selectedType = 'Syringe'),
-                          ),
-                          _TypeOption(
-                            label: 'Other',
-                            asset: 'assets/images/medication_3d.png',
-                            isSelected: _selectedType == 'Other',
-                            onTap: () => setState(() => _selectedType = 'Other'),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 32),
-
-                      // Time & Schedule
-                      const Text(
-                        'Time & Schedule',
-                        style: TextStyle(
-                          color: Color(0xFF9CA3AF),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            _TypeOption(
+                              label: 'Tablet',
+                              asset: 'assets/images/medicine_bottle_3d.png',
+                              isSelected: _selectedType == 'Tablet',
+                              onTap: () => setState(() => _selectedType = 'Tablet'),
+                            ),
+                            _TypeOption(
+                              label: 'Capsule',
+                              asset: 'assets/images/capsule_3d.png',
+                              isSelected: _selectedType == 'Capsule',
+                              onTap: () => setState(() => _selectedType = 'Capsule'),
+                            ),
+                            _TypeOption(
+                              label: 'Syringe',
+                              asset: 'assets/images/syringe_3d.png',
+                              isSelected: _selectedType == 'Syringe',
+                              onTap: () => setState(() => _selectedType = 'Syringe'),
+                            ),
+                            _TypeOption(
+                              label: 'Other',
+                              asset: 'assets/images/medication_3d.png',
+                              isSelected: _selectedType == 'Other',
+                              onTap: () => setState(() => _selectedType = 'Other'),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: <Widget>[
-                          ..._selectedTimes.map((String time) => _ScheduleChip(label: time)),
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                    color: Color(0x1A000000),
-                                    blurRadius: 10,
-                                    offset: Offset(0, 4),
+
+                        const SizedBox(height: 32),
+
+                        // Time & Schedule
+                        Text(
+                          'Time & Schedule',
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: colorScheme.onSurface.withValues(alpha: 0.5),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: <Widget>[
+                            ..._selectedTimes.map((String time) => _ScheduleChip(label: time)),
+                            GestureDetector(
+                              onTap: () {},
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.surface.withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: colorScheme.outline.withValues(alpha: 0.1),
+                                  ),
+                                ),
+                                child: Icon(
+                                  Symbols.add_rounded,
+                                  size: 24,
+                                  color: colorScheme.error.withValues(alpha: 0.8),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 32),
+
+                        // Duration & Frequency
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    'Duration',
+                                    style: theme.textTheme.labelLarge?.copyWith(
+                                      color: colorScheme.onSurface.withValues(alpha: 0.5),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  _ParamRow(
+                                    icon: Symbols.calendar_month_rounded,
+                                    value: _duration,
+                                    iconColor: colorScheme.primary,
                                   ),
                                 ],
                               ),
-                              child: const Icon(Symbols.add_rounded, size: 24, color: Color(0xFFF87171)),
                             ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 32),
-
-                      // Duration & Frequency
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                const Text(
-                                  'Duration',
-                                  style: TextStyle(
-                                    color: Color(0xFF9CA3AF),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
+                            const SizedBox(width: 24),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    'Frequency',
+                                    style: theme.textTheme.labelLarge?.copyWith(
+                                      color: colorScheme.onSurface.withValues(alpha: 0.5),
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 12),
-                                _ParamRow(
-                                  icon: Symbols.calendar_month_rounded,
-                                  value: _duration,
-                                  iconColor: const Color(0xFF60A5FA),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 24),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                const Text(
-                                  'Frequency',
-                                  style: TextStyle(
-                                    color: Color(0xFF9CA3AF),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
+                                  const SizedBox(height: 12),
+                                  _ParamRow(
+                                    icon: Symbols.schedule_rounded,
+                                    value: _frequency,
+                                    iconColor: colorScheme.tertiary,
                                   ),
-                                ),
-                                const SizedBox(height: 12),
-                                _ParamRow(
-                                  icon: Symbols.schedule_rounded,
-                                  value: _frequency,
-                                  iconColor: const Color(0xFFFB923C),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 120), // Spacing for bottom button
-                    ],
+                          ],
+                        ),
+                        const SizedBox(height: 120), // Spacing for bottom button
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
-              // Bottom Button
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                child: Container(
-                  width: double.infinity,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: <Color>[Color(0xFF5EEAD4), Color(0xFF2DD4BF)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: const Color(0xFF2DD4BF).withValues(alpha: 0.3),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
+                // Bottom Button
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                  child: Container(
+                    width: double.infinity,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: <Color>[
+                          colorScheme.primary,
+                          colorScheme.secondary,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                    ],
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: _save,
                       borderRadius: BorderRadius.circular(20),
-                      child: const Center(
-                        child: Text(
-                          'Add Reminder',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                          color: colorScheme.primary.withValues(alpha: 0.3),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: _save,
+                        borderRadius: BorderRadius.circular(20),
+                        child: const Center(
+                          child: Text(
+                            'Add Reminder',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -377,17 +388,22 @@ class _TypeOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 76,
         height: 76,
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF3B82F6) : Colors.white,
+          color: isSelected ? colorScheme.primary : colorScheme.surface.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
           gradient: isSelected
-              ? const LinearGradient(
-                  colors: <Color>[Color(0xFF60A5FA), Color(0xFF2563EB)],
+              ? LinearGradient(
+                  colors: <Color>[
+                    colorScheme.primary,
+                    colorScheme.secondary,
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 )
@@ -395,7 +411,7 @@ class _TypeOption extends StatelessWidget {
           boxShadow: isSelected
               ? <BoxShadow>[
                   BoxShadow(
-                    color: const Color(0xFF2563EB).withValues(alpha: 0.3),
+                    color: colorScheme.primary.withValues(alpha: 0.3),
                     blurRadius: 15,
                     offset: const Offset(0, 6),
                   ),
@@ -407,6 +423,11 @@ class _TypeOption extends StatelessWidget {
                     offset: const Offset(0, 4),
                   ),
                 ],
+          border: isSelected
+              ? null
+              : Border.all(
+                  color: colorScheme.outline.withValues(alpha: 0.1),
+                ),
         ),
         child: Center(
           child: Padding(
@@ -430,17 +451,26 @@ class _ScheduleChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final bool isDinner = label.contains('Dinner');
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: isDinner ? const Color(0xFFFFF7ED) : const Color(0xFFECFDF5),
+        color: isDinner
+            ? colorScheme.errorContainer.withValues(alpha: 0.2)
+            : colorScheme.tertiaryContainer.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isDinner
+              ? colorScheme.error.withValues(alpha: 0.1)
+              : colorScheme.tertiary.withValues(alpha: 0.1),
+        ),
       ),
       child: Text(
         label,
         style: TextStyle(
-          color: isDinner ? const Color(0xFFEA580C) : const Color(0xFF059669),
+          color: isDinner ? colorScheme.onErrorContainer : colorScheme.onTertiaryContainer,
           fontWeight: FontWeight.w600,
           fontSize: 14,
         ),
@@ -461,6 +491,8 @@ class _ParamRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       children: <Widget>[
         Row(
@@ -476,16 +508,19 @@ class _ParamRow extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF374151),
+                color: colorScheme.onSurface,
               ),
             ),
           ],
         ),
         const SizedBox(height: 8),
-        const Divider(height: 1, color: Color(0xFFF3F4F6)),
+        Divider(
+          height: 1,
+          color: colorScheme.outline.withValues(alpha: 0.1),
+        ),
       ],
     );
   }
