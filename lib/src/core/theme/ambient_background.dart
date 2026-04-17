@@ -21,10 +21,10 @@ class _AmbientBackgroundState extends State<AmbientBackground>
   @override
   void initState() {
     super.initState();
-    // Ultra-slow 12.5s loop for immersive atmospheric motion
+    // Extremely slow 25s loop for absolute ambient tranquility
     _lickController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 12500),
+      duration: const Duration(milliseconds: 25000),
     )..repeat(reverse: true);
 
     // High-speed jitter for fire flicker
@@ -83,14 +83,14 @@ class _AmbientBackgroundState extends State<AmbientBackground>
           // 3. Extreme Glassmorphism: Gaussian Hyper-Blur
           Positioned.fill(
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 200.0, sigmaY: 200.0),
+              filter: ImageFilter.blur(sigmaX: 300.0, sigmaY: 300.0),
               child: const SizedBox.shrink(),
             ),
           ),
 
           // 4. Midnight Veil: 80% Black Overlay
           Positioned.fill(
-            child: Container(color: Colors.black.withValues(alpha: 0.2)),
+            child: Container(color: Colors.black.withValues(alpha: 0.6)),
           ),
 
           // 5. Content Slot
@@ -146,7 +146,8 @@ class _MidnightInfernoPainter extends CustomPainter {
       final double bottomY = size.height;
 
       // Tongue dimensions - varied for organic distribution
-      final double width = (size.width * 0.3) * (0.8 + 0.4 * random.nextDouble());
+      final double width =
+          (size.width * 0.3) * (0.8 + 0.4 * random.nextDouble());
       final double height = (size.height * 0.55) * individualScale;
 
       path.moveTo(xPos - (width / 2), bottomY);
