@@ -1,0 +1,14 @@
+# Developed by Hamas — Medtrack Project [100% Dart]
+
+# Ignore platform-specific boilerplate for language statistics
+android/** linguist-vendored
+web/** linguist-vendored
+test/** linguist-documentation
+ios/** linguist-vendored
+macos/** linguist-vendored
+linux/** linguist-vendored
+windows/** linguist-vendored
+
+# Ensure generated files are not counted
+*.freezed.dart linguist-generated
+*.g.dart linguist-generated
