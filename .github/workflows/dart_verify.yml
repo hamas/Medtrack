@@ -23,17 +23,20 @@ jobs:
       - name: Generate Dummy Firebase Options
         run: |
           mkdir -p lib
-          echo "import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;" > lib/firebase_options.dart
-          echo "class DefaultFirebaseOptions {" >> lib/firebase_options.dart
-          echo "  static FirebaseOptions get currentPlatform {" >> lib/firebase_options.dart
-          echo "    return const FirebaseOptions(" >> lib/firebase_options.dart
-          echo "      apiKey: 'dummy'," >> lib/firebase_options.dart
-          echo "      appId: 'dummy'," >> lib/firebase_options.dart
-          echo "      messagingSenderId: 'dummy'," >> lib/firebase_options.dart
-          echo "      projectId: 'dummy'," >> lib/firebase_options.dart
-          echo "    );" >> lib/firebase_options.dart
-          echo "  }" >> lib/firebase_options.dart
-          echo "}" >> lib/firebase_options.dart
+          cat <<EOF > lib/firebase_options.dart
+          import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
+          class DefaultFirebaseOptions {
+            static FirebaseOptions get currentPlatform {
+              return const FirebaseOptions(
+                apiKey: 'dummy',
+                appId: 'dummy',
+                messagingSenderId: 'dummy',
+                projectId: 'dummy',
+              );
+            }
+          }
+          EOF
+          dart format lib/firebase_options.dart
       
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed .
