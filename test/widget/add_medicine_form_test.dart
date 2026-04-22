@@ -12,8 +12,8 @@ void main() {
         const ProviderScope(child: MaterialApp(home: AddMedicineScreen())),
       );
 
-      expect(find.text('New Medication'), findsOneWidget);
-      expect(find.text('Basic Details'), findsOneWidget);
+      expect(find.text('New Reminder'), findsOneWidget);
+      expect(find.text('Medicine Name'), findsOneWidget);
     });
   });
 }
