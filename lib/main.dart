@@ -88,6 +88,25 @@ final GoRouter _router = GoRouter(
                       secondaryAnimation: secondaryAnimation,
                     ),
                   ),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'notifications',
+                      pageBuilder: (BuildContext context, GoRouterState state) =>
+                          CustomTransitionPage<void>(
+                        key: state.pageKey,
+                        child: const NotificationsScreen(),
+                        transitionsBuilder: (BuildContext context,
+                                Animation<double> animation,
+                                Animation<double> secondaryAnimation,
+                                Widget child) =>
+                            AppMotion.pageFadeTransitionBuilder(
+                          child: child,
+                          animation: animation,
+                          secondaryAnimation: secondaryAnimation,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -110,6 +129,25 @@ final GoRouter _router = GoRouter(
                       secondaryAnimation: secondaryAnimation,
                     ),
                   ),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'add',
+                      pageBuilder: (BuildContext context, GoRouterState state) =>
+                          CustomTransitionPage<void>(
+                        key: state.pageKey,
+                        child: const AddMedicineScreen(),
+                        transitionsBuilder: (BuildContext context,
+                                Animation<double> animation,
+                                Animation<double> secondaryAnimation,
+                                Widget child) =>
+                            AppMotion.pageFadeTransitionBuilder(
+                          child: child,
+                          animation: animation,
+                          secondaryAnimation: secondaryAnimation,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -157,29 +195,7 @@ final GoRouter _router = GoRouter(
                 ),
               ],
             ),
-            // Branch 4: Notifications
-            StatefulShellBranch(
-              routes: <RouteBase>[
-                GoRoute(
-                  path: '/notifications',
-                  pageBuilder: (BuildContext context, GoRouterState state) =>
-                      CustomTransitionPage<void>(
-                    key: state.pageKey,
-                    child: const NotificationsScreen(),
-                    transitionsBuilder: (BuildContext context,
-                            Animation<double> animation,
-                            Animation<double> secondaryAnimation,
-                            Widget child) =>
-                        AppMotion.pageFadeTransitionBuilder(
-                      child: child,
-                      animation: animation,
-                      secondaryAnimation: secondaryAnimation,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            // Branch 5: Menu
+            // Branch 4: Menu & Its Sub-pages
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
@@ -198,79 +214,13 @@ final GoRouter _router = GoRouter(
                       secondaryAnimation: secondaryAnimation,
                     ),
                   ),
-                ),
-              ],
-            ),
-            // Branch 6: Achievements
-            StatefulShellBranch(
-              routes: <RouteBase>[
-                GoRoute(
-                  path: '/achievements',
-                  pageBuilder: (BuildContext context, GoRouterState state) =>
-                      CustomTransitionPage<void>(
-                    key: state.pageKey,
-                    child: const AchievementsScreen(),
-                    transitionsBuilder: (BuildContext context,
-                            Animation<double> animation,
-                            Animation<double> secondaryAnimation,
-                            Widget child) =>
-                        AppMotion.pageFadeTransitionBuilder(
-                      child: child,
-                      animation: animation,
-                      secondaryAnimation: secondaryAnimation,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            // Branch 7: Security
-            StatefulShellBranch(
-              routes: <RouteBase>[
-                GoRoute(
-                  path: '/security',
-                  pageBuilder: (BuildContext context, GoRouterState state) =>
-                      CustomTransitionPage<void>(
-                    key: state.pageKey,
-                    child: const SecurityScreen(),
-                    transitionsBuilder: (BuildContext context,
-                            Animation<double> animation,
-                            Animation<double> secondaryAnimation,
-                            Widget child) =>
-                        AppMotion.pageFadeTransitionBuilder(
-                      child: child,
-                      animation: animation,
-                      secondaryAnimation: secondaryAnimation,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            // Branch 8: Policies
-            StatefulShellBranch(
-              routes: <RouteBase>[
-                GoRoute(
-                  path: '/policies',
-                  pageBuilder: (BuildContext context, GoRouterState state) =>
-                      CustomTransitionPage<void>(
-                    key: state.pageKey,
-                    child: const PoliciesScreen(),
-                    transitionsBuilder: (BuildContext context,
-                            Animation<double> animation,
-                            Animation<double> secondaryAnimation,
-                            Widget child) =>
-                        AppMotion.pageFadeTransitionBuilder(
-                      child: child,
-                      animation: animation,
-                      secondaryAnimation: secondaryAnimation,
-                    ),
-                  ),
                   routes: <RouteBase>[
                     GoRoute(
-                      path: 'readme',
+                      path: 'achievements',
                       pageBuilder: (BuildContext context, GoRouterState state) =>
                           CustomTransitionPage<void>(
                         key: state.pageKey,
-                        child: const ReadmeScreen(),
+                        child: const AchievementsScreen(),
                         transitionsBuilder: (BuildContext context,
                                 Animation<double> animation,
                                 Animation<double> secondaryAnimation,
@@ -283,11 +233,11 @@ final GoRouter _router = GoRouter(
                       ),
                     ),
                     GoRoute(
-                      path: 'privacy',
+                      path: 'security',
                       pageBuilder: (BuildContext context, GoRouterState state) =>
                           CustomTransitionPage<void>(
                         key: state.pageKey,
-                        child: const PrivacyPolicyScreen(),
+                        child: const SecurityScreen(),
                         transitionsBuilder: (BuildContext context,
                                 Animation<double> animation,
                                 Animation<double> secondaryAnimation,
@@ -299,29 +249,60 @@ final GoRouter _router = GoRouter(
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ],
-            ),
-            // Branch 9: Add Medicine
-            StatefulShellBranch(
-              routes: <RouteBase>[
-                GoRoute(
-                  path: '/medicines-add',
-                  pageBuilder: (BuildContext context, GoRouterState state) =>
-                      CustomTransitionPage<void>(
-                    key: state.pageKey,
-                    child: const AddMedicineScreen(),
-                    transitionsBuilder: (BuildContext context,
-                            Animation<double> animation,
-                            Animation<double> secondaryAnimation,
-                            Widget child) =>
-                        AppMotion.pageFadeTransitionBuilder(
-                      child: child,
-                      animation: animation,
-                      secondaryAnimation: secondaryAnimation,
+                    GoRoute(
+                      path: 'policies',
+                      pageBuilder: (BuildContext context, GoRouterState state) =>
+                          CustomTransitionPage<void>(
+                        key: state.pageKey,
+                        child: const PoliciesScreen(),
+                        transitionsBuilder: (BuildContext context,
+                                Animation<double> animation,
+                                Animation<double> secondaryAnimation,
+                                Widget child) =>
+                            AppMotion.pageFadeTransitionBuilder(
+                          child: child,
+                          animation: animation,
+                          secondaryAnimation: secondaryAnimation,
+                        ),
+                      ),
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: 'readme',
+                          pageBuilder: (BuildContext context, GoRouterState state) =>
+                              CustomTransitionPage<void>(
+                            key: state.pageKey,
+                            child: const ReadmeScreen(),
+                            transitionsBuilder: (BuildContext context,
+                                    Animation<double> animation,
+                                    Animation<double> secondaryAnimation,
+                                    Widget child) =>
+                                AppMotion.pageFadeTransitionBuilder(
+                              child: child,
+                              animation: animation,
+                              secondaryAnimation: secondaryAnimation,
+                            ),
+                          ),
+                        ),
+                        GoRoute(
+                          path: 'privacy',
+                          pageBuilder: (BuildContext context, GoRouterState state) =>
+                              CustomTransitionPage<void>(
+                            key: state.pageKey,
+                            child: const PrivacyPolicyScreen(),
+                            transitionsBuilder: (BuildContext context,
+                                    Animation<double> animation,
+                                    Animation<double> secondaryAnimation,
+                                    Widget child) =>
+                                AppMotion.pageFadeTransitionBuilder(
+                              child: child,
+                              animation: animation,
+                              secondaryAnimation: secondaryAnimation,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),

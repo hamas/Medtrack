@@ -91,21 +91,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       canPop: currentIndex == 0 && !context.canPop(),
       onPopInvokedWithResult: (bool didPop, Object? result) {
         if (didPop) return;
-
-        // 1. If we can pop internally (stack navigation), do that first
-        if (context.canPop()) {
-          context.pop();
-          return;
-        }
-
-        // 2. If we are on a secondary root tab (Medicines, Calendar, Profile), land on Homepage
-        if (widget.navigationShell.currentIndex != 0) {
-          widget.navigationShell.goBranch(0);
-          return;
-        }
-
-        // 3. Otherwise, if we are on Homepage, allow app closure (default behavior if we can't do anything else)
-        // Note: System will close app if we don't handle it here and canPop is false.
+        _handleBack();
       },
       child: Stack(
         children: <Widget>[
@@ -149,12 +135,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 child: showBackButton
                     ? _buildCircularIconButton(
                         icon: Symbols.arrow_back_rounded,
-                        onPressed: () => context.pop(),
+                        onPressed: _handleBack,
                         hasBackground: true,
                       )
                     : _buildCircularIconButton(
                         icon: Symbols.menu_rounded,
-                        onPressed: () => widget.navigationShell.goBranch(5), // Menu Branch
+                        onPressed: () => widget.navigationShell.goBranch(4), // Menu Branch is now index 4
                         hasBackground: true,
                       ),
               ),
@@ -162,7 +148,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 if (showSettingsGear)
                   _buildCircularIconButton(
                     icon: Symbols.settings_rounded,
-                    onPressed: () => widget.navigationShell.goBranch(7), // Security Branch
+                    onPressed: () => context.push('/menu/security'), // Security is now a sub-route
                     hasBackground: true,
                   )
                 else if (showBellIcon)
@@ -173,7 +159,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                       width: 18,
                       height: 18,
                     ),
-                    onPressed: () => widget.navigationShell.goBranch(4), // Notifications Branch
+                    onPressed: () => context.push('/notifications'), // Notifications is now a sub-route
                     hasBackground: false, // No background for bell
                   ),
                 const SizedBox(width: 16),
@@ -241,6 +227,15 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       ),
     );
   }
+
+  void _handleBack() {
+    if (context.canPop()) {
+      context.pop();
+    } else if (widget.navigationShell.currentIndex != 0) {
+      widget.navigationShell.goBranch(0);
+    }
+  }
+
 
   Widget _buildCircularIconButton({
     IconData? icon,
