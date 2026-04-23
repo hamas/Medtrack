@@ -9,7 +9,7 @@ class SettingsState extends _$SettingsState {
   Future<Map<String, dynamic>> build() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return <String, dynamic>{
-      'biometric_enabled': prefs.getBool('biometric_enabled') ?? true,
+      'biometric_enabled': prefs.getBool('biometric_enabled') ?? false,
       'notifications_enabled': prefs.getBool('notifications_enabled') ?? true,
       'tips_enabled': prefs.getBool('tips_enabled') ?? true,
       'reminders_enabled': prefs.getBool('reminders_enabled') ?? true,

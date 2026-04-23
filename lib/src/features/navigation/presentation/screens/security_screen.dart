@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:local_auth/local_auth.dart';
 import '../providers/settings_provider.dart';
 
 class SecurityScreen extends ConsumerWidget {
@@ -20,7 +21,7 @@ class SecurityScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             _buildToggle(
                 'Biometric Lock',
-                'Require fingerprint to open',
+                'Require fingerprint or PIN to open',
                 Symbols.fingerprint_rounded,
                 Colors.greenAccent,
                 settings['biometric_enabled'] as bool? ?? false,
@@ -156,8 +157,25 @@ class SecurityScreen extends ConsumerWidget {
     );
   }
 
-  void _update(WidgetRef ref, String key, dynamic value) {
-    ref.read(settingsStateProvider.notifier).updateSetting(key, value);
+  Future<void> _update(WidgetRef ref, String key, dynamic value) async {
+    if (key == 'biometric_enabled' && value == true) {
+      final LocalAuthentication auth = LocalAuthentication();
+      try {
+        final bool canCheck = await auth.canCheckBiometrics || await auth.isDeviceSupported();
+        if (canCheck) {
+          final bool didAuth = await auth.authenticate(
+            localizedReason: 'Please authenticate to enable biometric lock',
+            biometricOnly: false,
+            persistAcrossBackgrounding: true,
+          );
+          if (!didAuth) return;
+        }
+      } catch (e) {
+        debugPrint('Auth verification failed: $e');
+        return;
+      }
+    }
+    await ref.read(settingsStateProvider.notifier).updateSetting(key, value);
   }
 }
 

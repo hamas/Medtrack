@@ -32,7 +32,7 @@ class _BiometricGateState extends ConsumerState<BiometricGate>
     final Map<String, dynamic> settings = await ref.read(
       settingsStateProvider.future,
     );
-    if (!((settings['biometric_enabled'] as bool?) ?? true)) {
+    if (!((settings['biometric_enabled'] as bool?) ?? false)) {
       setState(() => _isAuthenticated = true);
       return;
     }
@@ -76,7 +76,8 @@ class _BiometricGateState extends ConsumerState<BiometricGate>
       // local_auth v3 API: flat named parameters, no AuthenticationOptions wrapper.
       final bool didAuthenticate = await _auth.authenticate(
         localizedReason: 'Please authenticate to access your medical data.',
-        biometricOnly: true,
+        biometricOnly: false,
+        persistAcrossBackgrounding: true,
       );
 
       setState(() {
