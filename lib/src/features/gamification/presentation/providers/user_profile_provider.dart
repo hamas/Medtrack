@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../authentication/presentation/providers/auth_provider.dart';
 import '../../data/repositories/user_profile_repository_impl.dart';
@@ -16,12 +17,24 @@ UserProfileRepository userProfileRepo(Ref ref) {
 class UserProfileState extends _$UserProfileState {
   @override
   Stream<UserProfile> build() {
-    final String? userId = ref.watch(currentUidProvider);
-    if (userId == null) {
-      // Return a dummy stream or handle unauthenticated state
-      return const Stream<UserProfile>.empty();
-    }
-    return ref.watch(userProfileRepoProvider).streamUserProfile(userId);
+    final AsyncValue<User?> authState = ref.watch(authStateProvider);
+
+    return authState.when(
+      data: (User? user) {
+        if (user == null) {
+          return Stream<UserProfile>.value(
+            const UserProfile(uid: 'guest', name: 'Guest User'),
+          );
+        }
+        return ref.watch(userProfileRepoProvider).streamUserProfile(user.uid);
+      },
+      loading: () => Stream<UserProfile>.value(
+        const UserProfile(uid: 'loading', name: 'Loading...'),
+      ),
+      error: (Object e, StackTrace? s) => Stream<UserProfile>.value(
+        const UserProfile(uid: 'error', name: 'Error'),
+      ),
+    );
   }
 
   Future<void> updateStreak(int newStreak) async {

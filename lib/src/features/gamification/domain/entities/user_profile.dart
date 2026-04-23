@@ -21,6 +21,10 @@ abstract class UserProfile with _$UserProfile {
     double? weight,
     double? height,
     String? email,
+    String? gender,
+    String? emergencyContact,
+    @Default(<String>[]) List<String> medicalConditions,
+    @Default(<String>[]) List<String> allergies,
   }) = _UserProfile;
 
   factory UserProfile.fromJson(Map<String, dynamic> json) =>

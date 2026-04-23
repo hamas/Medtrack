@@ -12,24 +12,20 @@ part of 'user_profile_provider.dart';
 @ProviderFor(userProfileRepo)
 final userProfileRepoProvider = UserProfileRepoProvider._();
 
-final class UserProfileRepoProvider
-    extends
-        $FunctionalProvider<
-          UserProfileRepository,
-          UserProfileRepository,
-          UserProfileRepository
-        >
-    with $Provider<UserProfileRepository> {
+final class UserProfileRepoProvider extends $FunctionalProvider<
+    UserProfileRepository,
+    UserProfileRepository,
+    UserProfileRepository> with $Provider<UserProfileRepository> {
   UserProfileRepoProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'userProfileRepoProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'userProfileRepoProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
 
   @override
   String debugGetCreateSourceHash() => _$userProfileRepoHash();
@@ -37,8 +33,8 @@ final class UserProfileRepoProvider
   @$internal
   @override
   $ProviderElement<UserProfileRepository> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+          $ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
   UserProfileRepository create(Ref ref) {
@@ -62,15 +58,15 @@ final userProfileStateProvider = UserProfileStateProvider._();
 final class UserProfileStateProvider
     extends $StreamNotifierProvider<UserProfileState, UserProfile> {
   UserProfileStateProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'userProfileStateProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'userProfileStateProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
 
   @override
   String debugGetCreateSourceHash() => _$userProfileStateHash();
@@ -88,14 +84,11 @@ abstract class _$UserProfileState extends $StreamNotifier<UserProfile> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<AsyncValue<UserProfile>, UserProfile>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<AsyncValue<UserProfile>, UserProfile>,
-              AsyncValue<UserProfile>,
-              Object?,
-              Object?
-            >;
+    final element = ref.element as $ClassProviderElement<
+        AnyNotifier<AsyncValue<UserProfile>, UserProfile>,
+        AsyncValue<UserProfile>,
+        Object?,
+        Object?>;
     element.handleCreate(ref, build);
   }
 }

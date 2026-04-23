@@ -14,16 +14,16 @@ final checkoffProvider = CheckoffNotifierFamily._();
 
 final class CheckoffNotifierProvider
     extends $AsyncNotifierProvider<CheckoffNotifier, List<AdherenceLog>> {
-  CheckoffNotifierProvider._({
-    required CheckoffNotifierFamily super.from,
-    required String super.argument,
-  }) : super(
-         retry: null,
-         name: r'checkoffProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
+  CheckoffNotifierProvider._(
+      {required CheckoffNotifierFamily super.from,
+      required String super.argument})
+      : super(
+          retry: null,
+          name: r'checkoffProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
 
   @override
   String debugGetCreateSourceHash() => _$checkoffNotifierHash();
@@ -54,23 +54,20 @@ String _$checkoffNotifierHash() => r'715e821b15cc86e185057c3690f5e00472acacf0';
 
 final class CheckoffNotifierFamily extends $Family
     with
-        $ClassFamilyOverride<
-          CheckoffNotifier,
-          AsyncValue<List<AdherenceLog>>,
-          List<AdherenceLog>,
-          FutureOr<List<AdherenceLog>>,
-          String
-        > {
+        $ClassFamilyOverride<CheckoffNotifier, AsyncValue<List<AdherenceLog>>,
+            List<AdherenceLog>, FutureOr<List<AdherenceLog>>, String> {
   CheckoffNotifierFamily._()
-    : super(
-        retry: null,
-        name: r'checkoffProvider',
-        dependencies: null,
-        $allTransitiveDependencies: null,
-        isAutoDispose: true,
-      );
+      : super(
+          retry: null,
+          name: r'checkoffProvider',
+          dependencies: null,
+          $allTransitiveDependencies: null,
+          isAutoDispose: true,
+        );
 
-  CheckoffNotifierProvider call(String medicineId) =>
+  CheckoffNotifierProvider call(
+    String medicineId,
+  ) =>
       CheckoffNotifierProvider._(argument: medicineId, from: this);
 
   @override
@@ -81,20 +78,23 @@ abstract class _$CheckoffNotifier extends $AsyncNotifier<List<AdherenceLog>> {
   late final _$args = ref.$arg as String;
   String get medicineId => _$args;
 
-  FutureOr<List<AdherenceLog>> build(String medicineId);
+  FutureOr<List<AdherenceLog>> build(
+    String medicineId,
+  );
   @$mustCallSuper
   @override
   void runBuild() {
     final ref =
         this.ref as $Ref<AsyncValue<List<AdherenceLog>>, List<AdherenceLog>>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<AsyncValue<List<AdherenceLog>>, List<AdherenceLog>>,
-              AsyncValue<List<AdherenceLog>>,
-              Object?,
-              Object?
-            >;
-    element.handleCreate(ref, () => build(_$args));
+    final element = ref.element as $ClassProviderElement<
+        AnyNotifier<AsyncValue<List<AdherenceLog>>, List<AdherenceLog>>,
+        AsyncValue<List<AdherenceLog>>,
+        Object?,
+        Object?>;
+    element.handleCreate(
+        ref,
+        () => build(
+              _$args,
+            ));
   }
 }

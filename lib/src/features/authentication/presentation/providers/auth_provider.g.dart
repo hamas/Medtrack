@@ -16,15 +16,15 @@ final class AuthStateProvider
     extends $FunctionalProvider<AsyncValue<User?>, User?, Stream<User?>>
     with $FutureModifier<User?>, $StreamProvider<User?> {
   AuthStateProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'authStateProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'authStateProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
 
   @override
   String debugGetCreateSourceHash() => _$authStateHash();
@@ -49,15 +49,15 @@ final class CurrentUidProvider
     extends $FunctionalProvider<String?, String?, String?>
     with $Provider<String?> {
   CurrentUidProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'currentUidProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'currentUidProvider',
+          isAutoDispose: true,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
 
   @override
   String debugGetCreateSourceHash() => _$currentUidHash();

@@ -8,6 +8,7 @@ import 'src/core/theme/app_theme.dart';
 import 'src/features/authentication/presentation/widgets/biometric_gate.dart';
 import 'src/core/services/health_tips_service.dart';
 import 'src/features/gamification/presentation/screens/achievements_screen.dart';
+import 'src/features/navigation/presentation/screens/profile_screen.dart';
 import 'src/features/navigation/presentation/screens/profile_settings_screen.dart';
 import 'src/features/navigation/presentation/screens/notifications_screen.dart';
 import 'src/features/navigation/presentation/screens/security_screen.dart';
@@ -173,7 +174,7 @@ final GoRouter _router = GoRouter(
                 ),
               ],
             ),
-            // Branch 3: Profile Settings
+            // Branch 3: Profile Dashboard
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
@@ -181,7 +182,7 @@ final GoRouter _router = GoRouter(
                   pageBuilder: (BuildContext context, GoRouterState state) =>
                       CustomTransitionPage<void>(
                     key: state.pageKey,
-                    child: const ProfileSettingsScreen(),
+                    child: const ProfileScreen(),
                     transitionsBuilder: (BuildContext context,
                             Animation<double> animation,
                             Animation<double> secondaryAnimation,
@@ -192,6 +193,25 @@ final GoRouter _router = GoRouter(
                       secondaryAnimation: secondaryAnimation,
                     ),
                   ),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'edit',
+                      pageBuilder: (BuildContext context, GoRouterState state) =>
+                          CustomTransitionPage<void>(
+                        key: state.pageKey,
+                        child: const ProfileSettingsScreen(),
+                        transitionsBuilder: (BuildContext context,
+                                Animation<double> animation,
+                                Animation<double> secondaryAnimation,
+                                Widget child) =>
+                            AppMotion.pageFadeTransitionBuilder(
+                          child: child,
+                          animation: animation,
+                          secondaryAnimation: secondaryAnimation,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

@@ -17,9 +17,13 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emergencyContactController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _conditionsController = TextEditingController();
+  final TextEditingController _allergiesController = TextEditingController();
   String? _selectedBloodType;
   bool _initialized = false;
 
@@ -28,9 +32,13 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     _nameController.text = profile.name;
     _emailController.text = profile.email ?? '';
     _phoneController.text = profile.phone ?? '';
+    _emergencyContactController.text = profile.emergencyContact ?? '';
     _weightController.text = profile.weight?.toString() ?? '';
     _heightController.text = profile.height?.toString() ?? '';
     _ageController.text = profile.age?.toString() ?? '';
+    _genderController.text = profile.gender ?? '';
+    _conditionsController.text = profile.medicalConditions.join(', ');
+    _allergiesController.text = profile.allergies.join(', ');
     _selectedBloodType = profile.bloodType;
     _initialized = true;
   }
@@ -40,9 +48,13 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _emergencyContactController.dispose();
     _weightController.dispose();
     _heightController.dispose();
     _ageController.dispose();
+    _genderController.dispose();
+    _conditionsController.dispose();
+    _allergiesController.dispose();
     super.dispose();
   }
 
@@ -79,6 +91,12 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                 'Phone Number',
                 _phoneController,
                 Symbols.call_rounded,
+                keyboardType: TextInputType.phone,
+              ),
+              _buildField(
+                'Emergency Contact',
+                _emergencyContactController,
+                Symbols.e911_emergency_rounded,
                 keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: 32),
@@ -119,6 +137,26 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   ),
                 ],
               ),
+              _buildField(
+                'Gender',
+                _genderController,
+                Symbols.wc_rounded,
+              ),
+              const SizedBox(height: 32),
+              const _SectionTitle(title: 'MEDICAL HISTORY'),
+              const SizedBox(height: 16),
+              _buildField(
+                'Conditions (comma separated)',
+                _conditionsController,
+                Symbols.medical_services_rounded,
+                hint: 'e.g. Hypertension, Diabetes',
+              ),
+              _buildField(
+                'Allergies (comma separated)',
+                _allergiesController,
+                Symbols.warning_rounded,
+                hint: 'e.g. Peanuts, Penicillin',
+              ),
               const SizedBox(height: 32),
               const _SectionTitle(title: 'PRIVACY & DOCUMENTATION'),
               const SizedBox(height: 16),
@@ -151,6 +189,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     TextEditingController controller,
     IconData icon, {
     TextInputType keyboardType = TextInputType.text,
+    String? hint,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
@@ -175,6 +214,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             ),
             decoration: InputDecoration(
               prefixIcon: Icon(icon, color: Colors.white24, size: 20),
+              hintText: hint,
+              hintStyle: const TextStyle(color: Colors.white10, fontSize: 13),
               filled: true,
               fillColor: Colors.white.withValues(alpha: 0.05),
               border: OutlineInputBorder(
@@ -254,10 +295,22 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       name: _nameController.text,
       email: _emailController.text,
       phone: _phoneController.text,
+      emergencyContact: _emergencyContactController.text,
       age: int.tryParse(_ageController.text),
       weight: double.tryParse(_weightController.text),
       height: double.tryParse(_heightController.text),
+      gender: _genderController.text,
       bloodType: _selectedBloodType,
+      medicalConditions: _conditionsController.text
+          .split(',')
+          .map((String e) => e.trim())
+          .where((String e) => e.isNotEmpty)
+          .toList(),
+      allergies: _allergiesController.text
+          .split(',')
+          .map((String e) => e.trim())
+          .where((String e) => e.isNotEmpty)
+          .toList(),
     );
 
     await ref.read(userProfileStateProvider.notifier).updateProfile(updated);
