@@ -61,6 +61,13 @@ class MedTrackTheme {
         ),
       ),
       iconTheme: const IconThemeData(weight: 600, color: Color(0xFFF8FAFC)),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: const Color(0xFF1E293B), // Slate 800
+        contentTextStyle: GoogleFonts.googleSans(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 10,
+      ),
     );
   }
 
@@ -121,6 +128,13 @@ class MedTrackTheme {
         ),
       ),
       iconTheme: const IconThemeData(weight: 600, color: Color(0xFFF8FAFC)),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: const Color(0xFF1E293B), // Slate 800
+        contentTextStyle: GoogleFonts.googleSans(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 10,
+      ),
     );
   }
 }

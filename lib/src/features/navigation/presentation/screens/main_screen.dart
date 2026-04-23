@@ -3,11 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:medtrack/src/core/widgets/ambient_background.dart';
 import 'package:medtrack/src/core/utils/motion_utils.dart';
+import 'package:medtrack/src/features/history_tracking/presentation/providers/calendar_month_provider.dart';
 import '../../../gamification/domain/entities/user_profile.dart';
 import '../../../gamification/presentation/providers/user_profile_provider.dart';
+import '../providers/settings_provider.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key, required this.navigationShell});
@@ -29,61 +32,51 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     final int currentIndex = widget.navigationShell.currentIndex;
     final String currentPath = GoRouterState.of(context).uri.path;
 
-    final List<String> mainRootPaths = <String>['/', '/medicines', '/calendar', '/profile-settings'];
+    final List<String> mainRootPaths = <String>['/', '/medicines', '/calendar', '/profile'];
     final bool isMainRoot = mainRootPaths.contains(currentPath);
 
     // Dynamic Title & Actions mapping
-    final String title;
+    String title;
     final bool showBackButton = !isMainRoot;
-    final bool showSettingsGear;
-    final bool showBellIcon;
+    bool showSettingsGear = false;
+    bool showBellIcon = false;
+    bool showEditPen = false;
 
     if (currentPath == '/medicines-add') {
       title = 'New Reminder';
-      showSettingsGear = false;
-      showBellIcon = false;
     } else if (currentPath == '/notifications') {
       title = 'Notifications';
       showSettingsGear = true;
-      showBellIcon = false;
     } else if (currentPath == '/menu') {
       title = 'Main Menu';
-      showSettingsGear = false;
       showBellIcon = true;
-    } else if (currentPath == '/profile-settings') {
+    } else if (currentPath == '/profile') {
       title = 'Your Profile';
-      showSettingsGear = false;
-      showBellIcon = true;
+      showBellIcon = false; // Moved to Top Bar as Pen icon
+      showEditPen = true;
+    } else if (currentPath == '/profile/edit') {
+      title = 'Edit Profile';
     } else if (currentPath == '/achievements') {
       title = 'Achievements';
-      showSettingsGear = false;
-      showBellIcon = false;
     } else if (currentPath == '/security') {
       title = 'Security';
-      showSettingsGear = false;
-      showBellIcon = false;
     } else if (currentPath.startsWith('/policies')) {
       title = currentPath == '/policies/readme'
           ? 'About Medtrack'
           : (currentPath == '/policies/privacy' ? 'Privacy Policy' : 'Policies & Info');
-      showSettingsGear = false;
-      showBellIcon = false;
     } else if (currentPath == '/medicines') {
       title = 'Medicines';
-      showSettingsGear = false;
       showBellIcon = true;
     } else if (currentPath == '/calendar') {
-      title = 'Calendar';
-      showSettingsGear = false;
-      showBellIcon = true;
+      final DateTime calendarMonth = ref.watch(calendarMonthProvider);
+      title = DateFormat('MMMM yyyy').format(calendarMonth);
+      showBellIcon = false;
     } else {
       title = 'Medtrack';
-      showSettingsGear = false;
       showBellIcon = true;
     }
 
     // Logic for Bottom Nav Highlighting
-    // Only highlight if we are in the primary 4 branches
     final int navBarIndex = currentIndex <= 3 ? currentIndex : 0;
     final bool hideHighlight = currentIndex > 3;
 
@@ -95,14 +88,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       },
       child: Stack(
         children: <Widget>[
-          // Layer 1: Static Animated Background
           const Positioned.fill(
             child: RepaintBoundary(
               child: AmbientBackground(),
             ),
           ),
-
-          // Layer 2: Midnight Veil & Global Blur
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 200, sigmaY: 200),
@@ -111,12 +101,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               ),
             ),
           ),
-
-          // Layer 3: Moving Content Layer
           Scaffold(
             extendBody: true,
             backgroundColor: Colors.transparent,
-            // Persistent Header (AppBar)
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -132,7 +119,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               ),
               leadingWidth: 72,
               leading: Center(
-                child: showBackButton
+                child: (currentPath == '/profile/edit' || showBackButton)
                     ? _buildCircularIconButton(
                         icon: Symbols.arrow_back_rounded,
                         onPressed: _handleBack,
@@ -140,32 +127,58 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                       )
                     : _buildCircularIconButton(
                         icon: Symbols.menu_rounded,
-                        onPressed: () => widget.navigationShell.goBranch(4), // Menu Branch is now index 4
+                        onPressed: () => widget.navigationShell.goBranch(4),
                         hasBackground: true,
                       ),
               ),
               actions: <Widget>[
-                if (showSettingsGear)
+                if (currentPath == '/calendar') ...<Widget>[
+                   _buildCircularIconButton(
+                    icon: Symbols.chevron_left_rounded,
+                    onPressed: () => ref.read(calendarMonthProvider.notifier).previousMonth(),
+                    hasBackground: true,
+                  ),
+                  const SizedBox(width: 8),
+                   _buildCircularIconButton(
+                    icon: Symbols.chevron_right_rounded,
+                    onPressed: () => ref.read(calendarMonthProvider.notifier).nextMonth(),
+                    hasBackground: true,
+                  ),
+                ] else if (showEditPen)
+                  _buildCircularIconButton(
+                    icon: Symbols.edit_rounded,
+                    onPressed: () => context.push('/profile/edit'),
+                    hasBackground: true,
+                  )
+                else if (showSettingsGear)
                   _buildCircularIconButton(
                     icon: Symbols.settings_rounded,
-                    onPressed: () => context.push('/menu/security'), // Security is now a sub-route
+                    onPressed: () => context.push('/menu/security'),
+                    hasBackground: true,
+                  )
+                else if (currentPath == '/profile/edit')
+                  _buildCircularIconButton(
+                    icon: Symbols.check_rounded,
+                    onPressed: () => ref.read(profileSaveTriggerProvider.notifier).trigger(),
                     hasBackground: true,
                   )
                 else if (showBellIcon)
-                  _buildCircularIconButton(
-                    // Bell Icon
-                    customIcon: Image.asset(
-                      'assets/icons/notification_bell.png',
-                      width: 18,
-                      height: 18,
+                  Badge.count(
+                    count: ref.watch(notificationCountProvider),
+                    isLabelVisible: ref.watch(notificationCountProvider) > 0,
+                    child: _buildCircularIconButton(
+                      customIcon: Image.asset(
+                        'assets/icons/notification_bell.png',
+                        width: 18,
+                        height: 18,
+                      ),
+                      onPressed: () => context.push('/notifications'),
+                      hasBackground: false,
                     ),
-                    onPressed: () => context.push('/notifications'), // Notifications is now a sub-route
-                    hasBackground: false, // No background for bell
                   ),
                 const SizedBox(width: 16),
               ],
             ),
-            // Animated Body
             body: AnimatedSwitcher(
               duration: AppMotion.pageTransitionDuration,
               switchInCurve: Curves.easeInOut,
@@ -181,13 +194,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 child: widget.navigationShell,
               ),
             ),
-            // Persistent Footer (Bottom Nav)
             bottomNavigationBar: NavigationBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
               labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
               selectedIndex: navBarIndex,
-              indicatorColor: Colors.transparent, // Always transparent as requested
+              indicatorColor: Colors.transparent,
               onDestinationSelected: (int index) {
                 widget.navigationShell.goBranch(index);
               },
@@ -235,7 +247,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       widget.navigationShell.goBranch(0);
     }
   }
-
 
   Widget _buildCircularIconButton({
     IconData? icon,

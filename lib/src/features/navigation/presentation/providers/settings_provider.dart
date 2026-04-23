@@ -4,6 +4,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'settings_provider.g.dart';
 
 @riverpod
+class NotificationCount extends _$NotificationCount {
+  @override
+  int build() => 3;
+
+  void setCount(int count) => state = count;
+}
+
+@riverpod
+class ProfileSaveTrigger extends _$ProfileSaveTrigger {
+  @override
+  int build() => 0;
+
+  void trigger() => state++;
+}
+
+@riverpod
 class SettingsState extends _$SettingsState {
   @override
   Future<Map<String, dynamic>> build() async {
