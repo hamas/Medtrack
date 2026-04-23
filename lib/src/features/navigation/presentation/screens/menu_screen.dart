@@ -16,98 +16,91 @@ class MenuScreen extends ConsumerWidget {
       userProfileStateProvider,
     );
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Stack(
-        children: <Widget>[
-          ListView(
-            padding: const EdgeInsets.fromLTRB(
-              16,
-              60,
-              16,
-              120,
-            ), // Added bottom padding for branding
-            children: <Widget>[
-              // --- Profile Header ---
-              userProfileAsync.when(
-                data: (UserProfile profile) =>
-                    _ProfileHeader(user: authUser, profile: profile),
-                loading: () => _ProfileHeader(
-                  user: authUser,
-                  profile: UserProfile(
-                    uid: authUser?.uid ?? 'loading',
-                    name: authUser?.displayName ?? 'Hamas',
-                  ),
-                  isLoading: true,
-                ),
-                error: (Object e, StackTrace? _) => const _ProfileHeader(
-                  user: null,
-                  profile: UserProfile(uid: 'error', name: 'Hamas'),
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // --- Navigation Options ---
-              _MenuTile(
-                icon: Symbols.person_rounded,
-                title: 'Profile Settings',
-                subtitle: 'Personal details & Health metrics',
-                color: Colors.blueAccent,
-                onTap: () => context.push('/profile-settings'),
-              ),
-              _MenuTile(
-                icon: Symbols.notifications_active_rounded,
-                title: 'Notifications',
-                subtitle: 'Reminders & Health tips',
-                color: Colors.pinkAccent,
-                onTap: () => context.push('/notifications'),
-              ),
-              _MenuTile(
-                icon: Symbols.emoji_events_rounded,
-                title: 'Achievements',
-                subtitle: 'Heatmap & Earned Badges',
-                color: Colors.amberAccent,
-                onTap: () => context.push('/achievements'),
-              ),
-              _MenuTile(
-                icon: Symbols.security_rounded,
-                title: 'Security',
-                subtitle: 'Biometrics & Cloud Sync',
-                color: Colors.tealAccent,
-                onTap: () => context.push('/security'),
-              ),
-              _MenuTile(
-                icon: Symbols.policy_rounded,
-                title: 'Policies',
-                subtitle: 'Privacy, Terms & Documentation',
-                color: Colors.purpleAccent,
-                onTap: () => context.push('/policies'),
-              ),
-            ],
+    return Stack(
+      children: <Widget>[
+        ListView(
+          padding: const EdgeInsets.fromLTRB(
+            16,
+            20,
+            16,
+            120, // Padding for bottom nav + footer
           ),
-
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom:
-                100, // Raised to 100 to clear the bottom nav bar height due to extendBody: true
-            child: Center(
-              child: Text(
-                'Developed by Hamas ❤️',
-                style: TextStyle(
-                  fontSize: 10, // Reduced by 30% (from 14)
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white.withValues(
-                    alpha: 0.4,
-                  ), // Increased opacity for legibility
-                  letterSpacing: 2.0,
+          children: <Widget>[
+            // --- Profile Header ---
+            userProfileAsync.when(
+              data: (UserProfile profile) =>
+                  _ProfileHeader(user: authUser, profile: profile),
+              loading: () => _ProfileHeader(
+                user: authUser,
+                profile: UserProfile(
+                  uid: authUser?.uid ?? 'loading',
+                  name: authUser?.displayName ?? 'Hamas',
                 ),
+                isLoading: true,
+              ),
+              error: (Object e, StackTrace? _) => const _ProfileHeader(
+                user: null,
+                profile: UserProfile(uid: 'error', name: 'Hamas'),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // --- Navigation Options ---
+            _MenuTile(
+              icon: Symbols.person_rounded,
+              title: 'Profile Settings',
+              subtitle: 'Personal details & Health metrics',
+              color: Colors.blueAccent,
+              onTap: () => context.push('/profile-settings'),
+            ),
+            _MenuTile(
+              icon: Symbols.notifications_active_rounded,
+              title: 'Notifications',
+              subtitle: 'Reminders & Health tips',
+              color: Colors.pinkAccent,
+              onTap: () => context.push('/notifications'),
+            ),
+            _MenuTile(
+              icon: Symbols.emoji_events_rounded,
+              title: 'Achievements',
+              subtitle: 'Heatmap & Earned Badges',
+              color: Colors.amberAccent,
+              onTap: () => context.push('/achievements'),
+            ),
+            _MenuTile(
+              icon: Symbols.security_rounded,
+              title: 'Security',
+              subtitle: 'Biometrics & Cloud Sync',
+              color: Colors.tealAccent,
+              onTap: () => context.push('/security'),
+            ),
+            _MenuTile(
+              icon: Symbols.policy_rounded,
+              title: 'Policies',
+              subtitle: 'Privacy, Terms & Documentation',
+              color: Colors.purpleAccent,
+              onTap: () => context.push('/policies'),
+            ),
+          ],
+        ),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 100, // Above bottom nav
+          child: Center(
+            child: Text(
+              'Developed by Hamas ❤️',
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w400,
+                color: Colors.white.withValues(alpha: 0.4),
+                letterSpacing: 2.0,
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

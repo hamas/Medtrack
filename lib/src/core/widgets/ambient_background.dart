@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class AmbientBackground extends StatefulWidget {
@@ -51,55 +50,40 @@ class _AmbientBackgroundState extends State<AmbientBackground>
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      child: Stack(
-        children: <Widget>[
-          // 1. Foundation: Deepest Navy/Lavender base layer
-          const Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(color: Color(0xFF090A1A)),
-            ),
+    return Stack(
+      children: <Widget>[
+        // 1. Foundation: Deepest Navy/Lavender base layer
+        const Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(color: Color(0xFF090A1A)),
           ),
+        ),
 
-          // 2. The Midnight Inferno: Animated Flames & Sparks
-          AnimatedBuilder(
-            animation: Listenable.merge(<AnimationController>[
-              _lickController,
-              _flickerController,
-            ]),
-            builder: (BuildContext context, Widget? child) {
-              return CustomPaint(
-                painter: _MidnightInfernoPainter(
-                  lickProgress: _lickController.value,
-                  flickerValue: CurvedAnimation(
-                    parent: _flickerController,
-                    curve: Curves.easeInOut,
-                  ).value,
-                  sparks: _sparks,
-                  random: _random,
-                ),
-                size: Size.infinite,
-              );
-            },
-          ),
+        // 2. The Midnight Inferno: Animated Flames & Sparks
+        AnimatedBuilder(
+          animation: Listenable.merge(<AnimationController>[
+            _lickController,
+            _flickerController,
+          ]),
+          builder: (BuildContext context, Widget? child) {
+            return CustomPaint(
+              painter: _MidnightInfernoPainter(
+                lickProgress: _lickController.value,
+                flickerValue: CurvedAnimation(
+                  parent: _flickerController,
+                  curve: Curves.easeInOut,
+                ).value,
+                sparks: _sparks,
+                random: _random,
+              ),
+              size: Size.infinite,
+            );
+          },
+        ),
 
-          // 3. Extreme Glassmorphism: Gaussian Hyper-Blur
-          Positioned.fill(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 300.0, sigmaY: 300.0),
-              child: const SizedBox.shrink(),
-            ),
-          ),
-
-          // 4. Midnight Veil: 80% Black Overlay
-          Positioned.fill(
-            child: Container(color: Colors.black.withValues(alpha: 0.6)),
-          ),
-
-          // 5. Content Slot
-          if (widget.child != null) Positioned.fill(child: widget.child!),
-        ],
-      ),
+        // 3. Content Slot
+        if (widget.child != null) Positioned.fill(child: widget.child!),
+      ],
     );
   }
 }

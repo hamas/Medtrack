@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:medtrack/src/core/widgets/ambient_background.dart';
 import '../providers/settings_provider.dart';
 
 class SecurityScreen extends ConsumerWidget {
@@ -13,84 +12,58 @@ class SecurityScreen extends ConsumerWidget {
       settingsStateProvider,
     );
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        titleSpacing: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Symbols.arrow_back_rounded,
-            size: 22,
-            color: Colors.white70,
+    return settingsAsync.when(
+      data: (Map<String, dynamic> settings) => SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          children: <Widget>[
+            const SizedBox(height: 20),
+            _buildToggle(
+                'Biometric Lock',
+                'Require fingerprint to open',
+                Symbols.fingerprint_rounded,
+                Colors.greenAccent,
+                settings['biometric_enabled'] as bool? ?? false,
+                (bool val) => _update(ref, 'biometric_enabled', val),
+              ),
+              const SizedBox(height: 32),
+              const _SectionTitle(title: 'ACCOUNT SECURITY'),
+              const SizedBox(height: 16),
+              _buildActionButton(
+                'Change Password',
+                'Update your login credentials',
+                Symbols.lock_reset_rounded,
+                Colors.blueAccent,
+                () {
+                  // Change password logic
+                },
+              ),
+              _buildActionButton(
+                'Two-Factor Auth',
+                'Add an extra layer of safety',
+                Symbols.verified_user_rounded,
+                Colors.purpleAccent,
+                () {
+                  // 2FA logic
+                },
+              ),
+              const SizedBox(height: 32),
+              const _SectionTitle(title: 'DANGER ZONE'),
+              const SizedBox(height: 16),
+              _buildActionButton(
+                'Delete Account',
+                'Permanently remove all data',
+                Symbols.delete_forever_rounded,
+                Colors.redAccent,
+                () {
+                  // Delete logic
+                },
+              ),
+            ],
           ),
-          onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'Security',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w800,
-            color: Colors.white,
-            letterSpacing: -0.5,
-          ),
-        ),
-      ),
-      body: AmbientBackground(
-        child: settingsAsync.when(
-          data: (Map<String, dynamic> settings) => SafeArea(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: <Widget>[
-                const SizedBox(height: 20),
-                _buildToggle(
-                  'Biometric Lock',
-                  'Secure app with Fingerprint/FaceID',
-                  Symbols.fingerprint_rounded,
-                  Colors.tealAccent,
-                  settings['biometric_enabled'] as bool? ?? false,
-                  (bool val) => _update(ref, 'biometric_enabled', val),
-                ),
-                _buildToggle(
-                  'Cloud Sync',
-                  'Keep data synced across devices',
-                  Symbols.cloud_sync_rounded,
-                  Colors.blueAccent,
-                  settings['cloud_sync_enabled'] as bool? ?? true,
-                  (bool val) => _update(ref, 'cloud_sync_enabled', val),
-                ),
-                const SizedBox(height: 32),
-                const _SectionTitle(title: 'DATA MANAGEMENT'),
-                const SizedBox(height: 16),
-                _buildActionButton(
-                  'Export Health Data',
-                  'Download your adherence history',
-                  Symbols.export_notes_rounded,
-                  Colors.amberAccent,
-                  () {
-                    // Export logic
-                  },
-                ),
-                _buildActionButton(
-                  'Delete Account',
-                  'Permanently remove all data',
-                  Symbols.delete_forever_rounded,
-                  Colors.redAccent,
-                  () {
-                    // Delete logic
-                  },
-                ),
-              ],
-            ),
-          ),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (Object e, StackTrace? _) => Center(child: Text('Error: $e')),
-        ),
-      ),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (Object e, StackTrace? _) => Center(child: Text('Error: $e')),
     );
   }
 

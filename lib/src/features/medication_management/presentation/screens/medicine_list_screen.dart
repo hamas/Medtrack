@@ -17,52 +17,6 @@ class MedicineListScreen extends ConsumerWidget {
 
     return Column(
       children: <Widget>[
-        // Cinematic Header
-        Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(40),
-              bottomRight: Radius.circular(40),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                const Text(
-                  'Your Medicines',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 24,
-                    color: Colors.white,
-                    letterSpacing: -1.0,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () => context.push('/add-medicine'),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.1),
-                      ),
-                    ),
-                    child: Icon(
-                      Symbols.add_rounded,
-                      color: theme.colorScheme.primary,
-                      size: 24,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
         // List Content
         Expanded(
           child: medicinesAsync.when(
@@ -123,7 +77,7 @@ class MedicineListScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 32),
             FilledButton.icon(
-              onPressed: () => context.push('/add-medicine'),
+              onPressed: () => context.push('/medicines/add'),
               icon: const Icon(Symbols.add_rounded),
               label: const Text('Add First Medicine'),
               style: FilledButton.styleFrom(

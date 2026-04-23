@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
-import 'package:medtrack/src/core/widgets/ambient_background.dart';
+
 import '../../domain/entities/achievement.dart';
 import '../../domain/entities/user_profile.dart';
 import '../providers/user_profile_provider.dart';
@@ -20,40 +20,12 @@ class AchievementsScreen extends ConsumerWidget {
       adherenceHistoryProvider,
     );
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        titleSpacing: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Symbols.arrow_back_rounded,
-            size: 22,
-            color: Colors.white70,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text(
-          'Achievements',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w800,
-            color: Colors.white,
-            letterSpacing: -0.5,
-          ),
-        ),
-      ),
-      body: AmbientBackground(
-        child: profileAsync.when(
+    return profileAsync.when(
           data: (UserProfile profile) => SafeArea(
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: <Widget>[
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 const _SectionTitle(title: 'ADHERENCE MOMENTUM'),
                 const SizedBox(height: 12),
                 adherenceHistoryAsync.when(
@@ -89,9 +61,7 @@ class AchievementsScreen extends ConsumerWidget {
           ),
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (Object e, StackTrace? _) => Center(child: Text('Error: $e')),
-        ),
-      ),
-    );
+        );
   }
 }
 

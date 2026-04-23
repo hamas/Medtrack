@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:medtrack/src/core/widgets/ambient_background.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import '../../../gamification/domain/entities/user_profile.dart';
 import '../../../gamification/presentation/providers/user_profile_provider.dart';
 
@@ -58,123 +57,92 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       (UserProfile profile) => _initializeControllers(profile),
     );
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        titleSpacing: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Symbols.arrow_back_rounded,
-            size: 22,
-            color: Colors.white70,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text(
-          'Profile Settings',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w800,
-            color: Colors.white,
-            letterSpacing: -0.5,
-          ),
-        ),
-      ),
-      body: AmbientBackground(
-        child: profileAsync.when(
-          data: (UserProfile profile) => SafeArea(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-              ), // Standardized to 16
-              children: <Widget>[
-                const SizedBox(height: 20),
-                _buildField(
-                  'Display Name',
-                  _nameController,
-                  Symbols.person_rounded,
-                ),
-                _buildField(
-                  'Email Address',
-                  _emailController,
-                  Symbols.mail_rounded,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                _buildField(
-                  'Phone Number',
-                  _phoneController,
-                  Symbols.call_rounded,
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: 32),
-                const _SectionTitle(title: 'HEALTH METRICS'),
-                const SizedBox(height: 16),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: _buildField(
-                        'Age',
-                        _ageController,
-                        Symbols.event_rounded,
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(child: _buildBloodTypeDropdown()),
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: _buildField(
-                        'Weight (kg)',
-                        _weightController,
-                        Symbols.monitor_weight_rounded,
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _buildField(
-                        'Height (cm)',
-                        _heightController,
-                        Symbols.height_rounded,
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32),
-                const _SectionTitle(title: 'PRIVACY & DOCUMENTATION'),
-                const SizedBox(height: 16),
-                _buildPrivacyTile(context),
-                const SizedBox(height: 32),
-                FilledButton(
-                  onPressed: _saveProfile,
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 18),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+    return profileAsync.when(
+      data: (UserProfile profile) => SafeArea(
+        child: ListView(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 16), // Standardized to 16
+          children: <Widget>[
+            const SizedBox(height: 20),
+            _buildField(
+                'Display Name',
+                _nameController,
+                Symbols.person_rounded,
+              ),
+              _buildField(
+                'Email Address',
+                _emailController,
+                Symbols.mail_rounded,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              _buildField(
+                'Phone Number',
+                _phoneController,
+                Symbols.call_rounded,
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 32),
+              const _SectionTitle(title: 'HEALTH METRICS'),
+              const SizedBox(height: 16),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: _buildField(
+                      'Age',
+                      _ageController,
+                      Symbols.event_rounded,
+                      keyboardType: TextInputType.number,
                     ),
                   ),
-                  child: const Text(
-                    'Save Changes',
-                    style: TextStyle(fontWeight: FontWeight.w800),
+                  const SizedBox(width: 16),
+                  Expanded(child: _buildBloodTypeDropdown()),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: _buildField(
+                      'Weight (kg)',
+                      _weightController,
+                      Symbols.monitor_weight_rounded,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildField(
+                      'Height (cm)',
+                      _heightController,
+                      Symbols.height_rounded,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+              const _SectionTitle(title: 'PRIVACY & DOCUMENTATION'),
+              const SizedBox(height: 16),
+              _buildPrivacyTile(context),
+              const SizedBox(height: 32),
+              FilledButton(
+                onPressed: _saveProfile,
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                const SizedBox(height: 40),
-              ],
-            ),
+                child: const Text(
+                  'Save Changes',
+                  style: TextStyle(fontWeight: FontWeight.w800),
+                ),
+              ),
+              const SizedBox(height: 40),
+            ],
           ),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (Object e, StackTrace? _) => Center(child: Text('Error: $e')),
         ),
-      ),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (Object e, StackTrace? _) => Center(child: Text('Error: $e')),
     );
   }
 
@@ -300,7 +268,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      Navigator.pop(context);
+      context.pop();
     }
   }
 

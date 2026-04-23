@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/services/local_db_service.dart';
 import '../../../daily_dashboard/presentation/providers/daily_timeline_provider.dart';
-import '../../../../core/widgets/ambient_background.dart';
+
 import '../../data/repositories/medication_repository_impl.dart';
 import '../../domain/entities/medicine.dart';
 
@@ -83,58 +83,11 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: AmbientBackground(
-        child: SafeArea(
+    return SafeArea(
           child: Form(
             key: _formKey,
             child: Column(
               children: <Widget>[
-                // Custom Header
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                          Symbols.arrow_back_ios_new_rounded,
-                          size: 24,
-                          color: colorScheme.onSurface,
-                        ),
-                        onPressed: () => context.pop(),
-                      ),
-                      Text(
-                        'New Reminder',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: colorScheme.onSurface,
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: colorScheme.surface.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: colorScheme.outline.withValues(alpha: 0.1),
-                          ),
-                        ),
-                        child: Icon(
-                          Symbols.notifications_active_rounded,
-                          color: colorScheme.tertiary,
-                          size: 20,
-                          fill: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -422,8 +375,6 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
                   ),
                 ),
               ],
-            ),
-          ),
         ),
       ),
     );

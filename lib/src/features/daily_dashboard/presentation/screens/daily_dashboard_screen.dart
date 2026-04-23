@@ -248,7 +248,7 @@ class _DailyDashboardScreenState extends ConsumerState<DailyDashboardScreen> {
                                 80, // Elevation for FAB alignment with nav bar
                             right: 16,
                             child: FloatingActionButton.extended(
-                              onPressed: () => context.push('/add-medicine'),
+                              onPressed: () => context.push('/medicines/add'),
                               icon: const Icon(Symbols.add_rounded),
                               label: const Text('Add Medication'),
                             ),

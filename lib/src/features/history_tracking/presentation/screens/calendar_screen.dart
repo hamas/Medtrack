@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 
+
 class CalendarScreen extends StatelessWidget {
   const CalendarScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Adherence History & Calendar'));
+    return const Center(
+      child: Text(
+        'Adherence History & Calendar',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+      ),
+    );
   }
 }

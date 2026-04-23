@@ -4,6 +4,8 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../navigation/presentation/providers/settings_provider.dart';
 
+import '../../../../core/widgets/ambient_background.dart';
+
 class BiometricGate extends ConsumerStatefulWidget {
   const BiometricGate({required this.child, super.key});
   final Widget child;
@@ -75,7 +77,6 @@ class _BiometricGateState extends ConsumerState<BiometricGate>
       final bool didAuthenticate = await _auth.authenticate(
         localizedReason: 'Please authenticate to access your medical data.',
         biometricOnly: true,
-        persistAcrossBackgrounding: true,
       );
 
       setState(() {
@@ -105,38 +106,43 @@ class _BiometricGateState extends ConsumerState<BiometricGate>
     if (_isAuthenticated) {
       return widget.child;
     }
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Icon(
-              Symbols.health_and_safety_rounded,
-              size: 72,
-              color: Colors.grey,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Medtrack',
-              style: Theme.of(
-                context,
-              ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Authentication required',
-              style: TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 48),
-            if (_isAuthenticating)
-              const CircularProgressIndicator()
-            else
-              FilledButton.icon(
-                onPressed: _authenticate,
-                icon: const Icon(Symbols.fingerprint_rounded),
-                label: const Text('Unlock with Biometrics'),
+    return AmbientBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Icon(
+                Symbols.health_and_safety_rounded,
+                size: 72,
+                color: Colors.white70,
+                fill: 1,
               ),
-          ],
+              const SizedBox(height: 20),
+              Text(
+                'Medtrack',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Authentication required',
+                style: TextStyle(color: Colors.white38),
+              ),
+              const SizedBox(height: 48),
+              if (_isAuthenticating)
+                const CircularProgressIndicator()
+              else
+                FilledButton.icon(
+                  onPressed: _authenticate,
+                  icon: const Icon(Symbols.fingerprint_rounded),
+                  label: const Text('Unlock with Biometrics'),
+                ),
+            ],
+          ),
         ),
       ),
     );

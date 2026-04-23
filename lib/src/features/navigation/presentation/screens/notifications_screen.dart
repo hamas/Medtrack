@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:medtrack/src/core/widgets/ambient_background.dart';
 import '../providers/settings_provider.dart';
 
 class NotificationsScreen extends ConsumerWidget {
@@ -13,91 +12,61 @@ class NotificationsScreen extends ConsumerWidget {
       settingsStateProvider,
     );
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        titleSpacing: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Symbols.arrow_back_rounded,
-            size: 22,
-            color: Colors.white70,
+    return settingsAsync.when(
+      data: (Map<String, dynamic> settings) => SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          children: <Widget>[
+            const SizedBox(height: 20),
+            _buildToggle(
+                'Main Notifications',
+                'Enable all alerts',
+                Symbols.notifications_active_rounded,
+                Colors.blueAccent,
+                settings['main_enabled'] as bool? ?? true,
+                (bool val) => _update(ref, 'main_enabled', val),
+              ),
+              const SizedBox(height: 32),
+              const _SectionTitle(title: 'ALERT CATEGORIES'),
+              const SizedBox(height: 16),
+              _buildToggle(
+                'Medication Reminders',
+                'Dose alerts and refill nudges',
+                Symbols.pill_rounded,
+                Colors.pinkAccent,
+                settings['reminders_enabled'] as bool? ?? true,
+                (bool val) => _update(ref, 'reminders_enabled', val),
+              ),
+              _buildToggle(
+                'Daily Summary',
+                'Morning recap of your schedule',
+                Symbols.assignment_rounded,
+                Colors.amberAccent,
+                settings['summary_enabled'] as bool? ?? false,
+                (bool val) => _update(ref, 'summary_enabled', val),
+              ),
+              _buildToggle(
+                'Health Tips',
+                'Smart suggestions & insights',
+                Symbols.lightbulb_rounded,
+                Colors.tealAccent,
+                settings['tips_enabled'] as bool? ?? true,
+                (bool val) => _update(ref, 'tips_enabled', val),
+              ),
+              const SizedBox(height: 32),
+              const _SectionTitle(title: 'PREFERENCES'),
+              const SizedBox(height: 16),
+              _buildTimePicker(
+                context,
+                ref,
+                'Summary Time',
+                settings['summary_time'] as String? ?? '08:00',
+              ),
+            ],
           ),
-          onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'Notifications',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w800,
-            color: Colors.white,
-            letterSpacing: -0.5,
-          ),
-        ),
-      ),
-      body: AmbientBackground(
-        child: settingsAsync.when(
-          data: (Map<String, dynamic> settings) => SafeArea(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: <Widget>[
-                const SizedBox(height: 20),
-                _buildToggle(
-                  'Main Notifications',
-                  'Enable all alerts',
-                  Symbols.notifications_active_rounded,
-                  Colors.blueAccent,
-                  settings['main_enabled'] as bool? ?? true,
-                  (bool val) => _update(ref, 'main_enabled', val),
-                ),
-                const SizedBox(height: 32),
-                const _SectionTitle(title: 'ALERT CATEGORIES'),
-                const SizedBox(height: 16),
-                _buildToggle(
-                  'Medication Reminders',
-                  'Dose alerts and refill nudges',
-                  Symbols.pill_rounded,
-                  Colors.pinkAccent,
-                  settings['reminders_enabled'] as bool? ?? true,
-                  (bool val) => _update(ref, 'reminders_enabled', val),
-                ),
-                _buildToggle(
-                  'Daily Summary',
-                  'Morning recap of your schedule',
-                  Symbols.assignment_rounded,
-                  Colors.amberAccent,
-                  settings['summary_enabled'] as bool? ?? false,
-                  (bool val) => _update(ref, 'summary_enabled', val),
-                ),
-                _buildToggle(
-                  'Health Tips',
-                  'Smart suggestions & insights',
-                  Symbols.lightbulb_rounded,
-                  Colors.tealAccent,
-                  settings['tips_enabled'] as bool? ?? true,
-                  (bool val) => _update(ref, 'tips_enabled', val),
-                ),
-                const SizedBox(height: 32),
-                const _SectionTitle(title: 'PREFERENCES'),
-                const SizedBox(height: 16),
-                _buildTimePicker(
-                  context,
-                  ref,
-                  'Summary Time',
-                  settings['summary_time'] as String? ?? '08:00',
-                ),
-              ],
-            ),
-          ),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (Object e, StackTrace? _) => Center(child: Text('Error: $e')),
-        ),
-      ),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (Object e, StackTrace? _) => Center(child: Text('Error: $e')),
     );
   }
 

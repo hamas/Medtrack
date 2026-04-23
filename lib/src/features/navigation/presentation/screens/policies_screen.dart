@@ -1,74 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import '../../../../core/widgets/ambient_background.dart';
 
 class PoliciesScreen extends StatelessWidget {
   const PoliciesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        titleSpacing: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Symbols.arrow_back_rounded,
-            size: 22,
-            color: Colors.white70,
-          ),
-          onPressed: () => context.pop(),
-        ),
-        title: const Text(
-          'Policies & Info',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w800,
-            color: Colors.white,
-            letterSpacing: -0.5,
-          ),
-        ),
-      ),
-      body: AmbientBackground(
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            children: <Widget>[
-              const SizedBox(height: 24),
-              _PolicyTile(
-                title: 'About Medtrack',
-                subtitle: 'Vision, Features & Tech Stack',
-                icon: Symbols.info_rounded,
-                onTap: () => context.push('/policies/readme'),
-              ),
-              const SizedBox(height: 12),
-              _PolicyTile(
-                title: 'Privacy Policy',
-                subtitle: 'How we handle your medical data',
-                icon: Symbols.security_rounded,
-                onTap: () => context.push('/policies/privacy'),
-              ),
-              const SizedBox(height: 32),
-              const Center(
-                child: Text(
-                  'Version 1.0.0 (Stable)',
-                  style: TextStyle(
-                    color: Colors.white24,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
+    return SafeArea(
+      child: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: <Widget>[
+          const SizedBox(height: 20),
+          _PolicyTile(
+              title: 'About Medtrack',
+              subtitle: 'Vision, Features & Tech Stack',
+              icon: Symbols.info_rounded,
+              onTap: () => context.push('/policies/readme'),
+            ),
+            const SizedBox(height: 12),
+            _PolicyTile(
+              title: 'Privacy Policy',
+              subtitle: 'How we handle your medical data',
+              icon: Symbols.security_rounded,
+              onTap: () => context.push('/policies/privacy'),
+            ),
+            const SizedBox(height: 32),
+            const Center(
+              child: Text(
+                'Version 1.0.0 (Stable)',
+                style: TextStyle(
+                  color: Colors.white24,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ),
     );
   }
 }
