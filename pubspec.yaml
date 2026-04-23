@@ -69,3 +69,6 @@ flutter:
     - assets/images/capsule.svg
     - assets/images/syringe.svg
     - assets/images/syrup.svg
+
+dependency_overrides:
+  analyzer: ^6.4.1
