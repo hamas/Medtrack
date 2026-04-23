@@ -33,6 +33,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   late TextEditingController _conditionsController;
   late TextEditingController _allergiesController;
   String? _selectedBloodType;
+  DateTime? _selectedDOB;
+  late TextEditingController _feetController;
+  late TextEditingController _inchesController;
+  final ImagePicker _picker = ImagePicker();
   bool _initialized = false;
 
   @override
@@ -50,6 +54,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _physicianController = TextEditingController();
     _conditionsController = TextEditingController();
     _allergiesController = TextEditingController();
+    _feetController = TextEditingController();
+    _inchesController = TextEditingController();
   }
 
   void _initializeData(UserProfile profile) {
@@ -68,6 +74,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _allergiesController.text = profile.allergies.join(', ');
     _selectedBloodType = profile.bloodType;
     _initialized = true;
+
+    // Convert height (cm) to feet/inches
+    if (profile.height != null) {
+      final double totalInches = profile.height! / 2.54;
+      final int feet = (totalInches / 12).floor();
+      final int inches = (totalInches % 12).round();
+      _feetController.text = feet.toString();
+      _inchesController.text = inches.toString();
+    }
   }
 
   @override
@@ -84,6 +99,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _physicianController.dispose();
     _conditionsController.dispose();
     _allergiesController.dispose();
+    _feetController.dispose();
+    _inchesController.dispose();
     super.dispose();
   }
 
@@ -93,13 +110,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ref.watch(userProfileStateProvider);
     final User? authUser = FirebaseAuth.instance.currentUser;
 
-    return profileAsync.when(
-      data: (UserProfile profile) {
-        _initializeData(profile);
-        return _buildContent(context, profile, authUser);
+    return PopScope(
+      onPopInvokedWithResult: (bool didPop, Object? result) {
+        if (didPop && _isEditing) {
+          setState(() {
+            _isEditing = false;
+            _initialized = false;
+          });
+        }
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (Object e, StackTrace? _) => Center(child: Text('Error: $e')),
+      child: profileAsync.when(
+        data: (UserProfile profile) {
+          _initializeData(profile);
+          return _buildContent(context, profile, authUser);
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (Object e, StackTrace? _) => Center(child: Text('Error: $e')),
+      ),
     );
   }
 
@@ -244,25 +271,45 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         Expanded(
             child: _buildStatCard('Weight', '${_weightController.text} kg',
                 Symbols.monitor_weight_rounded, Colors.blueAccent,
-                controller: _weightController, suffix: ' kg')),
+                controller: _weightController, isNumeric: true)),
         const SizedBox(width: 8),
         Expanded(
-            child: _buildStatCard('Height', '${_heightController.text} cm',
+            child: _buildStatCard('Height', _formatHeight(),
                 Symbols.height_rounded, Colors.greenAccent,
-                controller: _heightController, suffix: ' cm')),
+                isHeight: true)),
         const SizedBox(width: 8),
         Expanded(
-            child: _buildStatCard('Age', '${_ageController.text} yrs',
+            child: _buildStatCard('Age', _calculateAgeDisplay(),
                 Symbols.event_rounded, Colors.orangeAccent,
-                controller: _ageController, suffix: ' yrs')),
+                isDOB: true)),
       ],
     );
   }
 
+  String _formatHeight() {
+    if (_feetController.text.isEmpty && _inchesController.text.isEmpty) {
+      return '--';
+    }
+    return "${_feetController.text}' ${_inchesController.text}\"";
+  }
+
+  String _calculateAgeDisplay() {
+    if (_selectedDOB == null) return '--';
+    final DateTime now = DateTime.now();
+    int age = now.year - _selectedDOB!.year;
+    if (now.month < _selectedDOB!.month ||
+        (now.month == _selectedDOB!.month && now.day < _selectedDOB!.day)) {
+      age--;
+    }
+    return '$age yrs';
+  }
+
   Widget _buildStatCard(String label, String value, IconData icon, Color color,
       {TextEditingController? controller,
-      String? suffix,
-      bool isBlood = false}) {
+      bool isBlood = false,
+      bool isHeight = false,
+      bool isDOB = false,
+      bool isNumeric = false}) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
       decoration: BoxDecoration(
@@ -276,10 +323,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           Icon(icon, color: color, size: 18),
           const SizedBox(height: 12),
           if (_isEditing)
-            isBlood
-                ? _buildBloodTypePicker()
-                : _buildInlineTextField(controller!,
-                    fontSize: 13, textAlign: TextAlign.center)
+            if (isBlood)
+              _buildBloodTypePicker()
+            else if (isHeight)
+              _buildHeightPicker()
+            else if (isDOB)
+              _buildDOBPicker()
+            else
+              _buildInlineTextField(controller!,
+                  fontSize: 13,
+                  textAlign: TextAlign.center,
+                  isNumeric: isNumeric)
           else
             Text(value,
                 style: const TextStyle(
@@ -290,7 +344,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 overflow: TextOverflow.ellipsis),
           const SizedBox(height: 2),
           Text(label,
-              style: const TextStyle(
+               style: const TextStyle(
                   fontSize: 10,
                   color: Colors.white38,
                   fontWeight: FontWeight.w600),
@@ -298,6 +352,56 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               overflow: TextOverflow.ellipsis),
         ],
       ),
+    );
+  }
+
+  Widget _buildHeightPicker() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        SizedBox(
+          width: 20,
+          child: _buildInlineTextField(_feetController,
+              fontSize: 12, isNumeric: true, textAlign: TextAlign.center),
+        ),
+        const Text("'", style: TextStyle(color: Colors.white38, fontSize: 10)),
+        SizedBox(
+          width: 20,
+          child: _buildInlineTextField(_inchesController,
+              fontSize: 12, isNumeric: true, textAlign: TextAlign.center),
+        ),
+        const Text('"', style: TextStyle(color: Colors.white38, fontSize: 10)),
+      ],
+    );
+  }
+
+  Widget _buildDOBPicker() {
+    return GestureDetector(
+      onTap: () async {
+        final DateTime? picked = await showDatePicker(
+          context: context,
+          initialDate: _selectedDOB ?? DateTime(2000),
+          firstDate: DateTime(1900),
+          lastDate: DateTime.now(),
+          builder: (BuildContext context, Widget? child) => Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: const ColorScheme.dark(
+                primary: Colors.blueAccent,
+                onPrimary: Colors.white,
+                surface: Color(0xFF0F172A),
+                onSurface: Colors.white,
+              ),
+            ),
+            child: child!,
+          ),
+        );
+        if (picked != null) setState(() => _selectedDOB = picked);
+      },
+      child: Text(_calculateAgeDisplay(),
+          style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: Colors.blueAccent)),
     );
   }
 
@@ -363,7 +467,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _buildInfoRow(Symbols.person_rounded, 'Gender', _genderController),
+          _buildInfoRow(Symbols.person_rounded, 'Gender', _genderController, isGender: true),
           const Divider(height: 32, color: Colors.white10),
           _buildInfoRow(Symbols.medical_services_rounded, 'Conditions',
               _conditionsController,
@@ -374,7 +478,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               hint: 'Comma separated'),
           const Divider(height: 32, color: Colors.white10),
           _buildInfoRow(Symbols.e911_emergency_rounded, 'Emergency Contact',
-              _emergencyContactController),
+              _emergencyContactController, isPhone: true),
           const Divider(height: 32, color: Colors.white10),
           _buildInfoRow(
               Symbols.shield_rounded, 'Insurance', _insuranceController),
@@ -388,7 +492,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Widget _buildInfoRow(
       IconData icon, String label, TextEditingController controller,
-      {String? hint}) {
+      {String? hint, bool isGender = false, bool isPhone = false}) {
     return Row(
       children: <Widget>[
         Icon(icon, color: Colors.white24, size: 20),
@@ -403,8 +507,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       color: Colors.white38,
                       fontWeight: FontWeight.w600)),
               if (_isEditing)
-                _buildInlineTextField(controller,
-                    fontSize: 14, color: Colors.white70, hint: hint)
+                if (isGender)
+                  _buildGenderPicker()
+                else
+                  _buildInlineTextField(controller,
+                      fontSize: 14, color: Colors.white70, hint: hint, isNumeric: isPhone)
               else
                 Text(controller.text.isEmpty ? 'Not set' : controller.text,
                     style: const TextStyle(
@@ -418,16 +525,39 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
+  Widget _buildGenderPicker() {
+    return DropdownButtonHideUnderline(
+      child: DropdownButton<String>(
+        value: _genderController.text.isEmpty ? null : _genderController.text,
+        dropdownColor: const Color(0xFF1E293B),
+        icon: const Icon(Symbols.expand_more_rounded, color: Colors.white24, size: 16),
+        style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+        hint: const Text('Select', style: TextStyle(color: Colors.white10, fontSize: 14)),
+        items: <String>['Male', 'Female', 'Rather not say']
+            .map((String value) => DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                ))
+            .toList(),
+        onChanged: (String? newValue) {
+          if (newValue != null) setState(() => _genderController.text = newValue);
+        },
+      ),
+    );
+  }
+
   Widget _buildInlineTextField(TextEditingController controller,
       {double fontSize = 14,
       FontWeight fontWeight = FontWeight.w600,
       Color color = Colors.white,
       TextAlign textAlign = TextAlign.start,
-      String? hint}) {
+      String? hint,
+      bool isNumeric = false}) {
     return TextField(
       controller: controller,
       textAlign: textAlign,
       cursorColor: Colors.white,
+      keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
       style:
           TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color),
       decoration: InputDecoration(
@@ -523,8 +653,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
 
   Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final NavigatorState navigator = Navigator.of(context);
     final XFile? image = await showModalBottomSheet<XFile?>(
       context: context,
       backgroundColor: const Color(0xFF1E293B),
@@ -538,9 +666,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               title: const Text('Take Photo',
                   style: TextStyle(color: Colors.white)),
               onTap: () async {
-                final XFile? img = await picker.pickImage(
+                final XFile? img = await _picker.pickImage(
                     source: ImageSource.camera, imageQuality: 50);
-                navigator.pop(img);
+                if (context.mounted) Navigator.pop(context, img);
               },
             ),
             ListTile(
@@ -548,9 +676,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               title: const Text('Choose from Gallery',
                   style: TextStyle(color: Colors.white)),
               onTap: () async {
-                final XFile? img = await picker.pickImage(
+                final XFile? img = await _picker.pickImage(
                     source: ImageSource.gallery, imageQuality: 50);
-                navigator.pop(img);
+                if (context.mounted) Navigator.pop(context, img);
               },
             ),
           ],
@@ -588,14 +716,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final UserProfile? current = ref.read(userProfileStateProvider).value;
     if (current == null) return;
 
+    // Convert height (feet/inches) back to cm
+    double? heightCm;
+    if (_feetController.text.isNotEmpty || _inchesController.text.isNotEmpty) {
+      final int feet = int.tryParse(_feetController.text) ?? 0;
+      final int inches = int.tryParse(_inchesController.text) ?? 0;
+      heightCm = ((feet * 12) + inches) * 2.54;
+    }
+
     final UserProfile updated = current.copyWith(
       name: _nameController.text,
       email: _emailController.text,
       phone: _phoneController.text,
       emergencyContact: _emergencyContactController.text,
-      age: int.tryParse(_ageController.text),
+      age: _selectedDOB != null ? (DateTime.now().year - _selectedDOB!.year) : null,
       weight: double.tryParse(_weightController.text),
-      height: double.tryParse(_heightController.text),
+      height: heightCm,
       gender: _genderController.text,
       bloodType: _selectedBloodType,
       insuranceProvider: _insuranceController.text,
@@ -612,12 +748,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           .toList(),
     );
 
-    await ref.read(userProfileStateProvider.notifier).updateProfile(updated);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Profile updated successfully!'),
-          backgroundColor: Colors.green));
-      setState(() => _isEditing = false);
+    try {
+      if (current.uid == 'guest' || current.uid == 'hamas_lead_dev') {
+         // Local simulation for guest users to prevent permission errors
+         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Guest profiles cannot be saved to cloud.'),
+            backgroundColor: Colors.orange));
+         setState(() => _isEditing = false);
+         return;
+      }
+
+      await ref.read(userProfileStateProvider.notifier).updateProfile(updated);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Profile updated successfully!'),
+            backgroundColor: Colors.green));
+        setState(() => _isEditing = false);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Save failed: $e'),
+            backgroundColor: Colors.red));
+      }
     }
   }
 }
