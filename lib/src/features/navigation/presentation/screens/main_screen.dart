@@ -51,7 +51,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       showSettingsGear = false;
       showBellIcon = true;
     } else if (currentPath == '/profile-settings') {
-      title = 'Profile Settings';
+      title = 'Your Profile';
       showSettingsGear = false;
       showBellIcon = false;
     } else if (currentPath == '/achievements') {
