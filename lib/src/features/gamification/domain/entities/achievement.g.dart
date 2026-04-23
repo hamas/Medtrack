@@ -7,10 +7,10 @@ part of 'achievement.dart';
 // **************************************************************************
 
 _Achievement _$AchievementFromJson(Map<String, dynamic> json) => _Achievement(
-      id: json['id'] as String,
-      type: $enumDecode(_$AchievementTypeEnumMap, json['type']),
-      dateEarned: DateTime.parse(json['dateEarned'] as String),
-    );
+  id: json['id'] as String,
+  type: $enumDecode(_$AchievementTypeEnumMap, json['type']),
+  dateEarned: DateTime.parse(json['dateEarned'] as String),
+);
 
 Map<String, dynamic> _$AchievementToJson(_Achievement instance) =>
     <String, dynamic>{

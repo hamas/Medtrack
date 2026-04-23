@@ -12,20 +12,24 @@ part of 'daily_timeline_provider.dart';
 @ProviderFor(dashboardRepo)
 final dashboardRepoProvider = DashboardRepoProvider._();
 
-final class DashboardRepoProvider extends $FunctionalProvider<
-    DashboardRepository,
-    DashboardRepository,
-    DashboardRepository> with $Provider<DashboardRepository> {
+final class DashboardRepoProvider
+    extends
+        $FunctionalProvider<
+          DashboardRepository,
+          DashboardRepository,
+          DashboardRepository
+        >
+    with $Provider<DashboardRepository> {
   DashboardRepoProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'dashboardRepoProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'dashboardRepoProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$dashboardRepoHash();
@@ -33,8 +37,8 @@ final class DashboardRepoProvider extends $FunctionalProvider<
   @$internal
   @override
   $ProviderElement<DashboardRepository> $createElement(
-          $ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   DashboardRepository create(Ref ref) {
@@ -58,15 +62,15 @@ final selectedDateProvider = SelectedDateNotifierProvider._();
 final class SelectedDateNotifierProvider
     extends $NotifierProvider<SelectedDateNotifier, DateTime> {
   SelectedDateNotifierProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'selectedDateProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'selectedDateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$selectedDateNotifierHash();
@@ -93,8 +97,14 @@ abstract class _$SelectedDateNotifier extends $Notifier<DateTime> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<DateTime, DateTime>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<DateTime, DateTime>, DateTime, Object?, Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<DateTime, DateTime>,
+              DateTime,
+              Object?,
+              Object?
+            >;
     element.handleCreate(ref, build);
   }
 }
@@ -105,15 +115,15 @@ final dailyTimelineProvider = DailyTimelineProvider._();
 final class DailyTimelineProvider
     extends $AsyncNotifierProvider<DailyTimeline, List<Dose>> {
   DailyTimelineProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'dailyTimelineProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'dailyTimelineProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$dailyTimelineHash();
@@ -131,11 +141,14 @@ abstract class _$DailyTimeline extends $AsyncNotifier<List<Dose>> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<AsyncValue<List<Dose>>, List<Dose>>;
-    final element = ref.element as $ClassProviderElement<
-        AnyNotifier<AsyncValue<List<Dose>>, List<Dose>>,
-        AsyncValue<List<Dose>>,
-        Object?,
-        Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<Dose>>, List<Dose>>,
+              AsyncValue<List<Dose>>,
+              Object?,
+              Object?
+            >;
     element.handleCreate(ref, build);
   }
 }

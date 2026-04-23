@@ -427,6 +427,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return TextField(
       controller: controller,
       textAlign: textAlign,
+      cursorColor: Colors.white,
       style:
           TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color),
       decoration: InputDecoration(
@@ -494,20 +495,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Widget _buildActionButtons() {
     if (_isEditing) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          TextButton(
-            onPressed: () => setState(() {
-              _isEditing = false;
-              _initialized = false; // Reset to reload original data
-            }),
-            child:
-                const Text('Cancel', style: TextStyle(color: Colors.white38)),
-          ),
-          const SizedBox(width: 16),
-          _buildSaveButton(),
-        ],
+      return Center(
+        child: TextButton.icon(
+          onPressed: _saveProfile,
+          style: TextButton.styleFrom(
+              foregroundColor: Colors.white38,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
+          icon: const Icon(Symbols.check_circle_rounded, size: 14),
+          label: const Text('Save Changes',
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+        ),
       );
     }
     return Center(
@@ -523,27 +520,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildSaveButton() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: const LinearGradient(
-            colors: <Color>[Colors.blueAccent, Colors.purpleAccent]),
-      ),
-      child: ElevatedButton(
-        onPressed: _saveProfile,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        ),
-        child: const Text('Save',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900)),
-      ),
-    );
-  }
+
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();

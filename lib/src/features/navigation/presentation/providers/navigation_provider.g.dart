@@ -14,15 +14,15 @@ final navigationProvider = NavigationProvider._();
 
 final class NavigationProvider extends $NotifierProvider<Navigation, int> {
   NavigationProvider._()
-      : super(
-          from: null,
-          argument: null,
-          retry: null,
-          name: r'navigationProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'navigationProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$navigationHash();
@@ -48,8 +48,14 @@ abstract class _$Navigation extends $Notifier<int> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<int, int>;
-    final element = ref.element
-        as $ClassProviderElement<AnyNotifier<int, int>, int, Object?, Object?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
     element.handleCreate(ref, build);
   }
 }
