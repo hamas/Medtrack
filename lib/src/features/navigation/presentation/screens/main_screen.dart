@@ -29,9 +29,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     final int currentIndex = widget.navigationShell.currentIndex;
     final String currentPath = GoRouterState.of(context).uri.path;
 
+    final List<String> mainRootPaths = <String>['/', '/medicines', '/calendar', '/profile-settings'];
+    final bool isMainRoot = mainRootPaths.contains(currentPath);
+
     // Dynamic Title & Actions mapping
     final String title;
-    final bool showBackButton = context.canPop();
+    final bool showBackButton = !isMainRoot;
     final bool showSettingsGear;
     final bool showBellIcon;
 
@@ -85,11 +88,24 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     final bool hideHighlight = currentIndex > 3;
 
     return PopScope(
-      canPop: !context.canPop(),
+      canPop: currentIndex == 0 && !context.canPop(),
       onPopInvokedWithResult: (bool didPop, Object? result) {
-        if (!didPop && context.canPop()) {
+        if (didPop) return;
+
+        // 1. If we can pop internally (stack navigation), do that first
+        if (context.canPop()) {
           context.pop();
+          return;
         }
+
+        // 2. If we are on a secondary root tab (Medicines, Calendar, Profile), land on Homepage
+        if (widget.navigationShell.currentIndex != 0) {
+          widget.navigationShell.goBranch(0);
+          return;
+        }
+
+        // 3. Otherwise, if we are on Homepage, allow app closure (default behavior if we can't do anything else)
+        // Note: System will close app if we don't handle it here and canPop is false.
       },
       child: Stack(
         children: <Widget>[
