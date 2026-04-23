@@ -23,6 +23,8 @@ abstract class UserProfile with _$UserProfile {
     String? email,
     String? gender,
     String? emergencyContact,
+    String? insuranceProvider,
+    String? primaryPhysician,
     @Default(<String>[]) List<String> medicalConditions,
     @Default(<String>[]) List<String> allergies,
   }) = _UserProfile;

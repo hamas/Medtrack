@@ -32,6 +32,8 @@ _UserProfile _$UserProfileFromJson(Map<String, dynamic> json) => _UserProfile(
       email: json['email'] as String?,
       gender: json['gender'] as String?,
       emergencyContact: json['emergencyContact'] as String?,
+      insuranceProvider: json['insuranceProvider'] as String?,
+      primaryPhysician: json['primaryPhysician'] as String?,
       medicalConditions: (json['medicalConditions'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
@@ -60,6 +62,8 @@ Map<String, dynamic> _$UserProfileToJson(_UserProfile instance) =>
       'email': instance.email,
       'gender': instance.gender,
       'emergencyContact': instance.emergencyContact,
+      'insuranceProvider': instance.insuranceProvider,
+      'primaryPhysician': instance.primaryPhysician,
       'medicalConditions': instance.medicalConditions,
       'allergies': instance.allergies,
     };

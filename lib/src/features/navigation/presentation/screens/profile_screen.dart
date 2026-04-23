@@ -25,25 +25,21 @@ class ProfileScreen extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       children: <Widget>[
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
         
         // Header Section
-        _buildHeader(profile, authUser),
-        const SizedBox(height: 24),
+        _buildHeader(context, profile, authUser),
+        const SizedBox(height: 16),
 
         // Bento Grid for Stats
         _buildBentoStats(profile),
         const SizedBox(height: 16),
-
-        // Medical Info Section
-        _buildSectionHeader('MEDICAL PROFILE'),
-        const SizedBox(height: 8),
         _buildMedicalCard(profile),
-        const SizedBox(height: 16),
-
+        const SizedBox(height: 24),
+ 
         // Achievements & Streaks
         _buildSectionHeader('YOUR ACHIEVEMENTS'),
-        const SizedBox(height: 8),
+        const SizedBox(height: 16),
         _buildProgressCard(profile),
         const SizedBox(height: 32),
 
@@ -54,77 +50,7 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(UserProfile profile, User? user) {
-    return Column(
-      children: <Widget>[
-        Stack(
-          alignment: Alignment.bottomRight,
-          children: <Widget>[
-            Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white10, width: 2),
-              ),
-              child: CircleAvatar(
-                radius: 50,
-                backgroundColor: Colors.white.withValues(alpha: 0.05),
-                backgroundImage: user?.photoURL != null
-                    ? NetworkImage(user!.photoURL!)
-                    : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
-              ),
-            ),
-            if (profile.equippedBadgeId != null)
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: const BoxDecoration(
-                  color: Colors.blueAccent,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Symbols.verified_rounded, color: Colors.white, size: 16),
-              ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Text(
-          profile.name,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w900,
-            color: Colors.white,
-            letterSpacing: -0.5,
-          ),
-        ),
-        Text(
-          profile.email ?? user?.email ?? 'No email set',
-          style: const TextStyle(
-            fontSize: 14,
-            color: Colors.white38,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBentoStats(UserProfile profile) {
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 16,
-      crossAxisSpacing: 16,
-      childAspectRatio: 1.5,
-      children: <Widget>[
-        _buildStatCard('Blood', profile.bloodType ?? '--', Symbols.bloodtype_rounded, Colors.redAccent),
-        _buildStatCard('Weight', '${profile.weight ?? '--'} kg', Symbols.monitor_weight_rounded, Colors.blueAccent),
-        _buildStatCard('Height', '${profile.height ?? '--'} cm', Symbols.height_rounded, Colors.greenAccent),
-        _buildStatCard('Age', '${profile.age ?? '--'} yrs', Symbols.event_rounded, Colors.orangeAccent),
-      ],
-    );
-  }
-
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildHeader(BuildContext context, UserProfile profile, User? user) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -132,18 +58,136 @@ class ProfileScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(28),
         border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Icon(icon, color: color, size: 20),
-          const Spacer(),
+          Stack(
+            alignment: Alignment.bottomRight,
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white10, width: 1.5),
+                ),
+                child: CircleAvatar(
+                  radius: 40,
+                  backgroundColor: Colors.white.withValues(alpha: 0.05),
+                  backgroundImage: user?.photoURL != null
+                      ? NetworkImage(user!.photoURL!)
+                      : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+                ),
+              ),
+              if (profile.equippedBadgeId != null)
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: const BoxDecoration(
+                    color: Colors.blueAccent,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Symbols.verified_rounded, color: Colors.white, size: 12),
+                ),
+            ],
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  profile.name,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: <Widget>[
+                    const Icon(Symbols.mail_rounded, color: Colors.white24, size: 14),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        (profile.email != null && profile.email!.isNotEmpty)
+                            ? profile.email!
+                            : user?.email ?? 'email@medtrack.com',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.white38,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: <Widget>[
+                    const Icon(Symbols.call_rounded, color: Colors.white24, size: 14),
+                    const SizedBox(width: 6),
+                    Text(
+                      (profile.phone != null && profile.phone!.isNotEmpty)
+                          ? profile.phone!
+                          : '+1 000 000 0000',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.white38,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBentoStats(UserProfile profile) {
+    return Row(
+      children: <Widget>[
+        Expanded(child: _buildStatCard('Blood', profile.bloodType ?? '--', Symbols.bloodtype_rounded, Colors.redAccent)),
+        const SizedBox(width: 8),
+        Expanded(child: _buildStatCard('Weight', '${profile.weight ?? '--'} kg', Symbols.monitor_weight_rounded, Colors.blueAccent)),
+        const SizedBox(width: 8),
+        Expanded(child: _buildStatCard('Height', '${profile.height ?? '--'} cm', Symbols.height_rounded, Colors.greenAccent)),
+        const SizedBox(width: 8),
+        Expanded(child: _buildStatCard('Age', '${profile.age ?? '--'} yrs', Symbols.event_rounded, Colors.orangeAccent)),
+      ],
+    );
+  }
+
+  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(icon, color: color, size: 18),
+          const SizedBox(height: 12),
           Text(
             value,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Colors.white),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Colors.white),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
+          const SizedBox(height: 2),
           Text(
             label,
-            style: const TextStyle(fontSize: 11, color: Colors.white38, fontWeight: FontWeight.w600),
+            style: const TextStyle(fontSize: 10, color: Colors.white38, fontWeight: FontWeight.w600),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -162,6 +206,8 @@ class ProfileScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          _buildInfoRow(Symbols.person_rounded, 'Gender', profile.gender ?? 'Not set'),
+          const Divider(height: 32, color: Colors.white10),
           _buildInfoRow(Symbols.medical_services_rounded, 'Conditions', 
             profile.medicalConditions.isEmpty ? 'No conditions listed' : profile.medicalConditions.join(', ')),
           const Divider(height: 32, color: Colors.white10),
@@ -169,6 +215,10 @@ class ProfileScreen extends ConsumerWidget {
             profile.allergies.isEmpty ? 'No allergies reported' : profile.allergies.join(', ')),
           const Divider(height: 32, color: Colors.white10),
           _buildInfoRow(Symbols.e911_emergency_rounded, 'Emergency Contact', profile.emergencyContact ?? 'Not set'),
+          const Divider(height: 32, color: Colors.white10),
+          _buildInfoRow(Symbols.shield_rounded, 'Insurance', profile.insuranceProvider ?? 'Not set'),
+          const Divider(height: 32, color: Colors.white10),
+          _buildInfoRow(Symbols.stethoscope_rounded, 'Primary Physician', profile.primaryPhysician ?? 'Not set'),
         ],
       ),
     );
@@ -196,9 +246,7 @@ class ProfileScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: <Color>[Colors.blueAccent.withValues(alpha: 0.1), Colors.purpleAccent.withValues(alpha: 0.1)],
-        ),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
@@ -225,29 +273,30 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildSectionHeader(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.w800,
-        color: Colors.white38,
-        letterSpacing: 2,
+    return Center(
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w800,
+          color: Colors.white38,
+          letterSpacing: 2,
+        ),
       ),
     );
   }
 
   Widget _buildEditButton(BuildContext context) {
-    return FilledButton.icon(
-      onPressed: () => context.push('/profile-settings/edit'),
-      style: FilledButton.styleFrom(
-        backgroundColor: Colors.white.withValues(alpha: 0.05),
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        side: const BorderSide(color: Colors.white10),
+    return Center(
+      child: TextButton.icon(
+        onPressed: () => context.push('/profile-settings/edit'),
+        style: TextButton.styleFrom(
+          foregroundColor: Colors.white38,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        ),
+        icon: const Icon(Symbols.edit_rounded, size: 14),
+        label: const Text('Edit', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
       ),
-      icon: const Icon(Symbols.edit_rounded, size: 20),
-      label: const Text('Edit Health Profile', style: TextStyle(fontWeight: FontWeight.w800)),
     );
   }
 }

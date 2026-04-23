@@ -30,6 +30,8 @@ mixin _$UserProfile {
   String? get email;
   String? get gender;
   String? get emergencyContact;
+  String? get insuranceProvider;
+  String? get primaryPhysician;
   List<String> get medicalConditions;
   List<String> get allergies;
 
@@ -72,6 +74,10 @@ mixin _$UserProfile {
             (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.emergencyContact, emergencyContact) ||
                 other.emergencyContact == emergencyContact) &&
+            (identical(other.insuranceProvider, insuranceProvider) ||
+                other.insuranceProvider == insuranceProvider) &&
+            (identical(other.primaryPhysician, primaryPhysician) ||
+                other.primaryPhysician == primaryPhysician) &&
             const DeepCollectionEquality()
                 .equals(other.medicalConditions, medicalConditions) &&
             const DeepCollectionEquality().equals(other.allergies, allergies));
@@ -79,30 +85,33 @@ mixin _$UserProfile {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      uid,
-      name,
-      currentStreak,
-      longestStreak,
-      const DeepCollectionEquality().hash(earnedBadges),
-      const DeepCollectionEquality().hash(adherenceHistory),
-      lastCheckoffDate,
-      equippedBadgeId,
-      phone,
-      bloodType,
-      age,
-      weight,
-      height,
-      email,
-      gender,
-      emergencyContact,
-      const DeepCollectionEquality().hash(medicalConditions),
-      const DeepCollectionEquality().hash(allergies));
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        uid,
+        name,
+        currentStreak,
+        longestStreak,
+        const DeepCollectionEquality().hash(earnedBadges),
+        const DeepCollectionEquality().hash(adherenceHistory),
+        lastCheckoffDate,
+        equippedBadgeId,
+        phone,
+        bloodType,
+        age,
+        weight,
+        height,
+        email,
+        gender,
+        emergencyContact,
+        insuranceProvider,
+        primaryPhysician,
+        const DeepCollectionEquality().hash(medicalConditions),
+        const DeepCollectionEquality().hash(allergies)
+      ]);
 
   @override
   String toString() {
-    return 'UserProfile(uid: $uid, name: $name, currentStreak: $currentStreak, longestStreak: $longestStreak, earnedBadges: $earnedBadges, adherenceHistory: $adherenceHistory, lastCheckoffDate: $lastCheckoffDate, equippedBadgeId: $equippedBadgeId, phone: $phone, bloodType: $bloodType, age: $age, weight: $weight, height: $height, email: $email, gender: $gender, emergencyContact: $emergencyContact, medicalConditions: $medicalConditions, allergies: $allergies)';
+    return 'UserProfile(uid: $uid, name: $name, currentStreak: $currentStreak, longestStreak: $longestStreak, earnedBadges: $earnedBadges, adherenceHistory: $adherenceHistory, lastCheckoffDate: $lastCheckoffDate, equippedBadgeId: $equippedBadgeId, phone: $phone, bloodType: $bloodType, age: $age, weight: $weight, height: $height, email: $email, gender: $gender, emergencyContact: $emergencyContact, insuranceProvider: $insuranceProvider, primaryPhysician: $primaryPhysician, medicalConditions: $medicalConditions, allergies: $allergies)';
   }
 }
 
@@ -129,6 +138,8 @@ abstract mixin class $UserProfileCopyWith<$Res> {
       String? email,
       String? gender,
       String? emergencyContact,
+      String? insuranceProvider,
+      String? primaryPhysician,
       List<String> medicalConditions,
       List<String> allergies});
 }
@@ -161,6 +172,8 @@ class _$UserProfileCopyWithImpl<$Res> implements $UserProfileCopyWith<$Res> {
     Object? email = freezed,
     Object? gender = freezed,
     Object? emergencyContact = freezed,
+    Object? insuranceProvider = freezed,
+    Object? primaryPhysician = freezed,
     Object? medicalConditions = null,
     Object? allergies = null,
   }) {
@@ -228,6 +241,14 @@ class _$UserProfileCopyWithImpl<$Res> implements $UserProfileCopyWith<$Res> {
       emergencyContact: freezed == emergencyContact
           ? _self.emergencyContact
           : emergencyContact // ignore: cast_nullable_to_non_nullable
+              as String?,
+      insuranceProvider: freezed == insuranceProvider
+          ? _self.insuranceProvider
+          : insuranceProvider // ignore: cast_nullable_to_non_nullable
+              as String?,
+      primaryPhysician: freezed == primaryPhysician
+          ? _self.primaryPhysician
+          : primaryPhysician // ignore: cast_nullable_to_non_nullable
               as String?,
       medicalConditions: null == medicalConditions
           ? _self.medicalConditions
@@ -351,6 +372,8 @@ extension UserProfilePatterns on UserProfile {
             String? email,
             String? gender,
             String? emergencyContact,
+            String? insuranceProvider,
+            String? primaryPhysician,
             List<String> medicalConditions,
             List<String> allergies)?
         $default, {
@@ -376,6 +399,8 @@ extension UserProfilePatterns on UserProfile {
             _that.email,
             _that.gender,
             _that.emergencyContact,
+            _that.insuranceProvider,
+            _that.primaryPhysician,
             _that.medicalConditions,
             _that.allergies);
       case _:
@@ -415,6 +440,8 @@ extension UserProfilePatterns on UserProfile {
             String? email,
             String? gender,
             String? emergencyContact,
+            String? insuranceProvider,
+            String? primaryPhysician,
             List<String> medicalConditions,
             List<String> allergies)
         $default,
@@ -439,6 +466,8 @@ extension UserProfilePatterns on UserProfile {
             _that.email,
             _that.gender,
             _that.emergencyContact,
+            _that.insuranceProvider,
+            _that.primaryPhysician,
             _that.medicalConditions,
             _that.allergies);
       case _:
@@ -477,6 +506,8 @@ extension UserProfilePatterns on UserProfile {
             String? email,
             String? gender,
             String? emergencyContact,
+            String? insuranceProvider,
+            String? primaryPhysician,
             List<String> medicalConditions,
             List<String> allergies)?
         $default,
@@ -501,6 +532,8 @@ extension UserProfilePatterns on UserProfile {
             _that.email,
             _that.gender,
             _that.emergencyContact,
+            _that.insuranceProvider,
+            _that.primaryPhysician,
             _that.medicalConditions,
             _that.allergies);
       case _:
@@ -529,6 +562,8 @@ class _UserProfile implements UserProfile {
       this.email,
       this.gender,
       this.emergencyContact,
+      this.insuranceProvider,
+      this.primaryPhysician,
       final List<String> medicalConditions = const <String>[],
       final List<String> allergies = const <String>[]})
       : _earnedBadges = earnedBadges,
@@ -586,6 +621,10 @@ class _UserProfile implements UserProfile {
   final String? gender;
   @override
   final String? emergencyContact;
+  @override
+  final String? insuranceProvider;
+  @override
+  final String? primaryPhysician;
   final List<String> _medicalConditions;
   @override
   @JsonKey()
@@ -649,6 +688,10 @@ class _UserProfile implements UserProfile {
             (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.emergencyContact, emergencyContact) ||
                 other.emergencyContact == emergencyContact) &&
+            (identical(other.insuranceProvider, insuranceProvider) ||
+                other.insuranceProvider == insuranceProvider) &&
+            (identical(other.primaryPhysician, primaryPhysician) ||
+                other.primaryPhysician == primaryPhysician) &&
             const DeepCollectionEquality()
                 .equals(other._medicalConditions, _medicalConditions) &&
             const DeepCollectionEquality()
@@ -657,30 +700,33 @@ class _UserProfile implements UserProfile {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      uid,
-      name,
-      currentStreak,
-      longestStreak,
-      const DeepCollectionEquality().hash(_earnedBadges),
-      const DeepCollectionEquality().hash(_adherenceHistory),
-      lastCheckoffDate,
-      equippedBadgeId,
-      phone,
-      bloodType,
-      age,
-      weight,
-      height,
-      email,
-      gender,
-      emergencyContact,
-      const DeepCollectionEquality().hash(_medicalConditions),
-      const DeepCollectionEquality().hash(_allergies));
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        uid,
+        name,
+        currentStreak,
+        longestStreak,
+        const DeepCollectionEquality().hash(_earnedBadges),
+        const DeepCollectionEquality().hash(_adherenceHistory),
+        lastCheckoffDate,
+        equippedBadgeId,
+        phone,
+        bloodType,
+        age,
+        weight,
+        height,
+        email,
+        gender,
+        emergencyContact,
+        insuranceProvider,
+        primaryPhysician,
+        const DeepCollectionEquality().hash(_medicalConditions),
+        const DeepCollectionEquality().hash(_allergies)
+      ]);
 
   @override
   String toString() {
-    return 'UserProfile(uid: $uid, name: $name, currentStreak: $currentStreak, longestStreak: $longestStreak, earnedBadges: $earnedBadges, adherenceHistory: $adherenceHistory, lastCheckoffDate: $lastCheckoffDate, equippedBadgeId: $equippedBadgeId, phone: $phone, bloodType: $bloodType, age: $age, weight: $weight, height: $height, email: $email, gender: $gender, emergencyContact: $emergencyContact, medicalConditions: $medicalConditions, allergies: $allergies)';
+    return 'UserProfile(uid: $uid, name: $name, currentStreak: $currentStreak, longestStreak: $longestStreak, earnedBadges: $earnedBadges, adherenceHistory: $adherenceHistory, lastCheckoffDate: $lastCheckoffDate, equippedBadgeId: $equippedBadgeId, phone: $phone, bloodType: $bloodType, age: $age, weight: $weight, height: $height, email: $email, gender: $gender, emergencyContact: $emergencyContact, insuranceProvider: $insuranceProvider, primaryPhysician: $primaryPhysician, medicalConditions: $medicalConditions, allergies: $allergies)';
   }
 }
 
@@ -709,6 +755,8 @@ abstract mixin class _$UserProfileCopyWith<$Res>
       String? email,
       String? gender,
       String? emergencyContact,
+      String? insuranceProvider,
+      String? primaryPhysician,
       List<String> medicalConditions,
       List<String> allergies});
 }
@@ -741,6 +789,8 @@ class __$UserProfileCopyWithImpl<$Res> implements _$UserProfileCopyWith<$Res> {
     Object? email = freezed,
     Object? gender = freezed,
     Object? emergencyContact = freezed,
+    Object? insuranceProvider = freezed,
+    Object? primaryPhysician = freezed,
     Object? medicalConditions = null,
     Object? allergies = null,
   }) {
@@ -808,6 +858,14 @@ class __$UserProfileCopyWithImpl<$Res> implements _$UserProfileCopyWith<$Res> {
       emergencyContact: freezed == emergencyContact
           ? _self.emergencyContact
           : emergencyContact // ignore: cast_nullable_to_non_nullable
+              as String?,
+      insuranceProvider: freezed == insuranceProvider
+          ? _self.insuranceProvider
+          : insuranceProvider // ignore: cast_nullable_to_non_nullable
+              as String?,
+      primaryPhysician: freezed == primaryPhysician
+          ? _self.primaryPhysician
+          : primaryPhysician // ignore: cast_nullable_to_non_nullable
               as String?,
       medicalConditions: null == medicalConditions
           ? _self._medicalConditions

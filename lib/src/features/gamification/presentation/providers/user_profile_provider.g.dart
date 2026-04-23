@@ -76,7 +76,7 @@ final class UserProfileStateProvider
   UserProfileState create() => UserProfileState();
 }
 
-String _$userProfileStateHash() => r'4c726dfc44a2cf8012f5797295330757c26d6e55';
+String _$userProfileStateHash() => r'5c0e297f90116a981e007cf4c27d8c15ee383faa';
 
 abstract class _$UserProfileState extends $StreamNotifier<UserProfile> {
   Stream<UserProfile> build();
