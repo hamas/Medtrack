@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:uuid/uuid.dart';
@@ -50,7 +51,8 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
     }
 
     final String id = const Uuid().v4();
-    const String userId = 'hamas_lead_dev';
+    final User? user = FirebaseAuth.instance.currentUser;
+    final String userId = user?.uid ?? 'guest_user';
 
     final Medicine medicine = Medicine(
       id: id,

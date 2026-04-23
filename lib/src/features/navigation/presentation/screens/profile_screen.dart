@@ -18,7 +18,7 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool _isEditing = false;
   bool _isUploading = false;
-  
+
   // Controllers
   late TextEditingController _nameController;
   late TextEditingController _emailController;
@@ -89,7 +89,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<UserProfile> profileAsync = ref.watch(userProfileStateProvider);
+    final AsyncValue<UserProfile> profileAsync =
+        ref.watch(userProfileStateProvider);
     final User? authUser = FirebaseAuth.instance.currentUser;
 
     return profileAsync.when(
@@ -102,7 +103,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildContent(BuildContext context, UserProfile profile, User? authUser) {
+  Widget _buildContent(
+      BuildContext context, UserProfile profile, User? authUser) {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       children: <Widget>[
@@ -140,15 +142,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 if (_isEditing)
-                  _buildInlineTextField(_nameController, fontSize: 20, fontWeight: FontWeight.w900)
+                  _buildInlineTextField(_nameController,
+                      fontSize: 20, fontWeight: FontWeight.w900)
                 else
-                  Text(profile.name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -0.5)),
+                  Text(profile.name,
+                      style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: -0.5)),
                 const SizedBox(height: 4),
-                _buildContactRow(Symbols.mail_rounded, _emailController, 
-                  (profile.email?.isNotEmpty ?? false) ? profile.email! : (user?.email ?? 'email@medtrack.com')),
+                _buildContactRow(
+                    Symbols.mail_rounded,
+                    _emailController,
+                    (profile.email?.isNotEmpty ?? false)
+                        ? profile.email!
+                        : (user?.email ?? 'email@medtrack.com')),
                 const SizedBox(height: 4),
-                _buildContactRow(Symbols.call_rounded, _phoneController, 
-                  (profile.phone?.isNotEmpty ?? false) ? profile.phone! : '+1 000 000 0000'),
+                _buildContactRow(
+                    Symbols.call_rounded,
+                    _phoneController,
+                    (profile.phone?.isNotEmpty ?? false)
+                        ? profile.phone!
+                        : '+1 000 000 0000'),
               ],
             ),
           ),
@@ -165,37 +181,53 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         children: <Widget>[
           Container(
             padding: const EdgeInsets.all(3),
-            decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: Colors.white10, width: 1.5)),
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white10, width: 1.5)),
             child: CircleAvatar(
               radius: 40,
               backgroundColor: Colors.white.withValues(alpha: 0.05),
               backgroundImage: user?.photoURL != null
                   ? NetworkImage(user!.photoURL!)
-                  : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+                  : const AssetImage('assets/images/default_avatar.png')
+                      as ImageProvider,
             ),
           ),
           if (_isEditing)
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: Colors.black45, shape: BoxShape.circle),
-              child: _isUploading 
-                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(Symbols.photo_camera_rounded, color: Colors.white, size: 20),
+              decoration: const BoxDecoration(
+                  color: Colors.black45, shape: BoxShape.circle),
+              child: _isUploading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Symbols.photo_camera_rounded,
+                      color: Colors.white, size: 20),
             ),
         ],
       ),
     );
   }
 
-  Widget _buildContactRow(IconData icon, TextEditingController controller, String displayValue) {
+  Widget _buildContactRow(
+      IconData icon, TextEditingController controller, String displayValue) {
     return Row(
       children: <Widget>[
         Icon(icon, color: Colors.white24, size: 14),
         const SizedBox(width: 6),
         Expanded(
-          child: _isEditing 
-            ? _buildInlineTextField(controller, fontSize: 13, color: Colors.white70)
-            : Text(displayValue, style: const TextStyle(fontSize: 13, color: Colors.white38, fontWeight: FontWeight.w400), maxLines: 1, overflow: TextOverflow.ellipsis),
+          child: _isEditing
+              ? _buildInlineTextField(controller,
+                  fontSize: 13, color: Colors.white70)
+              : Text(displayValue,
+                  style: const TextStyle(
+                      fontSize: 13,
+                      color: Colors.white38,
+                      fontWeight: FontWeight.w400),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis),
         ),
       ],
     );
@@ -204,18 +236,33 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget _buildBentoStats(UserProfile profile) {
     return Row(
       children: <Widget>[
-        Expanded(child: _buildStatCard('Blood', _selectedBloodType ?? '--', Symbols.bloodtype_rounded, Colors.redAccent, isBlood: true)),
+        Expanded(
+            child: _buildStatCard('Blood', _selectedBloodType ?? '--',
+                Symbols.bloodtype_rounded, Colors.redAccent,
+                isBlood: true)),
         const SizedBox(width: 8),
-        Expanded(child: _buildStatCard('Weight', '${_weightController.text} kg', Symbols.monitor_weight_rounded, Colors.blueAccent, controller: _weightController, suffix: ' kg')),
+        Expanded(
+            child: _buildStatCard('Weight', '${_weightController.text} kg',
+                Symbols.monitor_weight_rounded, Colors.blueAccent,
+                controller: _weightController, suffix: ' kg')),
         const SizedBox(width: 8),
-        Expanded(child: _buildStatCard('Height', '${_heightController.text} cm', Symbols.height_rounded, Colors.greenAccent, controller: _heightController, suffix: ' cm')),
+        Expanded(
+            child: _buildStatCard('Height', '${_heightController.text} cm',
+                Symbols.height_rounded, Colors.greenAccent,
+                controller: _heightController, suffix: ' cm')),
         const SizedBox(width: 8),
-        Expanded(child: _buildStatCard('Age', '${_ageController.text} yrs', Symbols.event_rounded, Colors.orangeAccent, controller: _ageController, suffix: ' yrs')),
+        Expanded(
+            child: _buildStatCard('Age', '${_ageController.text} yrs',
+                Symbols.event_rounded, Colors.orangeAccent,
+                controller: _ageController, suffix: ' yrs')),
       ],
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color, {TextEditingController? controller, String? suffix, bool isBlood = false}) {
+  Widget _buildStatCard(String label, String value, IconData icon, Color color,
+      {TextEditingController? controller,
+      String? suffix,
+      bool isBlood = false}) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
       decoration: BoxDecoration(
@@ -229,11 +276,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           Icon(icon, color: color, size: 18),
           const SizedBox(height: 12),
           if (_isEditing)
-            isBlood ? _buildBloodTypePicker() : _buildInlineTextField(controller!, fontSize: 13, textAlign: TextAlign.center)
+            isBlood
+                ? _buildBloodTypePicker()
+                : _buildInlineTextField(controller!,
+                    fontSize: 13, textAlign: TextAlign.center)
           else
-            Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Colors.white), maxLines: 1, overflow: TextOverflow.ellipsis),
+            Text(value,
+                style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis),
           const SizedBox(height: 2),
-          Text(label, style: const TextStyle(fontSize: 10, color: Colors.white38, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
+          Text(label,
+              style: const TextStyle(
+                  fontSize: 10,
+                  color: Colors.white38,
+                  fontWeight: FontWeight.w600),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis),
         ],
       ),
     );
@@ -242,7 +304,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget _buildBloodTypePicker() {
     return GestureDetector(
       onTap: () => _showBloodTypePicker(),
-      child: Text(_selectedBloodType ?? '--', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Colors.blueAccent)),
+      child: Text(_selectedBloodType ?? '--',
+          style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: Colors.blueAccent)),
     );
   }
 
@@ -250,7 +316,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: const Color(0xFF0F172A),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
       builder: (BuildContext context) => Container(
         padding: const EdgeInsets.all(24),
         child: GridView.count(
@@ -258,20 +325,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           shrinkWrap: true,
           mainAxisSpacing: 12,
           crossAxisSpacing: 12,
-          children: <String>['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map((String t) => InkWell(
-            onTap: () {
-              setState(() => _selectedBloodType = t);
-              Navigator.pop(context);
-            },
-            child: Container(
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: _selectedBloodType == t ? Colors.blueAccent : Colors.white.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Text(t, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            ),
-          )).toList(),
+          children: <String>['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+              .map((String t) => InkWell(
+                    onTap: () {
+                      setState(() => _selectedBloodType = t);
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: _selectedBloodType == t
+                            ? Colors.blueAccent
+                            : Colors.white.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(t,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                  ))
+              .toList(),
         ),
       ),
     );
@@ -291,21 +365,30 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         children: <Widget>[
           _buildInfoRow(Symbols.person_rounded, 'Gender', _genderController),
           const Divider(height: 32, color: Colors.white10),
-          _buildInfoRow(Symbols.medical_services_rounded, 'Conditions', _conditionsController, hint: 'Comma separated'),
+          _buildInfoRow(Symbols.medical_services_rounded, 'Conditions',
+              _conditionsController,
+              hint: 'Comma separated'),
           const Divider(height: 32, color: Colors.white10),
-          _buildInfoRow(Symbols.warning_rounded, 'Allergies', _allergiesController, hint: 'Comma separated'),
+          _buildInfoRow(
+              Symbols.warning_rounded, 'Allergies', _allergiesController,
+              hint: 'Comma separated'),
           const Divider(height: 32, color: Colors.white10),
-          _buildInfoRow(Symbols.e911_emergency_rounded, 'Emergency Contact', _emergencyContactController),
+          _buildInfoRow(Symbols.e911_emergency_rounded, 'Emergency Contact',
+              _emergencyContactController),
           const Divider(height: 32, color: Colors.white10),
-          _buildInfoRow(Symbols.shield_rounded, 'Insurance', _insuranceController),
+          _buildInfoRow(
+              Symbols.shield_rounded, 'Insurance', _insuranceController),
           const Divider(height: 32, color: Colors.white10),
-          _buildInfoRow(Symbols.stethoscope_rounded, 'Primary Physician', _physicianController),
+          _buildInfoRow(Symbols.stethoscope_rounded, 'Primary Physician',
+              _physicianController),
         ],
       ),
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, TextEditingController controller, {String? hint}) {
+  Widget _buildInfoRow(
+      IconData icon, String label, TextEditingController controller,
+      {String? hint}) {
     return Row(
       children: <Widget>[
         Icon(icon, color: Colors.white24, size: 20),
@@ -314,11 +397,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(label, style: const TextStyle(fontSize: 11, color: Colors.white38, fontWeight: FontWeight.w600)),
+              Text(label,
+                  style: const TextStyle(
+                      fontSize: 11,
+                      color: Colors.white38,
+                      fontWeight: FontWeight.w600)),
               if (_isEditing)
-                _buildInlineTextField(controller, fontSize: 14, color: Colors.white70, hint: hint)
+                _buildInlineTextField(controller,
+                    fontSize: 14, color: Colors.white70, hint: hint)
               else
-                Text(controller.text.isEmpty ? 'Not set' : controller.text, style: const TextStyle(fontSize: 14, color: Colors.white70, fontWeight: FontWeight.w600)),
+                Text(controller.text.isEmpty ? 'Not set' : controller.text,
+                    style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.white70,
+                        fontWeight: FontWeight.w600)),
             ],
           ),
         ),
@@ -326,11 +418,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildInlineTextField(TextEditingController controller, {double fontSize = 14, FontWeight fontWeight = FontWeight.w600, Color color = Colors.white, TextAlign textAlign = TextAlign.start, String? hint}) {
+  Widget _buildInlineTextField(TextEditingController controller,
+      {double fontSize = 14,
+      FontWeight fontWeight = FontWeight.w600,
+      Color color = Colors.white,
+      TextAlign textAlign = TextAlign.start,
+      String? hint}) {
     return TextField(
       controller: controller,
       textAlign: textAlign,
-      style: TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color),
+      style:
+          TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color),
       decoration: InputDecoration(
         isDense: true,
         contentPadding: EdgeInsets.zero,
@@ -352,28 +450,45 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          _buildProgressStat('Streak', '${profile.currentStreak}', Symbols.local_fire_department_rounded, Colors.orange),
-          _buildProgressStat('Badges', '${profile.earnedBadges.length}', Symbols.emoji_events_rounded, Colors.amber),
-          _buildProgressStat('Record', '${profile.longestStreak}', Symbols.military_tech_rounded, Colors.blue),
+          _buildProgressStat('Streak', '${profile.currentStreak}',
+              Symbols.local_fire_department_rounded, Colors.orange),
+          _buildProgressStat('Badges', '${profile.earnedBadges.length}',
+              Symbols.emoji_events_rounded, Colors.amber),
+          _buildProgressStat('Record', '${profile.longestStreak}',
+              Symbols.military_tech_rounded, Colors.blue),
         ],
       ),
     );
   }
 
-  Widget _buildProgressStat(String label, String value, IconData icon, Color color) {
+  Widget _buildProgressStat(
+      String label, String value, IconData icon, Color color) {
     return Column(
       children: <Widget>[
         Icon(icon, color: color, size: 28),
         const SizedBox(height: 8),
-        Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.white)),
-        Text(label, style: const TextStyle(fontSize: 10, color: Colors.white38, fontWeight: FontWeight.w700)),
+        Text(value,
+            style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+                color: Colors.white)),
+        Text(label,
+            style: const TextStyle(
+                fontSize: 10,
+                color: Colors.white38,
+                fontWeight: FontWeight.w700)),
       ],
     );
   }
 
   Widget _buildSectionHeader(String title) {
     return Center(
-      child: Text(title, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Colors.white38, letterSpacing: 2)),
+      child: Text(title,
+          style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              color: Colors.white38,
+              letterSpacing: 2)),
     );
   }
 
@@ -387,7 +502,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               _isEditing = false;
               _initialized = false; // Reset to reload original data
             }),
-            child: const Text('Cancel', style: TextStyle(color: Colors.white38)),
+            child:
+                const Text('Cancel', style: TextStyle(color: Colors.white38)),
           ),
           const SizedBox(width: 16),
           _buildSaveButton(),
@@ -397,9 +513,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return Center(
       child: TextButton.icon(
         onPressed: () => setState(() => _isEditing = true),
-        style: TextButton.styleFrom(foregroundColor: Colors.white38, padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
+        style: TextButton.styleFrom(
+            foregroundColor: Colors.white38,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
         icon: const Icon(Symbols.edit_rounded, size: 14),
-        label: const Text('Edit Profile', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+        label: const Text('Edit Profile',
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
       ),
     );
   }
@@ -408,7 +527,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        gradient: const LinearGradient(colors: <Color>[Colors.blueAccent, Colors.purpleAccent]),
+        gradient: const LinearGradient(
+            colors: <Color>[Colors.blueAccent, Colors.purpleAccent]),
       ),
       child: ElevatedButton(
         onPressed: _saveProfile,
@@ -416,9 +536,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         ),
-        child: const Text('Save', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900)),
+        child: const Text('Save',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900)),
       ),
     );
   }
@@ -434,18 +556,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         child: Wrap(
           children: <Widget>[
             ListTile(
-              leading: const Icon(Symbols.photo_camera_rounded, color: Colors.white),
-              title: const Text('Take Photo', style: TextStyle(color: Colors.white)),
+              leading:
+                  const Icon(Symbols.photo_camera_rounded, color: Colors.white),
+              title: const Text('Take Photo',
+                  style: TextStyle(color: Colors.white)),
               onTap: () async {
-                final XFile? img = await picker.pickImage(source: ImageSource.camera, imageQuality: 50);
+                final XFile? img = await picker.pickImage(
+                    source: ImageSource.camera, imageQuality: 50);
                 navigator.pop(img);
               },
             ),
             ListTile(
               leading: const Icon(Symbols.image_rounded, color: Colors.white),
-              title: const Text('Choose from Gallery', style: TextStyle(color: Colors.white)),
+              title: const Text('Choose from Gallery',
+                  style: TextStyle(color: Colors.white)),
               onTap: () async {
-                final XFile? img = await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
+                final XFile? img = await picker.pickImage(
+                    source: ImageSource.gallery, imageQuality: 50);
                 navigator.pop(img);
               },
             ),
@@ -459,16 +586,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       setState(() => _isUploading = true);
       try {
         final String uid = FirebaseAuth.instance.currentUser!.uid;
-        final Reference ref = FirebaseStorage.instance.ref().child('avatars').child('$uid.jpg');
+        final Reference ref =
+            FirebaseStorage.instance.ref().child('avatars').child('$uid.jpg');
         await ref.putFile(File(image.path));
         final String url = await ref.getDownloadURL();
         await FirebaseAuth.instance.currentUser!.updatePhotoURL(url);
         if (!mounted) return;
         setState(() {});
       } catch (e) {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Upload failed: $e')),
+          );
+        }
       } finally {
-        if (mounted) setState(() => _isUploading = false);
+        if (mounted) {
+          setState(() => _isUploading = false);
+        }
       }
     }
   }
@@ -489,13 +623,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       bloodType: _selectedBloodType,
       insuranceProvider: _insuranceController.text,
       primaryPhysician: _physicianController.text,
-      medicalConditions: _conditionsController.text.split(',').map((String e) => e.trim()).where((String e) => e.isNotEmpty).toList(),
-      allergies: _allergiesController.text.split(',').map((String e) => e.trim()).where((String e) => e.isNotEmpty).toList(),
+      medicalConditions: _conditionsController.text
+          .split(',')
+          .map((String e) => e.trim())
+          .where((String e) => e.isNotEmpty)
+          .toList(),
+      allergies: _allergiesController.text
+          .split(',')
+          .map((String e) => e.trim())
+          .where((String e) => e.isNotEmpty)
+          .toList(),
     );
 
     await ref.read(userProfileStateProvider.notifier).updateProfile(updated);
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated successfully!'), backgroundColor: Colors.green));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Profile updated successfully!'),
+          backgroundColor: Colors.green));
       setState(() => _isEditing = false);
     }
   }

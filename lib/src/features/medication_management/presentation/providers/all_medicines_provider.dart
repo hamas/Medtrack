@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/repositories/medication_repository.dart';
 import '../../data/repositories/medication_repository_impl.dart';
@@ -11,9 +12,8 @@ final Provider<MedicationRepository> medicationRepositoryProvider =
 
 final StreamProvider<List<Medicine>> allMedicinesProvider =
     StreamProvider<List<Medicine>>((Ref ref) {
-      // For now using the hardcoded user ID as seen in add_medicine_screen
-      // or logic from existing code.
-      const String userId = 'hamas_lead_dev';
+      final User? user = FirebaseAuth.instance.currentUser;
+      final String userId = user?.uid ?? 'guest_user';
 
       final MedicationRepository repository = ref.watch(
         medicationRepositoryProvider,
