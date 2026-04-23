@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,80 +14,130 @@ class MedicineListScreen extends ConsumerWidget {
     final AsyncValue<List<Medicine>> medicinesAsync = ref.watch(
       allMedicinesProvider,
     );
-    final ThemeData theme = Theme.of(context);
 
-    return Column(
-      children: <Widget>[
-        // List Content
-        Expanded(
-          child: medicinesAsync.when(
-            data: (List<Medicine> medicines) {
-              if (medicines.isEmpty) {
-                return _buildEmptyState(context, theme);
-              }
-              return ListView.separated(
-                padding: const EdgeInsets.fromLTRB(16, 24, 16, 120),
-                itemCount: medicines.length,
-                separatorBuilder: (BuildContext context, int index) =>
-                    const SizedBox(height: 16),
-                itemBuilder: (BuildContext context, int index) {
-                  final Medicine medicine = medicines[index];
-                  return _MedicineCard(medicine: medicine);
-                },
-              );
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: medicinesAsync.when(
+        data: (List<Medicine> medicines) {
+          if (medicines.isEmpty) {
+            return _buildEmptyState(context);
+          }
+          return ListView.separated(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 140), // Extra bottom padding for FAB/Nav
+            itemCount: medicines.length,
+            separatorBuilder: (BuildContext context, int index) =>
+                const SizedBox(height: 16),
+            itemBuilder: (BuildContext context, int index) {
+              final Medicine medicine = medicines[index];
+              return _MedicineCard(medicine: medicine);
             },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (Object err, StackTrace stack) =>
-                Center(child: Text('Error: $err')),
-          ),
+          );
+        },
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: Colors.white24),
         ),
-      ],
+        error: (Object err, StackTrace stack) =>
+            Center(child: Text('Error: $err', style: const TextStyle(color: Colors.white))),
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 90), // Offset from bottom nav
+        child: FloatingActionButton(
+          onPressed: () => context.push('/medicines/add'),
+          backgroundColor: Colors.white.withValues(alpha: 0.1),
+          elevation: 0,
+          highlightElevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+          ),
+          child: const Icon(Symbols.add_rounded, color: Colors.white, size: 28),
+        ),
+      ),
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, ThemeData theme) {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(
-              Symbols.medication_liquid_rounded,
-              size: 80,
-              color: theme.colorScheme.primary.withValues(alpha: 0.4),
+            // Glassy Icon container
+            Container(
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.03),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+              ),
+              child: Icon(
+                Symbols.medication_rounded,
+                size: 72,
+                color: Colors.white.withValues(alpha: 0.15),
+              ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 40),
             const Text(
-              'Your Library is Empty',
+              "Your medicine cabinet is empty.",
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 26,
                 fontWeight: FontWeight.w900,
                 color: Colors.white,
+                letterSpacing: -0.8,
+                height: 1.1,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Text(
-              'Add your prescriptions here to track your daily doses and health journey.',
+              "Add your first prescription to start your journey.",
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.5),
-                fontSize: 14,
+                color: Colors.white.withValues(alpha: 0.35),
+                fontSize: 16,
+                height: 1.5,
+                fontWeight: FontWeight.w400,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 32),
-            FilledButton.icon(
-              onPressed: () => context.push('/medicines/add'),
-              icon: const Icon(Symbols.add_rounded),
-              label: const Text('Add First Medicine'),
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 16,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+            const SizedBox(height: 56),
+            // Minimalist Glass Button
+            ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => context.push('/medicines/add'),
+                      splashColor: Colors.white10,
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 36, vertical: 18),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(Symbols.add_rounded, color: Colors.white, size: 20),
+                            SizedBox(width: 10),
+                            Text(
+                              "Get Started",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 16,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -103,92 +154,106 @@ class _MedicineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {},
-          borderRadius: BorderRadius.circular(28),
-          child: Padding(
-            padding: const EdgeInsets.all(12.0), // Minimalist padding
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                // 3D Visual with glow
-                Container(
-                  width: 64, // Reduced size
-                  height: 64, // Reduced size
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Image.asset(
-                    'assets/images/medication_3d.png',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                const SizedBox(width: 14),
-                // Textual Info
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              medicine.name,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 16, // Reduced font size
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          const Icon(
-                            Symbols.more_vert_rounded,
-                            color: Colors.white24,
-                            size: 18,
-                          ),
-                        ],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(28),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.04),
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {},
+              splashColor: Colors.white.withValues(alpha: 0.05),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  children: <Widget>[
+                    // Method Icon Container (Glassy Bento Tile)
+                    Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                       ),
-                      Text(
-                        '${medicine.dosage}, 1 ${medicine.deliveryMethod.name}',
-                        style: const TextStyle(
-                          color: Colors.white38,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 11,
+                      child: Center(
+                        child: Icon(
+                          _getDeliveryIcon(medicine.deliveryMethod),
+                          color: Colors.white.withValues(alpha: 0.7),
+                          size: 26,
+                          weight: 600,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 4,
+                    ),
+                    const SizedBox(width: 18),
+                    // Main Info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          _TimingChip(
-                            label: _getMealLabel(medicine.mealContext),
-                            color: Colors.tealAccent,
-                          ),
-                          if (medicine.scheduleTimes.isNotEmpty)
-                            _TimingChip(
-                              label: '${medicine.scheduleTimes.length} doses',
-                              color: Colors.blueAccent,
+                          Text(
+                            medicine.name,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 19,
+                              letterSpacing: -0.6,
                             ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            medicine.dosage,
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.45),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    // Inventory Status (Smart Inventory)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.03),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            '${medicine.remainingQuantity}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 22,
+                              height: 1,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Left',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.25),
+                              fontWeight: FontWeight.w800,
+                              fontSize: 10,
+                              letterSpacing: 1.2,
+                              height: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -196,43 +261,23 @@ class _MedicineCard extends StatelessWidget {
     );
   }
 
-  String _getMealLabel(MealContext context) {
-    switch (context) {
-      case MealContext.beforeMeal:
-        return 'Before Meal';
-      case MealContext.withMeal:
-        return 'With Meal';
-      case MealContext.afterMeal:
-        return 'After Meal';
-      case MealContext.none:
-        return 'Anytime';
+  IconData _getDeliveryIcon(DeliveryMethod method) {
+    switch (method) {
+      case DeliveryMethod.water:
+        return Symbols.water_drop_rounded;
+      case DeliveryMethod.milk:
+        return Symbols.glass_cup_rounded;
+      case DeliveryMethod.mixed:
+        return Symbols.science_rounded;
+      case DeliveryMethod.injection:
+        return Symbols.vaccines_rounded;
+      case DeliveryMethod.drops:
+        return Symbols.opacity_rounded;
+      case DeliveryMethod.inhaler:
+        return Symbols.air_rounded;
+      case DeliveryMethod.other:
+        return Symbols.medication_rounded;
     }
   }
 }
 
-class _TimingChip extends StatelessWidget {
-  const _TimingChip({required this.label, required this.color});
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontSize: 10,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 0.5,
-        ),
-      ),
-    );
-  }
-}
