@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/repositories/medication_repository.dart';
 import '../../data/repositories/medication_repository_impl.dart';
@@ -12,6 +13,10 @@ final Provider<MedicationRepository> medicationRepositoryProvider =
 
 final StreamProvider<List<Medicine>> allMedicinesProvider =
     StreamProvider<List<Medicine>>((Ref ref) {
+      if (Firebase.apps.isEmpty) {
+        return Stream<List<Medicine>>.value(<Medicine>[]);
+      }
+
       final User? user = FirebaseAuth.instance.currentUser;
       final String userId = user?.uid ?? 'guest_user';
 

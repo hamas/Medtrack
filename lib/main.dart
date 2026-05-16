@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,21 +13,25 @@ import 'src/core/navigation/app_router.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(const ProviderScope(child: MedTrackApp()));
-
   try {
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
-      );
+      ).timeout(const Duration(seconds: 10));
     }
     final FirebaseService firebaseService = FirebaseService();
-    await firebaseService.initialize();
-    await firebaseService.ensureAuthenticated();
+    await firebaseService.initialize().timeout(const Duration(seconds: 5));
+    await firebaseService.ensureAuthenticated().timeout(const Duration(seconds: 5));
   } catch (e) {
     debugPrint('Firebase initialization failed. Error: $e');
   }
 
+  runApp(const ProviderScope(child: MedTrackApp()));
+
+  unawaited(_runPostLaunchInitialization());
+}
+
+Future<void> _runPostLaunchInitialization() async {
   try {
     final NotificationManager notificationManager = NotificationManager();
     await notificationManager.initialize();
