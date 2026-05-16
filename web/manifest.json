@@ -1,11 +1,11 @@
 {
-    "name": "medtrack",
-    "short_name": "medtrack",
+    "name": "Medtrack",
+    "short_name": "Medtrack",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Medtrack helps you manage medicines, reminders, and adherence tracking.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
