@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,6 +29,13 @@ class _BiometricGateState extends ConsumerState<BiometricGate>
   }
 
   Future<void> _checkAndAuthenticate() async {
+    if (kIsWeb) {
+      if (mounted) {
+        setState(() => _isAuthenticated = true);
+      }
+      return;
+    }
+
     // Wait for settings to load
     final Map<String, dynamic> settings = await ref.read(
       settingsStateProvider.future,
@@ -97,6 +105,12 @@ class _BiometricGateState extends ConsumerState<BiometricGate>
               LocalAuthExceptionCode.biometricHardwareTemporarilyUnavailable;
       setState(() {
         _isAuthenticated = bypass;
+        _isAuthenticating = false;
+      });
+    } catch (e) {
+      debugPrint('Biometric auth generic error: $e');
+      setState(() {
+        _isAuthenticated = true;
         _isAuthenticating = false;
       });
     }
