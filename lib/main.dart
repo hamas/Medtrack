@@ -11,6 +11,8 @@ import 'src/core/navigation/app_router.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  runApp(const ProviderScope(child: MedTrackApp()));
+
   try {
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
@@ -24,14 +26,20 @@ Future<void> main() async {
     debugPrint('Firebase initialization failed. Error: $e');
   }
 
-  final NotificationManager notificationManager = NotificationManager();
-  await notificationManager.initialize();
-  await notificationManager.requestPermissions();
+  try {
+    final NotificationManager notificationManager = NotificationManager();
+    await notificationManager.initialize();
+    await notificationManager.requestPermissions();
+  } catch (e) {
+    debugPrint('Notification initialization failed. Error: $e');
+  }
 
-  final HealthTipsService healthTipsService = HealthTipsService.instance;
-  await healthTipsService.scheduleDiscoveryTips();
-
-  runApp(const ProviderScope(child: MedTrackApp()));
+  try {
+    final HealthTipsService healthTipsService = HealthTipsService.instance;
+    await healthTipsService.scheduleDiscoveryTips();
+  } catch (e) {
+    debugPrint('Health tips initialization failed. Error: $e');
+  }
 }
 
 class MedTrackApp extends ConsumerWidget {

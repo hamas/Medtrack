@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -13,6 +13,10 @@ class NotificationManager {
       FlutterLocalNotificationsPlugin();
 
   Future<void> initialize() async {
+    if (kIsWeb) {
+      return;
+    }
+
     tz.initializeTimeZones();
 
     const AndroidInitializationSettings initializationSettingsAndroid =
@@ -27,7 +31,7 @@ class NotificationManager {
   }
 
   Future<void> _createHighImportanceChannel() async {
-    if (Platform.isAndroid) {
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       const AndroidNotificationChannel channel = AndroidNotificationChannel(
         'high_importance_medical_alerts',
         'Medical Alerts',
@@ -46,7 +50,7 @@ class NotificationManager {
   }
 
   Future<void> requestPermissions() async {
-    if (Platform.isAndroid) {
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       await Permission.notification.request();
       await Permission.scheduleExactAlarm.request();
     }
@@ -58,6 +62,10 @@ class NotificationManager {
     required String body,
     required DateTime scheduledDate,
   }) async {
+    if (kIsWeb) {
+      return;
+    }
+
     await _localNotifications.zonedSchedule(
       id: id,
       title: title,
