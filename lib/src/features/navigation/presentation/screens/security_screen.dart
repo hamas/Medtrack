@@ -1,0 +1,274 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:local_auth/local_auth.dart';
+import '../../../../core/services/firebase_service.dart';
+import '../../../../core/services/local_db_service.dart';
+import '../providers/settings_provider.dart';
+
+class SecurityScreen extends ConsumerWidget {
+  const SecurityScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<Map<String, dynamic>> settingsAsync = ref.watch(
+      settingsStateProvider,
+    );
+
+    return settingsAsync.when(
+      data: (Map<String, dynamic> settings) => SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          children: <Widget>[
+            const SizedBox(height: 20),
+            _buildToggle(
+              'Biometric Lock',
+              'Require fingerprint or PIN to open',
+              Symbols.fingerprint_rounded,
+              Colors.greenAccent,
+              settings['biometric_enabled'] as bool? ?? false,
+              (bool val) => _update(ref, 'biometric_enabled', val),
+            ),
+            const SizedBox(height: 32),
+            const _SectionTitle(title: 'DATA MANAGEMENT'),
+            const SizedBox(height: 16),
+            _buildActionButton(
+              'Clear Local Medication Data',
+              'Reset local offline database cache',
+              Symbols.cleaning_services_rounded,
+              Colors.orangeAccent,
+              () => _confirmClearData(context, ref),
+            ),
+            const SizedBox(height: 32),
+            const _SectionTitle(title: 'ACCOUNT ACTIONS'),
+            const SizedBox(height: 16),
+            _buildActionButton(
+              'Sign Out & Reset Session',
+              'Disconnect current user session',
+              Symbols.logout_rounded,
+              Colors.redAccent,
+              () => _confirmSignOut(context, ref),
+            ),
+          ],
+        ),
+      ),
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (Object e, StackTrace? _) => Center(child: Text('Error: $e')),
+    );
+  }
+
+  Future<void> _confirmClearData(BuildContext context, WidgetRef ref) async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1B2E),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text(
+          'Clear Local Data?',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'This will purge all locally cached medicines and adherence logs from this device.',
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white60),
+            ),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.orangeAccent.shade700,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Clear Data'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await LocalDbService().clearAllData();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Local cache cleared successfully.')),
+        );
+      }
+    }
+  }
+
+  Future<void> _confirmSignOut(BuildContext context, WidgetRef ref) async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1B2E),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text(
+          'Sign Out?',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'Are you sure you want to end your session?',
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white60),
+            ),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.redAccent.shade700,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Sign Out'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await FirebaseService().signOut();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Signed out successfully.')),
+        );
+      }
+    }
+  }
+
+  Widget _buildToggle(
+    String title,
+    String sub,
+    IconData icon,
+    Color color,
+    bool value,
+    ValueChanged<bool> onChanged,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: SwitchListTile(
+        value: value,
+        onChanged: onChanged,
+        secondary: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+            fontSize: 15,
+          ),
+        ),
+        subtitle: Text(
+          sub,
+          style: const TextStyle(fontSize: 11, color: Colors.white38),
+        ),
+        activeTrackColor: color.withValues(alpha: 0.3),
+        activeThumbColor: color,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+    String title,
+    String sub,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: ListTile(
+        onTap: onTap,
+        leading: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+            fontSize: 15,
+          ),
+        ),
+        subtitle: Text(
+          sub,
+          style: const TextStyle(fontSize: 11, color: Colors.white38),
+        ),
+        trailing: const Icon(
+          Symbols.chevron_right_rounded,
+          color: Colors.white10,
+          size: 20,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      ),
+    );
+  }
+
+  Future<void> _update(WidgetRef ref, String key, dynamic value) async {
+    if (key == 'biometric_enabled' && value == true) {
+      final LocalAuthentication auth = LocalAuthentication();
+      try {
+        final bool canCheck =
+            await auth.canCheckBiometrics || await auth.isDeviceSupported();
+        if (canCheck) {
+          final bool didAuth = await auth.authenticate(
+            localizedReason: 'Please authenticate to enable biometric lock',
+            biometricOnly: false,
+            persistAcrossBackgrounding: true,
+          );
+          if (!didAuth) return;
+        }
+      } catch (e) {
+        debugPrint('Auth verification failed: $e');
+        return;
+      }
+    }
+    await ref.read(settingsStateProvider.notifier).updateSetting(key, value);
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({required this.title});
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w800,
+        color: Colors.white38,
+        letterSpacing: 2,
+      ),
+    );
+  }
+}
