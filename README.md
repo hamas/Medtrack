@@ -1,41 +1,169 @@
-![Medtrack Banner](https://img.shields.io/badge/Medtrack-Cinematic_UI-blueviolet?style=for-the-badge)
-![Dart](https://img.shields.io/badge/Language-100%25_Dart-0175C2?style=flat-square&logo=dart&logoColor=white) 
-![Verified](https://img.shields.io/badge/Architecture-Clean_Feature_First-success?style=flat-square&logo=flutter&logoColor=white)
-![Platform](https://img.shields.io/badge/Platform-Android_%7C_iOS_%7C_Web-blue?style=flat-square&logo=android&logoColor=white)
+# Medtrack
 
-# Medtrack — Cinematic Medical Management
+A clinical-grade personal medication management and adherence tracking platform built with Flutter and Clean Architecture.
 
-## 🌟 The Vision
-Medtrack is not just a tracker; it's a **cinematic medical companion**. Designed for high-fidelity precision, it combines a stunning, premium aesthetic with a robust medical-grade tracking engine. It ensures zero-dose missing while providing a professional environment for healthcare management.
-
-## 🚀 Key Features
-
-### 🎬 Cinematic Experience
-- **Ambient Design System:** Dynamic, glassmorphic backgrounds that breathe life into the UI.
-- **Premium Aesthetics:** Carefully curated HSL color palettes and smooth micro-animations.
-- **Responsive Spacing:** Standardized 16px rhythm for a balanced, airy feel across all devices.
-
-### 🛡️ Secure Personal Hub
-- **Biometric Security:** Enterprise-level access gates (FaceID/Fingerprint) protecting sensitive data.
-- **Privacy First:** Local-first data with secure cloud synchronization.
-- **Granular Settings:** Personalized health metrics, notifications, and security controls.
-
-### 💊 Medical Precision
-- **Advanced Scheduling:** Support for complex intervals (daily, bi-weekly, custom) with surgical accuracy.
-- **Contextual Logging:** Track dosage with meal context (Before/With/After) and delivery methods.
-- **Clinical Reporting:** Generate high-fidelity PDF adherence reports directly for medical professionals.
-
-### 🧠 Smart Insights
-- **Gamified Achievements:** Motivation-driven adherence history with dynamic heatmap visualizations.
-- **Weather Awareness:** Contextual weather integration to align health routines with external conditions.
-- **Discovery Tips:** Daily medical-grade health tips scheduled for long-term recovery support.
-
-## 🏗️ Technical Architecture
-Built with a **"Top of the Line"** philosophy:
-- **Architecture:** 100% Clean Architecture (Feature-First).
-- **State Management:** Riverpod (Functional & Reactive).
-- **Persistence:** SQLCipher (Local) & Firestore (Cloud).
-- **Security:** Local Auth & Flutter Secure Storage.
+Developed and maintained by **Hamas** ([hamasdmc@gmail.com](mailto:hamasdmc@gmail.com)).
 
 ---
-**Developed by Hamas ❤️.**
+
+## Overview
+
+Medication non-adherence is one of the most persistent hurdles in modern outpatient medicine. Missed doses, irregular scheduling, and lack of contextual administration (such as meal requirements or drug contraindications) frequently lead to preventable health setbacks.
+
+**Medtrack** was engineered to solve this challenge with medical precision and architectural dependability. Rather than functioning as a generic calendar alarm, Medtrack acts as a personal clinical companion: calculating cyclical dose intervals, screening against known patient allergies, capturing structured clinical reasons for missed doses, managing prescription inventory, and generating verifiable adherence reports for healthcare providers.
+
+---
+
+## Clinical & Functional Capabilities
+
+### Surgical Dose Scheduling Engine
+* **Multi-Interval Support:** Accurately schedules daily, weekly, bi-weekly, monthly, or custom cyclical regimens (e.g., tapering courses or alternating-day therapy).
+* **Exact Time Alarms:** Utilizes Android exact alarm APIs (`SCHEDULE_EXACT_ALARM`) and high-importance notification channels to ensure alerts fire reliably, even in device low-power idle states.
+* **Meal Context Guidance:** Associates each dose with specific administration instructions: *Before Breakfast*, *With Meal*, *After Dinner*, or *No meal requirement*.
+
+### Clinical Safety & Allergy Screening
+* **Contraindication Guardrails:** Intercepts medication creation and cross-references drug names against the patient's documented allergy profile.
+* **Class Conflict Alerts:** Flags high-risk classes including penicillins, sulfa compounds, NSAIDs, opioids, and cephalosporins, requiring explicit acknowledgment before scheduling.
+
+### Adherence Audit & Flexible Workflow
+* **Structured Skip Reason Logging:** Patients rarely miss medication randomly. Medtrack captures specific clinical rationales:
+  * Adverse side effects or nausea
+  * Fasting or medical procedures
+  * Temporary supply unavailability
+  * Physician instructions to hold therapy
+* **Snooze Protocol:** Provides a 30-minute grace window for real-world flexibility without falsely marking a dose as missed.
+* **Audit Trail:** Intakes, skips, and timestamps are recorded in an adherence log database for clinician review.
+
+### Clinician-Ready PDF Reporting
+* **Standardized Adherence Summaries:** Exports multi-page, formatted medical reports directly from the app.
+* **KPI Adherence Scoring:** Calculates overall percentage adherence, active medication counts, and doses taken versus omitted.
+* **Regimen & Intake Tables:** Generates complete prescription rosters and up to 50 historical intake records formatted for physician consultation.
+
+### Inventory & Refill Warnings
+* **Depletion Tracking:** Automatically decrements pill counts upon dose confirmation.
+* **Refill Warnings:** Highlights low-stock medications once remaining quantities hit custom thresholds.
+
+### Biometric Security & Privacy
+* **Hardware-Gated Access:** Secures medical records behind local fingerprint, Face ID, or PIN authentication using native biometric prompts.
+* **Local-First Reliability:** All core scheduling, dose verification, and logging functions operate completely offline using SQLite. Cloud backup synchronizes automatically when network access is available.
+
+---
+
+## Architectural & Technical Design
+
+Medtrack is built with strict adherence to **Feature-First Clean Architecture**, ensuring clear separation of concerns, testability, and enterprise maintainability:
+
+```text
+Medtrack/
+├── android/                          # Native Android runner (Java 17, ProGuard, Desugaring)
+├── assets/                           # Curated production image and icon assets
+├── lib/
+│   ├── firebase_options.dart         # Android Firebase platform configuration
+│   ├── main.dart                     # Application entrypoint & initialization
+│   └── src/
+│       ├── core/
+│       │   ├── navigation/           # Declarative routing with GoRouter
+│       │   ├── services/             # Local database, notifications, alarms, auth
+│       │   ├── theme/                # Deep midnight cinematic theme & typography
+│       │   ├── utils/                # Standardized animation & motion curves
+│       │   └── widgets/              # Atmospheric ambient backgrounds & common UI
+│       └── features/
+│           ├── authentication/       # Biometric gate & auth state providers
+│           ├── daily_dashboard/      # Timeline, dose cards, low-stock banners
+│           ├── gamification/         # Streaks, milestones, adherence heatmaps
+│           ├── history_tracking/     # Monthly calendar & clinical PDF export
+│           ├── medication_management/# Dose scheduler, allergy checker, medicine forms
+│           ├── navigation/           # App shell, navigation bar, menus & security
+│           └── weather/              # Real-time ambient weather integration
+└── test/
+    ├── unit/                         # Dose scheduler interval tests
+    ├── widget/                       # Form validation and UI widget tests
+    └── widget_test.dart              # Core application smoke test
+```
+
+### Core Technology Stack
+
+| Component | Technology | Role |
+| :--- | :--- | :--- |
+| **Framework** | Flutter 3.47+ & Dart 3.11+ | Cross-platform UI toolkit and language |
+| **State Management** | Riverpod 3.x (`riverpod_generator`) | Reactive, compile-safe dependency injection |
+| **Routing** | GoRouter 18.x | Declarative, branch-aware navigation |
+| **Local Database** | SQLite (`sqflite`) | Offline-first persistence and schema migrations |
+| **Cloud Backend** | Firebase (Auth, Firestore, Storage) | Secure user accounts and cross-device sync |
+| **Notifications** | `flutter_local_notifications` | Native Android exact alarm scheduling |
+| **Biometrics** | `local_auth` / `local_auth_android` | Hardware-backed biometric authentication |
+| **PDF Generation** | `pdf` & `printing` | Medical-grade PDF rendering and sharing |
+| **Models** | Freezed & `json_serializable` | Immutable data models and JSON serialization |
+
+---
+
+## Getting Started
+
+### Prerequisites
+* [Flutter SDK](https://flutter.dev/docs/get-started/install) (version 3.29.0 or later, Dart 3.11+)
+* [Android Studio](https://developer.android.com/studio) with Android SDK and JDK 17
+* Physical Android device (recommended for exact alarms and biometrics) or Android Emulator (API 33+)
+
+### Setup Instructions
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/hamas/Medtrack.git
+   cd Medtrack
+   ```
+
+2. **Install project dependencies:**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Verify static analysis and tests:**
+   ```bash
+   dart analyze
+   flutter test
+   ```
+
+4. **Launch the application on Android:**
+   ```bash
+   flutter run
+   ```
+
+### Release Build
+
+To generate an optimized release build with resource shrinking and ProGuard minification:
+
+```bash
+# Build standalone APK
+flutter build apk --release
+
+# Build Google Play App Bundle
+flutter build appbundle --release
+```
+
+---
+
+## Code Quality Standards
+
+* **Strict Type Safety:** Configured with `strict-casts`, `strict-inference`, and `strict-raw-types`.
+* **Zero Analyzer Warnings:** Maintained with clean passes across all Dart and Flutter linter rules.
+* **Automated Test Coverage:** Includes unit tests for cyclical dose scheduling logic, widget tests for medication entry workflows, and application rendering tests.
+
+---
+
+## Author & Contact
+
+**Hamas**  
+Lead Developer & Maintainer  
+Email: [hamasdmc@gmail.com](mailto:hamasdmc@gmail.com)  
+GitHub: [@hamas](https://github.com/hamas)
+
+Contributions, feature requests, and issue reports are welcome via GitHub Issues.
+
+---
+
+## License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for complete details.
+
+### Clinical Notice
+Medtrack is intended solely as an informational personal medication and adherence management assistant. It is not a certified medical device and does not provide medical diagnosis, treatment planning, or clinical consultation. Users should always confirm medication regimens with their licensed physician or pharmacist.
