@@ -8,6 +8,10 @@ class DoseScheduler {
     Medicine medicine, {
     DateTime? startAfter,
   }) {
+    if (!medicine.isActive || medicine.isPrn) {
+      return <Dose>[];
+    }
+
     final List<Dose> doses = <Dose>[];
     final DateTime start = startAfter ?? DateTime.now();
 
@@ -30,8 +34,10 @@ class DoseScheduler {
       if (_isDoseDay(medicine, currentDateCandidate)) {
         for (final String timeStr in medicine.scheduleTimes) {
           final List<String> parts = timeStr.split(':');
-          final int hour = int.parse(parts[0]);
-          final int minute = int.parse(parts[1]);
+          if (parts.length < 2) continue;
+          final int? hour = int.tryParse(parts[0]);
+          final int? minute = int.tryParse(parts[1]);
+          if (hour == null || minute == null) continue;
 
           final DateTime doseDateTime = DateTime(
             currentDateCandidate.year,

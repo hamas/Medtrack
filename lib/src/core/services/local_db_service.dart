@@ -138,7 +138,12 @@ class LocalDbService {
     final List<Map<String, dynamic>> maps = await db.query('medicines');
     return List<Medicine>.generate(maps.length, (int i) {
       final Map<String, dynamic> map = Map<String, dynamic>.from(maps[i]);
-      map['scheduleTimes'] = (map['scheduleTimes'] as String).split(',');
+      final String scheduleStr = (map['scheduleTimes'] as String?) ?? '';
+      map['scheduleTimes'] = scheduleStr
+          .split(',')
+          .map((String s) => s.trim())
+          .where((String s) => s.isNotEmpty)
+          .toList();
       map['isActive'] = map['isActive'] == 1;
       map['isPrn'] = (map['isPrn'] ?? 0) == 1;
       map['minCooldownHours'] = (map['minCooldownHours'] as num?)?.toInt() ?? 4;

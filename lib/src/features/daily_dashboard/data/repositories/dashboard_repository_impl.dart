@@ -16,46 +16,63 @@ class DashboardRepositoryImpl implements DashboardRepository {
 
   @override
   Future<List<Dose>> getDailyTimeline(String userId, DateTime date) async {
-    final List<Medicine> medicines = <Medicine>[];
+    List<Medicine> medicines = await _localDb.getMedicines();
 
-    if (userId == 'guest_user') {
-      medicines.addAll(await _localDb.getMedicines());
-    } else {
-      final QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
-          .collection('medicines')
-          .where('userId', isEqualTo: userId)
-          .where('isActive', isEqualTo: true)
-          .get();
+    if (userId != 'guest_user') {
+      try {
+        final QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
+            .collection('medicines')
+            .where('userId', isEqualTo: userId)
+            .get();
 
-      for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
-          in snapshot.docs) {
-        medicines.add(Medicine.fromJson(doc.data()));
+        if (snapshot.docs.isNotEmpty) {
+          final List<Medicine> remoteMeds = snapshot.docs
+              .map(
+                (QueryDocumentSnapshot<Map<String, dynamic>> doc) =>
+                    Medicine.fromJson(doc.data()),
+              )
+              .toList();
+
+          for (final Medicine m in remoteMeds) {
+            await _localDb.insertMedicine(m);
+          }
+          medicines = await _localDb.getMedicines();
+        }
+      } catch (e) {
+        // Fallback to local DB when offline
       }
     }
 
-    // Retrieve today's recorded adherence logs to reconcile taken state
-    final List<AdherenceLog> existingLogs = userId == 'guest_user'
-        ? await _localDb.getAllAdherenceLogs()
-        : await _firestore
-              .collection('adherence_logs')
-              .where('userId', isEqualTo: userId)
-              .get()
-              .then(
-                (QuerySnapshot<Map<String, dynamic>> snap) => snap.docs
-                    .map(
-                      (QueryDocumentSnapshot<Map<String, dynamic>> d) =>
-                          AdherenceLog.fromJson(d.data()),
-                    )
-                    .toList(),
-              );
+    // Only active, scheduled (non-PRN) medications generate daily timeline slots
+    final List<Medicine> activeScheduledMeds = medicines
+        .where((Medicine m) => m.isActive && !m.isPrn)
+        .toList();
 
-    final Set<String> takenLogIds = existingLogs
-        .where((AdherenceLog l) => l.status == AdherenceStatus.taken)
-        .map(
-          (AdherenceLog l) =>
-              '${l.medicineId}_${l.scheduledTime.millisecondsSinceEpoch}',
-        )
-        .toSet();
+    // Retrieve today's recorded adherence logs to reconcile taken and skipped states
+    List<AdherenceLog> existingLogs = await _localDb.getAllAdherenceLogs();
+
+    if (userId != 'guest_user') {
+      try {
+        final QuerySnapshot<Map<String, dynamic>> snap = await _firestore
+            .collection('adherence_logs')
+            .where('userId', isEqualTo: userId)
+            .get();
+
+        for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+            in snap.docs) {
+          final AdherenceLog l = AdherenceLog.fromJson(doc.data());
+          await _localDb.insertAdherenceLog(l);
+        }
+        existingLogs = await _localDb.getAllAdherenceLogs();
+      } catch (e) {
+        // Fallback to local logs when offline
+      }
+    }
+
+    final Map<String, AdherenceLog> logMap = <String, AdherenceLog>{
+      for (final AdherenceLog l in existingLogs)
+        '${l.medicineId}_${l.scheduledTime.millisecondsSinceEpoch}': l,
+    };
 
     final List<Dose> todayDoses = <Dose>[];
     final DateTime startOfDay = DateTime(date.year, date.month, date.day);
@@ -63,7 +80,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
       const Duration(hours: 23, minutes: 59, seconds: 59),
     );
 
-    for (final Medicine medicine in medicines) {
+    for (final Medicine medicine in activeScheduledMeds) {
       final List<Dose> doses = DoseScheduler.calculateNextDoses(
         medicine,
         startAfter: startOfDay.subtract(const Duration(seconds: 1)),
@@ -75,8 +92,17 @@ class DashboardRepositoryImpl implements DashboardRepository {
         }
         final String doseLogKey =
             '${dose.medicine.id}_${dose.scheduledTime.millisecondsSinceEpoch}';
-        final bool isAlreadyTaken = takenLogIds.contains(doseLogKey);
-        todayDoses.add(isAlreadyTaken ? dose.copyWith(isTaken: true) : dose);
+        final AdherenceLog? matchLog = logMap[doseLogKey];
+        final bool isHandled =
+            matchLog != null &&
+            (matchLog.status == AdherenceStatus.taken ||
+                matchLog.status == AdherenceStatus.skipped);
+
+        todayDoses.add(
+          isHandled
+              ? dose.copyWith(isTaken: true, takenTime: matchLog.takenTime)
+              : dose,
+        );
       }
     }
 

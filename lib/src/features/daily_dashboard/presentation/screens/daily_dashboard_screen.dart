@@ -472,6 +472,8 @@ class _DashboardItem extends ConsumerWidget {
                                 _showSkipDoseDialog(context, ref);
                               } else if (action == 'symptom') {
                                 _showSymptomCheckInDialog(context, ref);
+                              } else if (action == 'vitals') {
+                                _showVitalsDialog(context, ref);
                               }
                             },
                             itemBuilder: (BuildContext ctx) =>
@@ -532,6 +534,20 @@ class _DashboardItem extends ConsumerWidget {
                                       ],
                                     ),
                                   ),
+                                  const PopupMenuItem<String>(
+                                    value: 'vitals',
+                                    child: Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          Symbols.monitor_heart_rounded,
+                                          color: Colors.cyanAccent,
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text('Log Vitals / Biometrics'),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                           ),
                         ],
@@ -560,6 +576,17 @@ class _DashboardItem extends ConsumerWidget {
                             color: const Color(0xFFE0E7FF),
                             textColor: const Color(0xFF4338CA),
                           ),
+                          if (!dose.isTaken &&
+                              DateTime.now()
+                                      .difference(dose.scheduledTime)
+                                      .inMinutes >
+                                  60)
+                            _TimeChip(
+                              label:
+                                  'Overdue by ${_formatOverdue(dose.scheduledTime)}',
+                              color: const Color(0xFFFEE2E2),
+                              textColor: const Color(0xFFDC2626),
+                            ),
                         ],
                       ),
                     ],
@@ -574,7 +601,7 @@ class _DashboardItem extends ConsumerWidget {
               child: InkWell(
                 onTap: () {
                   if (!dose.isTaken) {
-                    ref.read(dailyTimelineProvider.notifier).checkOffDose(dose);
+                    _handleDoseCheckOff(context, ref);
                   }
                 },
               ),
@@ -933,6 +960,285 @@ class _DashboardItem extends ConsumerWidget {
       case MealContext.none:
         return 'Anytime';
     }
+  }
+
+  String _formatOverdue(DateTime scheduled) {
+    final Duration diff = DateTime.now().difference(scheduled);
+    final int hours = diff.inHours;
+    final int mins = diff.inMinutes % 60;
+    if (hours > 0) {
+      return '${hours}h ${mins}m';
+    }
+    return '${mins}m';
+  }
+
+  Future<void> _handleDoseCheckOff(BuildContext context, WidgetRef ref) async {
+    final int lateHours = DateTime.now().difference(dose.scheduledTime).inHours;
+    if (lateHours >= 2) {
+      final bool? proceed = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext ctx) => AlertDialog(
+          backgroundColor: const Color(0xFF1E1B2E),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          icon: const Icon(
+            Symbols.info_rounded,
+            color: Colors.amberAccent,
+            size: 36,
+          ),
+          title: const Text(
+            'Late Dose Guidance',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          content: Text(
+            'This dose of ${dose.medicine.name} was scheduled $lateHours hours ago.\n\nClinical Rule: If it is almost time for your next scheduled dose, skip this dose. Never double up on medication to compensate for a missed dose.',
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 13,
+              height: 1.4,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.white60),
+              ),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: Colors.amber[800]),
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('Take Dose Now'),
+            ),
+          ],
+        ),
+      );
+      if (proceed != true) return;
+    }
+
+    if (context.mounted) {
+      await ref.read(dailyTimelineProvider.notifier).checkOffDose(dose);
+    }
+  }
+
+  void _showVitalsDialog(BuildContext context, WidgetRef ref) {
+    final TextEditingController bpController = TextEditingController();
+    final TextEditingController glucoseController = TextEditingController();
+    final TextEditingController hrController = TextEditingController();
+    final TextEditingController spo2Controller = TextEditingController();
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF1E1B2E),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (BuildContext sheetCtx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 16,
+            bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + 24,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: <Widget>[
+                    const Icon(
+                      Symbols.monitor_heart_rounded,
+                      color: Colors.cyanAccent,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Log Vitals: ${dose.medicine.name}',
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'Record paired physiological readings (e.g. BP for hypertension meds, Glucose for insulin).',
+                  style: TextStyle(fontSize: 12, color: Colors.white60),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: TextField(
+                        controller: bpController,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: 'Blood Pressure',
+                          hintText: '120/80',
+                          suffixText: 'mmHg',
+                          filled: true,
+                          fillColor: Colors.white.withValues(alpha: 0.04),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextField(
+                        controller: glucoseController,
+                        keyboardType: TextInputType.number,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: 'Blood Glucose',
+                          hintText: '100',
+                          suffixText: 'mg/dL',
+                          filled: true,
+                          fillColor: Colors.white.withValues(alpha: 0.04),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: TextField(
+                        controller: hrController,
+                        keyboardType: TextInputType.number,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: 'Heart Rate',
+                          hintText: '72',
+                          suffixText: 'bpm',
+                          filled: true,
+                          fillColor: Colors.white.withValues(alpha: 0.04),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextField(
+                        controller: spo2Controller,
+                        keyboardType: TextInputType.number,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: 'SpO2 Oxygen',
+                          hintText: '98',
+                          suffixText: '%',
+                          filled: true,
+                          fillColor: Colors.white.withValues(alpha: 0.04),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.cyanAccent.withValues(alpha: 0.8),
+                      foregroundColor: Colors.black87,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    onPressed: () {
+                      final List<String> entries = <String>[];
+                      if (bpController.text.trim().isNotEmpty) {
+                        entries.add('BP: ${bpController.text.trim()} mmHg');
+                      }
+                      if (glucoseController.text.trim().isNotEmpty) {
+                        entries.add(
+                          'Glucose: ${glucoseController.text.trim()} mg/dL',
+                        );
+                      }
+                      if (hrController.text.trim().isNotEmpty) {
+                        entries.add('HR: ${hrController.text.trim()} bpm');
+                      }
+                      if (spo2Controller.text.trim().isNotEmpty) {
+                        entries.add('SpO2: ${spo2Controller.text.trim()}%');
+                      }
+
+                      if (entries.isEmpty) {
+                        Navigator.pop(sheetCtx);
+                        return;
+                      }
+
+                      final String summary = entries.join(', ');
+                      Navigator.pop(sheetCtx);
+                      ref
+                          .read(dailyTimelineProvider.notifier)
+                          .logVitals(dose, summary);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Vitals logged: $summary'),
+                          backgroundColor: Colors.teal[800],
+                        ),
+                      );
+                    },
+                    icon: const Icon(Symbols.check_rounded, size: 18),
+                    label: const Text(
+                      'Save Vitals & Readings',
+                      style: TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
 

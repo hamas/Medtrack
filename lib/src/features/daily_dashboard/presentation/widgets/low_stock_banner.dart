@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import '../../../medication_management/domain/entities/medicine.dart';
 import '../../../medication_management/presentation/providers/all_medicines_provider.dart';
+import '../providers/daily_timeline_provider.dart';
 
 class LowStockBanner extends ConsumerWidget {
   const LowStockBanner({super.key});
@@ -77,13 +78,18 @@ class LowStockBanner extends ConsumerWidget {
                       'Refill ${med.name}',
                       style: const TextStyle(fontSize: 11, color: Colors.white),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
+                      final int targetQuantity = med.initialQuantity > 0
+                          ? med.initialQuantity
+                          : (med.remainingQuantity + 30);
                       final Medicine refilledMed = med.copyWith(
-                        remainingQuantity: med.initialQuantity,
+                        remainingQuantity: targetQuantity,
                       );
-                      ref
+                      await ref
                           .read(medicationRepositoryProvider)
                           .saveMedicine(refilledMed);
+                      ref.invalidate(allMedicinesProvider);
+                      ref.invalidate(dailyTimelineProvider);
                     },
                   ),
                 );

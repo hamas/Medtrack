@@ -1033,27 +1033,9 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
     );
 
     try {
-      if (current.uid == 'guest' || current.uid == 'hamas_lead_dev') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Row(
-              children: <Widget>[
-                Icon(
-                  Symbols.warning_rounded,
-                  color: Colors.orangeAccent,
-                  size: 20,
-                ),
-                SizedBox(width: 12),
-                Text('Guest profiles cannot be saved to cloud.'),
-              ],
-            ),
-          ),
-        );
-        context.pop();
-        return;
-      }
-
       await ref.read(userProfileStateProvider.notifier).updateProfile(updated);
+      ref.invalidate(userProfileStateProvider);
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -1065,7 +1047,7 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
                   size: 20,
                 ),
                 SizedBox(width: 12),
-                Text('Profile updated successfully!'),
+                Text('Profile and Emergency ID updated successfully!'),
               ],
             ),
           ),

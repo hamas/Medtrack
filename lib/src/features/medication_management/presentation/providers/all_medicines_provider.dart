@@ -28,7 +28,10 @@ final Provider<List<Medicine>> lowStockMedicinesProvider =
       );
       return allMedsAsync.when(
         data: (List<Medicine> meds) => meds
-            .where((Medicine m) => m.remainingQuantity <= m.lowStockThreshold)
+            .where(
+              (Medicine m) =>
+                  m.isActive && m.remainingQuantity <= m.lowStockThreshold,
+            )
             .toList(),
         loading: () => <Medicine>[],
         error: (Object error, StackTrace stack) => <Medicine>[],

@@ -9,6 +9,7 @@ import '../../domain/repositories/dashboard_repository.dart';
 import '../../../medication_management/domain/entities/medicine.dart';
 import '../../../medication_management/domain/repositories/medication_repository.dart';
 import '../../../medication_management/presentation/providers/all_medicines_provider.dart';
+import '../../../gamification/presentation/providers/adherence_history_provider.dart';
 import 'package:flutter/services.dart';
 
 part 'daily_timeline_provider.g.dart';
@@ -72,6 +73,9 @@ class DailyTimeline extends _$DailyTimeline {
 
       final DashboardRepository repository = ref.read(dashboardRepoProvider);
       await repository.recordIntake(dose, DateTime.now());
+
+      ref.invalidate(adherenceHistoryProvider);
+      ref.invalidate(allMedicinesProvider);
     }
   }
 
@@ -92,6 +96,8 @@ class DailyTimeline extends _$DailyTimeline {
         notes: 'Skipped: $reason',
         isSkipped: true,
       );
+
+      ref.invalidate(adherenceHistoryProvider);
     }
   }
 
@@ -112,6 +118,20 @@ class DailyTimeline extends _$DailyTimeline {
       notes: noteText,
       isSkipped: false,
     );
+
+    ref.invalidate(adherenceHistoryProvider);
+  }
+
+  Future<void> logVitals(Dose dose, String vitalsSummary) async {
+    final DashboardRepository repository = ref.read(dashboardRepoProvider);
+    await repository.recordIntake(
+      dose,
+      DateTime.now(),
+      notes: 'Vitals: $vitalsSummary',
+      isSkipped: false,
+    );
+
+    ref.invalidate(adherenceHistoryProvider);
   }
 
   Future<void> snoozeDose(Dose dose, Duration duration) async {

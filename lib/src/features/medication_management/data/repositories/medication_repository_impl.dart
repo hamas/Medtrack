@@ -33,15 +33,23 @@ class MedicationRepositoryImpl implements MedicationRepository {
     yield* _firestore
         .collection('medicines')
         .where('userId', isEqualTo: userId)
-        .where('isActive', isEqualTo: true)
         .snapshots()
         .map((QuerySnapshot<Map<String, dynamic>> snapshot) {
-          return snapshot.docs
+          final List<Medicine> remoteList = snapshot.docs
               .map(
                 (QueryDocumentSnapshot<Map<String, dynamic>> doc) =>
                     Medicine.fromJson(doc.data()),
               )
               .toList();
+
+          // Sync into local SQLite so cabinet persists offline
+          for (final Medicine m in remoteList) {
+            _localDb.insertMedicine(m);
+          }
+          return remoteList;
+        })
+        .handleError((Object error) {
+          // Keep stream alive when offline
         });
   }
 

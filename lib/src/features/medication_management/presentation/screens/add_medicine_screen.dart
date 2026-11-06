@@ -15,7 +15,9 @@ import '../providers/all_medicines_provider.dart';
 import '../../../medication_management/presentation/providers/medicine_save_provider.dart';
 
 class AddMedicineScreen extends ConsumerStatefulWidget {
-  const AddMedicineScreen({super.key});
+  const AddMedicineScreen({super.key, this.initialMedicine});
+
+  final Medicine? initialMedicine;
 
   @override
   ConsumerState<AddMedicineScreen> createState() => _AddMedicineScreenState();
@@ -57,6 +59,78 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
   final List<TimeOfDay> _times = <TimeOfDay>[
     const TimeOfDay(hour: 08, minute: 00),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    final Medicine? initMed = widget.initialMedicine;
+    if (initMed != null) {
+      _nameController.text = initMed.name;
+      _dosageController.text = initMed.dosage;
+      _supplyController.text = initMed.remainingQuantity.toString();
+      _lowStockController.text = initMed.lowStockThreshold.toString();
+      _startDate = initMed.startDate;
+      _mealContext = initMed.mealContext;
+      _isFixedCourse = initMed.durationDays != null;
+      if (initMed.durationDays != null) {
+        _courseDaysController.text = initMed.durationDays.toString();
+      }
+      _isPrn = initMed.isPrn;
+      _cooldownController.text = initMed.minCooldownHours.toString();
+
+      switch (initMed.deliveryMethod) {
+        case DeliveryMethod.tablet:
+          _selectedType = 'Tablet';
+          break;
+        case DeliveryMethod.capsule:
+          _selectedType = 'Capsule';
+          break;
+        case DeliveryMethod.injection:
+          _selectedType = 'Syringe';
+          break;
+        case DeliveryMethod.syrup:
+          _selectedType = 'Syrup';
+          break;
+        default:
+          _selectedType = 'Tablet';
+          break;
+      }
+
+      switch (initMed.intervalType) {
+        case IntervalType.daily:
+          _frequency = 'Daily';
+          break;
+        case IntervalType.weekly:
+          _frequency = initMed.intervalCount == 2
+              ? 'Every 2 weeks'
+              : 'Once a week';
+          break;
+        case IntervalType.monthly:
+          _frequency = 'Once a month';
+          break;
+        case IntervalType.custom:
+          _frequency = 'Twice a week';
+          break;
+      }
+
+      if (initMed.scheduleTimes.isNotEmpty) {
+        _times.clear();
+        for (final String t in initMed.scheduleTimes) {
+          final List<String> parts = t.split(':');
+          if (parts.length >= 2) {
+            final int? h = int.tryParse(parts[0]);
+            final int? m = int.tryParse(parts[1]);
+            if (h != null && m != null) {
+              _times.add(TimeOfDay(hour: h, minute: m));
+            }
+          }
+        }
+        if (_times.isEmpty) {
+          _times.add(const TimeOfDay(hour: 8, minute: 0));
+        }
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -190,9 +264,10 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
     }
 
     try {
-      final String id = const Uuid().v4();
+      final String id = widget.initialMedicine?.id ?? const Uuid().v4();
       final User? user = FirebaseAuth.instance.currentUser;
-      final String userId = user?.uid ?? 'guest_user';
+      final String userId =
+          widget.initialMedicine?.userId ?? (user?.uid ?? 'guest_user');
 
       // Map Frequency string to entity types
       IntervalType intervalType = IntervalType.daily;
@@ -218,8 +293,11 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
           break;
       }
 
-      final int initialQuantity =
-          int.tryParse(_supplyController.text.trim()) ?? 30;
+      final int initialQuantity = widget.initialMedicine != null
+          ? widget.initialMedicine!.initialQuantity
+          : (int.tryParse(_supplyController.text.trim()) ?? 30);
+      final int remainingQuantity =
+          int.tryParse(_supplyController.text.trim()) ?? initialQuantity;
       final int lowStockThreshold =
           int.tryParse(_lowStockController.text.trim()) ?? 5;
       final int? durationDays = _isFixedCourse
@@ -251,24 +329,30 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
         endDate: endDate,
         durationDays: durationDays,
         initialQuantity: initialQuantity,
-        remainingQuantity: initialQuantity,
+        remainingQuantity: remainingQuantity,
         lowStockThreshold: lowStockThreshold,
+        isActive: widget.initialMedicine?.isActive ?? true,
         isPrn: _isPrn,
         minCooldownHours: minCooldown,
-        createdAt: DateTime.now(),
+        createdAt: widget.initialMedicine?.createdAt ?? DateTime.now(),
       );
 
       await ref.read(medicationRepositoryProvider).saveMedicine(medicine);
 
       ref.invalidate(dailyTimelineProvider);
+      ref.invalidate(allMedicinesProvider);
 
       // Reset the trigger so it doesn't fire again if the screen is reused or state persists
       ref.read(medicineSaveTriggerProvider.notifier).reset();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Medicine saved successfully'),
+          SnackBar(
+            content: Text(
+              widget.initialMedicine != null
+                  ? 'Medication updated successfully'
+                  : 'Medicine saved successfully',
+            ),
             backgroundColor: Colors.green,
           ),
         );

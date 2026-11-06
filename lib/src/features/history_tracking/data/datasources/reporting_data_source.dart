@@ -36,6 +36,13 @@ class ReportingService {
         )
         .toList();
 
+    final List<AdherenceLog> vitalsLogs = logs
+        .where(
+          (AdherenceLog l) =>
+              l.mealNotes != null && l.mealNotes!.contains('Vitals:'),
+        )
+        .toList();
+
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -249,6 +256,44 @@ class ReportingService {
                 ),
                 headerDecoration: const pw.BoxDecoration(
                   color: PdfColors.red800,
+                ),
+                cellStyle: const pw.TextStyle(fontSize: 9),
+                cellPadding: const pw.EdgeInsets.symmetric(
+                  vertical: 4,
+                  horizontal: 6,
+                ),
+              ),
+              pw.SizedBox(height: 20),
+            ],
+
+            if (vitalsLogs.isNotEmpty) ...<pw.Widget>[
+              pw.Text(
+                'Patient Vitals & Biometric Observations',
+                style: const pw.TextStyle(
+                  fontSize: 14,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.teal900,
+                ),
+              ),
+              pw.SizedBox(height: 8),
+              pw.TableHelper.fromTextArray(
+                headers: <String>[
+                  'Timestamp',
+                  'Biometric / Physiological Reading',
+                ],
+                data: vitalsLogs.map((AdherenceLog log) {
+                  return <String>[
+                    dateFormat.format(log.takenTime ?? log.scheduledTime),
+                    log.mealNotes?.replaceFirst('Vitals: ', '') ?? '--',
+                  ];
+                }).toList(),
+                headerStyle: const pw.TextStyle(
+                  fontWeight: pw.FontWeight.bold,
+                  fontSize: 10,
+                  color: PdfColors.white,
+                ),
+                headerDecoration: const pw.BoxDecoration(
+                  color: PdfColors.teal800,
                 ),
                 cellStyle: const pw.TextStyle(fontSize: 9),
                 cellPadding: const pw.EdgeInsets.symmetric(

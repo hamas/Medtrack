@@ -5,6 +5,7 @@ import '../../features/daily_dashboard/presentation/screens/daily_dashboard_scre
 import '../../features/navigation/presentation/screens/notifications_screen.dart';
 import '../../features/medication_management/presentation/screens/medicine_list_screen.dart';
 import '../../features/medication_management/presentation/screens/add_medicine_screen.dart';
+import '../../features/medication_management/domain/entities/medicine.dart';
 import '../../features/history_tracking/presentation/screens/calendar_screen.dart';
 import '../../features/navigation/presentation/screens/profile_screen.dart';
 import '../../features/navigation/presentation/screens/profile_settings_screen.dart';
@@ -79,7 +80,12 @@ final GoRouter appRouter = GoRouter(
                 GoRoute(
                   path: 'add',
                   pageBuilder: (BuildContext context, GoRouterState state) =>
-                      _buildFadePage(state, const AddMedicineScreen()),
+                      _buildFadePage(
+                        state,
+                        AddMedicineScreen(
+                          initialMedicine: state.extra as Medicine?,
+                        ),
+                      ),
                 ),
               ],
             ),

@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/services/alarm_service.dart';
 import '../../../daily_dashboard/presentation/providers/daily_timeline_provider.dart';
+import '../../../gamification/presentation/providers/adherence_history_provider.dart';
 import '../../domain/entities/adherence_log.dart';
 import '../../domain/entities/medicine.dart';
 import '../../domain/repositories/medication_repository.dart';
@@ -397,6 +398,41 @@ class MedicineListScreen extends ConsumerWidget {
 
               const SizedBox(height: 16),
 
+              // Edit Medication Action Button
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                      color: Colors.white.withValues(alpha: 0.15),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(sheetCtx);
+                    context.push('/medicines/add', extra: medicine);
+                  },
+                  icon: const Icon(
+                    Symbols.edit_note_rounded,
+                    size: 18,
+                    color: Colors.blueAccent,
+                  ),
+                  label: const Text(
+                    'Edit Medication Details',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
               // Pause / Resume and Delete Action Buttons
               Row(
                 children: <Widget>[
@@ -480,6 +516,7 @@ class MedicineListScreen extends ConsumerWidget {
     await ref.read(medicationRepositoryProvider).saveMedicine(updated);
     ref.invalidate(allMedicinesProvider);
     ref.invalidate(dailyTimelineProvider);
+    ref.invalidate(adherenceHistoryProvider);
 
     if (context.mounted) {
       Navigator.pop(context);
@@ -565,6 +602,7 @@ class MedicineListScreen extends ConsumerWidget {
 
     ref.invalidate(allMedicinesProvider);
     ref.invalidate(dailyTimelineProvider);
+    ref.invalidate(adherenceHistoryProvider);
 
     if (context.mounted) {
       Navigator.pop(context);
@@ -734,6 +772,7 @@ class MedicineListScreen extends ConsumerWidget {
 
     ref.invalidate(allMedicinesProvider);
     ref.invalidate(dailyTimelineProvider);
+    ref.invalidate(adherenceHistoryProvider);
 
     if (context.mounted) {
       Navigator.pop(context);
@@ -877,6 +916,11 @@ class _MedicineCard extends StatelessWidget {
                             ),
                           ],
                         ),
+                        if (medicine.durationDays != null &&
+                            medicine.durationDays! > 0) ...<Widget>[
+                          const SizedBox(height: 8),
+                          _buildCourseProgressBar(medicine),
+                        ],
                       ],
                     ),
                   ),
@@ -923,6 +967,44 @@ class _MedicineCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCourseProgressBar(Medicine medicine) {
+    final int totalDays = medicine.durationDays!;
+    final int elapsedDays = DateTime.now()
+        .difference(medicine.startDate)
+        .inDays;
+    final int currentDay = (elapsedDays + 1).clamp(1, totalDays);
+    final double progress = (currentDay / totalDays).clamp(0.0, 1.0);
+    final bool isFinished = elapsedDays >= totalDays;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(
+            value: progress,
+            backgroundColor: Colors.white.withValues(alpha: 0.08),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              isFinished ? Colors.greenAccent : Colors.tealAccent,
+            ),
+            minHeight: 4,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          isFinished
+              ? 'Course Complete ($totalDays days)'
+              : 'Day $currentDay of $totalDays • ${totalDays - currentDay}d remaining',
+          style: TextStyle(
+            color: isFinished ? Colors.greenAccent : Colors.white38,
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
     );
   }
 }
