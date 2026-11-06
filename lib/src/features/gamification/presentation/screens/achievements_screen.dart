@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
-
+import '../../../../core/widgets/adherence_heatmap_card.dart';
+import '../../../../core/widgets/shared_ui.dart';
 import '../../domain/entities/achievement.dart';
 import '../../domain/entities/user_profile.dart';
 import '../providers/user_profile_provider.dart';
@@ -26,16 +26,16 @@ class AchievementsScreen extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           children: <Widget>[
             const SizedBox(height: 20),
-            const _SectionTitle(title: 'ADHERENCE MOMENTUM'),
+            const GlassSectionTitle(title: 'ADHERENCE MOMENTUM'),
             const SizedBox(height: 12),
             adherenceHistoryAsync.when(
               data: (Map<DateTime, int> history) =>
-                  _AdherenceHeatmap(history: history),
+                  AdherenceHeatmapCard(history: history, showTitle: false),
               loading: () => const SizedBox(height: 180),
               error: (Object e, StackTrace? _) => const SizedBox.shrink(),
             ),
             const SizedBox(height: 32),
-            const _SectionTitle(title: 'BADGE GALLERY'),
+            const GlassSectionTitle(title: 'BADGE GALLERY'),
             const SizedBox(height: 16),
             GridView.builder(
               shrinkWrap: true,
@@ -61,39 +61,6 @@ class AchievementsScreen extends ConsumerWidget {
       ),
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (Object e, StackTrace? _) => Center(child: Text('Error: $e')),
-    );
-  }
-}
-
-class _AdherenceHeatmap extends StatelessWidget {
-  const _AdherenceHeatmap({required this.history});
-  final Map<DateTime, int> history;
-
-  @override
-  Widget build(BuildContext context) {
-    final Color primaryColor = Theme.of(context).colorScheme.primary;
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: HeatMap(
-        datasets: history,
-        colorMode: ColorMode.color,
-        defaultColor: Colors.white.withValues(alpha: 0.03),
-        textColor: Colors.white38,
-        showColorTip: false,
-        showText: false,
-        scrollable: true,
-        size: 20,
-        colorsets: <int, Color>{
-          1: primaryColor.withValues(alpha: 0.3),
-          2: primaryColor.withValues(alpha: 0.6),
-          3: primaryColor,
-        },
-      ),
     );
   }
 }
@@ -211,23 +178,5 @@ class _BadgeTile extends StatelessWidget {
       case AchievementType.day90:
         return (Symbols.emoji_events_rounded, Colors.purpleAccent);
     }
-  }
-}
-
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title});
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.w800,
-        color: Colors.white38,
-        letterSpacing: 2,
-      ),
-    );
   }
 }

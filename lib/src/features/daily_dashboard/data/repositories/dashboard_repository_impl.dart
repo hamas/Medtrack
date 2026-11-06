@@ -69,6 +69,23 @@ class DashboardRepositoryImpl implements DashboardRepository {
       }
     }
 
+    if (userId != 'guest_user') {
+      try {
+        final List<AdherenceLog> allLocal = await _localDb
+            .getAllAdherenceLogs();
+        for (final AdherenceLog l in allLocal) {
+          if (l.userId == 'guest_user') {
+            final AdherenceLog updated = l.copyWith(userId: userId);
+            await _localDb.insertAdherenceLog(updated);
+            await _firestore
+                .collection('adherence_logs')
+                .doc(updated.id)
+                .set(updated.toJson());
+          }
+        }
+      } catch (_) {}
+    }
+
     final Map<String, AdherenceLog> logMap = <String, AdherenceLog>{
       for (final AdherenceLog l in existingLogs)
         '${l.medicineId}_${l.scheduledTime.millisecondsSinceEpoch}': l,
@@ -133,6 +150,36 @@ class DashboardRepositoryImpl implements DashboardRepository {
       mealNotes:
           notes ??
           (isSkipped ? 'Dose skipped by user' : 'Recorded via Daily Dashboard'),
+    );
+
+    await _localDb.insertAdherenceLog(log);
+
+    if (userId != 'guest_user') {
+      try {
+        await _firestore
+            .collection('adherence_logs')
+            .doc(logId)
+            .set(log.toJson());
+      } catch (e) {
+        // Fallback for offline sync
+      }
+    }
+  }
+
+  @override
+  Future<void> recordObservation(Dose dose, String notes) async {
+    final String logId =
+        '${dose.medicine.id}_obs_${DateTime.now().millisecondsSinceEpoch}';
+    final String userId = dose.medicine.userId;
+
+    final AdherenceLog log = AdherenceLog(
+      id: logId,
+      medicineId: dose.medicine.id,
+      userId: userId,
+      scheduledTime: dose.scheduledTime,
+      takenTime: DateTime.now(),
+      status: AdherenceStatus.taken,
+      mealNotes: notes,
     );
 
     await _localDb.insertAdherenceLog(log);

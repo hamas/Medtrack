@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../authentication/presentation/providers/auth_provider.dart';
 import '../../domain/repositories/medication_repository.dart';
 import '../../data/repositories/medication_repository_impl.dart';
 import '../../domain/entities/medicine.dart';
@@ -12,8 +12,7 @@ final Provider<MedicationRepository> medicationRepositoryProvider =
 
 final StreamProvider<List<Medicine>> allMedicinesProvider =
     StreamProvider<List<Medicine>>((Ref ref) {
-      final User? user = FirebaseAuth.instance.currentUser;
-      final String userId = user?.uid ?? 'guest_user';
+      final String userId = ref.watch(currentUidProvider) ?? 'guest_user';
 
       final MedicationRepository repository = ref.watch(
         medicationRepositoryProvider,

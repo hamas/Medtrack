@@ -220,7 +220,23 @@ class _DailyDashboardScreenState extends ConsumerState<DailyDashboardScreen> {
             Expanded(
               child: timelineAsync.when(
                 data: (List<Dose> doses) => doses.isEmpty
-                    ? const Center(child: Text('No doses scheduled for today.'))
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            const Text(
+                              'No doses scheduled for today.',
+                              style: TextStyle(color: Colors.white60),
+                            ),
+                            const SizedBox(height: 16),
+                            FilledButton.icon(
+                              onPressed: () => context.push('/medicines/add'),
+                              icon: const Icon(Symbols.add_rounded),
+                              label: const Text('Add Medication'),
+                            ),
+                          ],
+                        ),
+                      )
                     : Stack(
                         children: <Widget>[
                           ListView.separated(
@@ -401,209 +417,207 @@ class _DashboardItem extends ConsumerWidget {
               child: const SizedBox.expand(),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  width: 80,
-                  height: 80,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Image.asset(
-                    'assets/images/medication_3d.png',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                if (!dose.isTaken) {
+                  _handleDoseCheckOff(context, ref);
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      width: 80,
+                      height: 80,
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.6),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Image.asset(
+                        'assets/images/medication_3d.png',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              medicine.name,
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(
+                                  medicine.name,
+                                  style: theme.textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          PopupMenuButton<String>(
-                            icon: Icon(
-                              Symbols.more_vert_rounded,
-                              color: theme.colorScheme.onSurface.withValues(
-                                alpha: 0.3,
-                              ),
-                            ),
-                            color: const Color(0xFF1E1B2E),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            onSelected: (String action) {
-                              if (action == 'take') {
-                                ref
-                                    .read(dailyTimelineProvider.notifier)
-                                    .checkOffDose(dose);
-                              } else if (action == 'snooze') {
-                                ref
-                                    .read(dailyTimelineProvider.notifier)
-                                    .snoozeDose(
-                                      dose,
-                                      const Duration(minutes: 30),
+                              PopupMenuButton<String>(
+                                icon: Icon(
+                                  Symbols.more_vert_rounded,
+                                  color: theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                ),
+                                color: const Color(0xFF1E1B2E),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                onSelected: (String action) {
+                                  if (action == 'take') {
+                                    ref
+                                        .read(dailyTimelineProvider.notifier)
+                                        .checkOffDose(dose);
+                                  } else if (action == 'snooze') {
+                                    ref
+                                        .read(dailyTimelineProvider.notifier)
+                                        .snoozeDose(
+                                          dose,
+                                          const Duration(minutes: 30),
+                                        );
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Dose snoozed for 30 minutes',
+                                        ),
+                                      ),
                                     );
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Dose snoozed for 30 minutes',
-                                    ),
-                                  ),
-                                );
-                              } else if (action == 'skip') {
-                                _showSkipDoseDialog(context, ref);
-                              } else if (action == 'symptom') {
-                                _showSymptomCheckInDialog(context, ref);
-                              } else if (action == 'vitals') {
-                                _showVitalsDialog(context, ref);
-                              }
-                            },
-                            itemBuilder: (BuildContext ctx) =>
-                                <PopupMenuEntry<String>>[
-                                  const PopupMenuItem<String>(
-                                    value: 'take',
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Symbols.check_circle_rounded,
-                                          color: Colors.greenAccent,
-                                          size: 18,
+                                  } else if (action == 'skip') {
+                                    _showSkipDoseDialog(context, ref);
+                                  } else if (action == 'symptom') {
+                                    _showSymptomCheckInDialog(context, ref);
+                                  } else if (action == 'vitals') {
+                                    _showVitalsDialog(context, ref);
+                                  }
+                                },
+                                itemBuilder: (BuildContext ctx) =>
+                                    <PopupMenuEntry<String>>[
+                                      const PopupMenuItem<String>(
+                                        value: 'take',
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              Symbols.check_circle_rounded,
+                                              color: Colors.greenAccent,
+                                              size: 18,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Text('Take Dose'),
+                                          ],
                                         ),
-                                        SizedBox(width: 8),
-                                        Text('Take Dose'),
-                                      ],
-                                    ),
-                                  ),
-                                  const PopupMenuItem<String>(
-                                    value: 'snooze',
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Symbols.snooze_rounded,
-                                          color: Colors.amberAccent,
-                                          size: 18,
+                                      ),
+                                      const PopupMenuItem<String>(
+                                        value: 'snooze',
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              Symbols.snooze_rounded,
+                                              color: Colors.amberAccent,
+                                              size: 18,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Text('Snooze (30m)'),
+                                          ],
                                         ),
-                                        SizedBox(width: 8),
-                                        Text('Snooze (30m)'),
-                                      ],
-                                    ),
-                                  ),
-                                  const PopupMenuItem<String>(
-                                    value: 'skip',
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Symbols.cancel_rounded,
-                                          color: Colors.redAccent,
-                                          size: 18,
+                                      ),
+                                      const PopupMenuItem<String>(
+                                        value: 'skip',
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              Symbols.cancel_rounded,
+                                              color: Colors.redAccent,
+                                              size: 18,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Text('Skip Dose (Reason)'),
+                                          ],
                                         ),
-                                        SizedBox(width: 8),
-                                        Text('Skip Dose (Reason)'),
-                                      ],
-                                    ),
-                                  ),
-                                  const PopupMenuItem<String>(
-                                    value: 'symptom',
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Symbols.vital_signs_rounded,
-                                          color: Colors.pinkAccent,
-                                          size: 18,
+                                      ),
+                                      const PopupMenuItem<String>(
+                                        value: 'symptom',
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              Symbols.vital_signs_rounded,
+                                              color: Colors.pinkAccent,
+                                              size: 18,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Text('Log Side Effect'),
+                                          ],
                                         ),
-                                        SizedBox(width: 8),
-                                        Text('Log Side Effect'),
-                                      ],
-                                    ),
-                                  ),
-                                  const PopupMenuItem<String>(
-                                    value: 'vitals',
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          Symbols.monitor_heart_rounded,
-                                          color: Colors.cyanAccent,
-                                          size: 18,
+                                      ),
+                                      const PopupMenuItem<String>(
+                                        value: 'vitals',
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              Symbols.monitor_heart_rounded,
+                                              color: Colors.cyanAccent,
+                                              size: 18,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Text('Log Vitals / Biometrics'),
+                                          ],
                                         ),
-                                        SizedBox(width: 8),
-                                        Text('Log Vitals / Biometrics'),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                                      ),
+                                    ],
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${medicine.dosage}, 1 ${medicine.deliveryMethod.name}',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(
-                            alpha: 0.4,
-                          ),
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Wrap(
-                        spacing: 8,
-                        children: <Widget>[
-                          _TimeChip(
-                            label: _getMealLabel(medicine.mealContext),
-                            color: const Color(0xFFE0F7F6),
-                            textColor: const Color(0xFF0D9488),
-                          ),
-                          _TimeChip(
-                            label: timeStr,
-                            color: const Color(0xFFE0E7FF),
-                            textColor: const Color(0xFF4338CA),
-                          ),
-                          if (!dose.isTaken &&
-                              DateTime.now()
-                                      .difference(dose.scheduledTime)
-                                      .inMinutes >
-                                  60)
-                            _TimeChip(
-                              label:
-                                  'Overdue by ${_formatOverdue(dose.scheduledTime)}',
-                              color: const Color(0xFFFEE2E2),
-                              textColor: const Color(0xFFDC2626),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${medicine.dosage}, 1 ${medicine.deliveryMethod.name}',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.4,
+                              ),
+                              fontWeight: FontWeight.w400,
                             ),
+                          ),
+                          const SizedBox(height: 16),
+                          Wrap(
+                            spacing: 8,
+                            children: <Widget>[
+                              _TimeChip(
+                                label: _getMealLabel(medicine.mealContext),
+                                color: const Color(0xFFE0F7F6),
+                                textColor: const Color(0xFF0D9488),
+                              ),
+                              _TimeChip(
+                                label: timeStr,
+                                color: const Color(0xFFE0E7FF),
+                                textColor: const Color(0xFF4338CA),
+                              ),
+                              if (!dose.isTaken &&
+                                  DateTime.now()
+                                          .difference(dose.scheduledTime)
+                                          .inMinutes >
+                                      60)
+                                _TimeChip(
+                                  label:
+                                      'Overdue by ${_formatOverdue(dose.scheduledTime)}',
+                                  color: const Color(0xFFFEE2E2),
+                                  textColor: const Color(0xFFDC2626),
+                                ),
+                            ],
+                          ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          Positioned.fill(
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  if (!dose.isTaken) {
-                    _handleDoseCheckOff(context, ref);
-                  }
-                },
               ),
             ),
           ),
@@ -1262,10 +1276,10 @@ class _TimeChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: textColor,
           fontSize: 12,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );

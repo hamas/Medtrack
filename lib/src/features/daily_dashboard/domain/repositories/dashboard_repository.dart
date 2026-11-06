@@ -11,4 +11,7 @@ abstract class DashboardRepository {
     String? notes,
     bool isSkipped = false,
   });
+
+  /// Records a clinical observation (vitals, side effects) tied to a dose without mutating dose intake status.
+  Future<void> recordObservation(Dose dose, String notes);
 }

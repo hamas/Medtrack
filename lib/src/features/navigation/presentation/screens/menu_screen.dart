@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import '../../../../core/widgets/shared_ui.dart';
 import '../../../gamification/domain/entities/user_profile.dart';
 import '../../../gamification/presentation/providers/user_profile_provider.dart';
 
@@ -47,35 +48,35 @@ class MenuScreen extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // --- Navigation Options ---
-            _MenuTile(
+            GlassActionTile(
               icon: Symbols.person_rounded,
               title: 'Profile Settings',
               subtitle: 'Personal details & Health metrics',
               color: Colors.blueAccent,
               onTap: () => context.push('/profile/edit'),
             ),
-            _MenuTile(
+            GlassActionTile(
               icon: Symbols.notifications_active_rounded,
               title: 'Notifications',
               subtitle: 'Reminders & Health tips',
               color: Colors.pinkAccent,
               onTap: () => context.push('/notifications'),
             ),
-            _MenuTile(
+            GlassActionTile(
               icon: Symbols.emoji_events_rounded,
               title: 'Achievements',
               subtitle: 'Heatmap & Earned Badges',
               color: Colors.amberAccent,
               onTap: () => context.push('/menu/achievements'),
             ),
-            _MenuTile(
+            GlassActionTile(
               icon: Symbols.security_rounded,
               title: 'Security',
               subtitle: 'Biometrics & Cloud Sync',
               color: Colors.tealAccent,
               onTap: () => context.push('/menu/security'),
             ),
-            _MenuTile(
+            GlassActionTile(
               icon: Symbols.policy_rounded,
               title: 'Policies',
               subtitle: 'Privacy, Terms & Documentation',
@@ -186,68 +187,6 @@ class _ProfileHeader extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _MenuTile extends StatelessWidget {
-  const _MenuTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.color,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final Color color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-      ),
-      child: ListTile(
-        onTap: onTap,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-        visualDensity: VisualDensity.compact,
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: color, size: 20),
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-            fontSize: 15,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: const TextStyle(
-            fontSize: 11,
-            color: Colors.white38,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        trailing: const Icon(
-          Symbols.chevron_right_rounded,
-          color: Colors.white10,
-          size: 18,
-        ),
-      ),
     );
   }
 }

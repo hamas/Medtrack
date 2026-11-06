@@ -31,8 +31,7 @@ class SelectedDateNotifier extends _$SelectedDateNotifier {
 class DailyTimeline extends _$DailyTimeline {
   @override
   FutureOr<List<Dose>> build() async {
-    final String? userId = ref.watch(currentUidProvider);
-    if (userId == null) return <Dose>[];
+    final String userId = ref.watch(currentUidProvider) ?? 'guest_user';
 
     final DateTime date = ref.watch(selectedDateProvider);
     final DashboardRepository repository = ref.watch(dashboardRepoProvider);
@@ -112,24 +111,14 @@ class DailyTimeline extends _$DailyTimeline {
         : 'Side Effect: $symptom ($severity)';
 
     final DashboardRepository repository = ref.read(dashboardRepoProvider);
-    await repository.recordIntake(
-      dose,
-      DateTime.now(),
-      notes: noteText,
-      isSkipped: false,
-    );
+    await repository.recordObservation(dose, noteText);
 
     ref.invalidate(adherenceHistoryProvider);
   }
 
   Future<void> logVitals(Dose dose, String vitalsSummary) async {
     final DashboardRepository repository = ref.read(dashboardRepoProvider);
-    await repository.recordIntake(
-      dose,
-      DateTime.now(),
-      notes: 'Vitals: $vitalsSummary',
-      isSkipped: false,
-    );
+    await repository.recordObservation(dose, 'Vitals: $vitalsSummary');
 
     ref.invalidate(adherenceHistoryProvider);
   }

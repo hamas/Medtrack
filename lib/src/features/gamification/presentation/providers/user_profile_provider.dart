@@ -21,12 +21,8 @@ class UserProfileState extends _$UserProfileState {
 
     return authState.when(
       data: (User? user) {
-        if (user == null) {
-          return Stream<UserProfile>.value(
-            const UserProfile(uid: 'guest', name: 'Guest User'),
-          );
-        }
-        return ref.watch(userProfileRepoProvider).streamUserProfile(user.uid);
+        final String uid = user?.uid ?? 'guest';
+        return ref.watch(userProfileRepoProvider).streamUserProfile(uid);
       },
       loading: () => Stream<UserProfile>.value(
         const UserProfile(uid: 'loading', name: 'Loading...'),
@@ -47,6 +43,7 @@ class UserProfileState extends _$UserProfileState {
           : profile.longestStreak,
     );
     await ref.read(userProfileRepoProvider).saveUserProfile(updated);
+    ref.invalidateSelf();
   }
 
   Future<void> awardAchievement(Achievement achievement) async {
@@ -60,15 +57,18 @@ class UserProfileState extends _$UserProfileState {
       earnedBadges: <Achievement>[...profile.earnedBadges, achievement],
     );
     await ref.read(userProfileRepoProvider).saveUserProfile(updated);
+    ref.invalidateSelf();
   }
 
   Future<void> equipBadge(String? badgeId) async {
     final UserProfile profile = await future;
     final UserProfile updated = profile.copyWith(equippedBadgeId: badgeId);
     await ref.read(userProfileRepoProvider).saveUserProfile(updated);
+    ref.invalidateSelf();
   }
 
   Future<void> updateProfile(UserProfile updatedProfile) async {
     await ref.read(userProfileRepoProvider).saveUserProfile(updatedProfile);
+    ref.invalidateSelf();
   }
 }

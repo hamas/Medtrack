@@ -4,6 +4,12 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../../../core/services/firebase_service.dart';
 import '../../../../core/services/local_db_service.dart';
+import '../../../../core/services/notification_manager.dart';
+import '../../../../core/widgets/shared_ui.dart';
+import '../../../daily_dashboard/presentation/providers/daily_timeline_provider.dart';
+import '../../../gamification/presentation/providers/adherence_history_provider.dart';
+import '../../../gamification/presentation/providers/user_profile_provider.dart';
+import '../../../medication_management/presentation/providers/all_medicines_provider.dart';
 import '../providers/settings_provider.dart';
 
 class SecurityScreen extends ConsumerWidget {
@@ -21,33 +27,33 @@ class SecurityScreen extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           children: <Widget>[
             const SizedBox(height: 20),
-            _buildToggle(
-              'Biometric Lock',
-              'Require fingerprint or PIN to open',
-              Symbols.fingerprint_rounded,
-              Colors.greenAccent,
-              settings['biometric_enabled'] as bool? ?? false,
-              (bool val) => _update(ref, 'biometric_enabled', val),
+            GlassSwitchTile(
+              title: 'Biometric Lock',
+              subtitle: 'Require fingerprint or PIN to open',
+              icon: Symbols.fingerprint_rounded,
+              color: Colors.greenAccent,
+              value: settings['biometric_enabled'] as bool? ?? false,
+              onChanged: (bool val) => _update(ref, 'biometric_enabled', val),
             ),
             const SizedBox(height: 32),
-            const _SectionTitle(title: 'DATA MANAGEMENT'),
+            const GlassSectionTitle(title: 'DATA MANAGEMENT'),
             const SizedBox(height: 16),
-            _buildActionButton(
-              'Clear Local Medication Data',
-              'Reset local offline database cache',
-              Symbols.cleaning_services_rounded,
-              Colors.orangeAccent,
-              () => _confirmClearData(context, ref),
+            GlassActionTile(
+              title: 'Clear Local Medication Data',
+              subtitle: 'Reset local offline database cache',
+              icon: Symbols.cleaning_services_rounded,
+              color: Colors.orangeAccent,
+              onTap: () => _confirmClearData(context, ref),
             ),
             const SizedBox(height: 32),
-            const _SectionTitle(title: 'ACCOUNT ACTIONS'),
+            const GlassSectionTitle(title: 'ACCOUNT ACTIONS'),
             const SizedBox(height: 16),
-            _buildActionButton(
-              'Sign Out & Reset Session',
-              'Disconnect current user session',
-              Symbols.logout_rounded,
-              Colors.redAccent,
-              () => _confirmSignOut(context, ref),
+            GlassActionTile(
+              title: 'Sign Out & Reset Session',
+              subtitle: 'Disconnect current user session',
+              icon: Symbols.logout_rounded,
+              color: Colors.redAccent,
+              onTap: () => _confirmSignOut(context, ref),
             ),
           ],
         ),
@@ -91,7 +97,11 @@ class SecurityScreen extends ConsumerWidget {
     );
 
     if (confirmed == true) {
+      await NotificationManager().cancelAll();
       await LocalDbService().clearAllData();
+      ref.invalidate(allMedicinesProvider);
+      ref.invalidate(dailyTimelineProvider);
+      ref.invalidate(adherenceHistoryProvider);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Local cache cleared successfully.')),
@@ -135,101 +145,15 @@ class SecurityScreen extends ConsumerWidget {
 
     if (confirmed == true) {
       await FirebaseService().signOut();
+      ref.invalidate(allMedicinesProvider);
+      ref.invalidate(dailyTimelineProvider);
+      ref.invalidate(userProfileStateProvider);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Signed out successfully.')),
         );
       }
     }
-  }
-
-  Widget _buildToggle(
-    String title,
-    String sub,
-    IconData icon,
-    Color color,
-    bool value,
-    ValueChanged<bool> onChanged,
-  ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: SwitchListTile(
-        value: value,
-        onChanged: onChanged,
-        secondary: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: color, size: 20),
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-            fontSize: 15,
-          ),
-        ),
-        subtitle: Text(
-          sub,
-          style: const TextStyle(fontSize: 11, color: Colors.white38),
-        ),
-        activeTrackColor: color.withValues(alpha: 0.3),
-        activeThumbColor: color,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      ),
-    );
-  }
-
-  Widget _buildActionButton(
-    String title,
-    String sub,
-    IconData icon,
-    Color color,
-    VoidCallback onTap,
-  ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: ListTile(
-        onTap: onTap,
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: color, size: 20),
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-            fontSize: 15,
-          ),
-        ),
-        subtitle: Text(
-          sub,
-          style: const TextStyle(fontSize: 11, color: Colors.white38),
-        ),
-        trailing: const Icon(
-          Symbols.chevron_right_rounded,
-          color: Colors.white10,
-          size: 20,
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      ),
-    );
   }
 
   Future<void> _update(WidgetRef ref, String key, dynamic value) async {
@@ -252,23 +176,5 @@ class SecurityScreen extends ConsumerWidget {
       }
     }
     await ref.read(settingsStateProvider.notifier).updateSetting(key, value);
-  }
-}
-
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title});
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.w800,
-        color: Colors.white38,
-        letterSpacing: 2,
-      ),
-    );
   }
 }

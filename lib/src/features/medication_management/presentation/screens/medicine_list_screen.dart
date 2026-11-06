@@ -5,6 +5,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/services/alarm_service.dart';
+import '../../../../core/widgets/shared_ui.dart';
 import '../../../daily_dashboard/presentation/providers/daily_timeline_provider.dart';
 import '../../../gamification/presentation/providers/adherence_history_provider.dart';
 import '../../domain/entities/adherence_log.dart';
@@ -188,7 +189,7 @@ class MedicineListScreen extends ConsumerWidget {
                     ),
                     child: Center(
                       child: Icon(
-                        _getDeliveryIcon(medicine.deliveryMethod),
+                        getDeliveryMethodIcon(medicine.deliveryMethod),
                         color: Colors.blueAccent,
                         size: 26,
                       ),
@@ -786,31 +787,6 @@ class MedicineListScreen extends ConsumerWidget {
       );
     }
   }
-
-  static IconData _getDeliveryIcon(DeliveryMethod method) {
-    switch (method) {
-      case DeliveryMethod.tablet:
-        return Symbols.pill_rounded;
-      case DeliveryMethod.capsule:
-        return Symbols.vaccines_rounded;
-      case DeliveryMethod.syrup:
-        return Symbols.medication_liquid_rounded;
-      case DeliveryMethod.injection:
-        return Symbols.syringe_rounded;
-      case DeliveryMethod.water:
-        return Symbols.pill_rounded;
-      case DeliveryMethod.milk:
-        return Symbols.vaccines_rounded;
-      case DeliveryMethod.mixed:
-        return Symbols.science_rounded;
-      case DeliveryMethod.drops:
-        return Symbols.opacity_rounded;
-      case DeliveryMethod.inhaler:
-        return Symbols.air_rounded;
-      case DeliveryMethod.other:
-        return Symbols.medication_rounded;
-    }
-  }
 }
 
 class _MedicineCard extends StatelessWidget {
@@ -853,9 +829,7 @@ class _MedicineCard extends StatelessWidget {
                     ),
                     child: Center(
                       child: Icon(
-                        MedicineListScreen._getDeliveryIcon(
-                          medicine.deliveryMethod,
-                        ),
+                        getDeliveryMethodIcon(medicine.deliveryMethod),
                         color: Colors.blueAccent.withValues(alpha: 0.8),
                         size: 24,
                       ),

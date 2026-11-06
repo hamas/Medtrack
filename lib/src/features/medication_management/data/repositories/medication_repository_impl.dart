@@ -29,12 +29,15 @@ class MedicationRepositoryImpl implements MedicationRepository {
     // 2. Skip Firestore if we're in guest mode (avoids PERMISSION_DENIED)
     if (userId == 'guest_user') return;
 
-    // 3. Continue with Firestore snapshots for real-time synchronization
+    // 3. Migrate any local guest medicines to this user and upload unsynced
+    unawaited(_migrateAndSyncLocalMeds(userId));
+
+    // 4. Continue with Firestore snapshots for real-time synchronization
     yield* _firestore
         .collection('medicines')
         .where('userId', isEqualTo: userId)
         .snapshots()
-        .map((QuerySnapshot<Map<String, dynamic>> snapshot) {
+        .asyncMap((QuerySnapshot<Map<String, dynamic>> snapshot) async {
           final List<Medicine> remoteList = snapshot.docs
               .map(
                 (QueryDocumentSnapshot<Map<String, dynamic>> doc) =>
@@ -44,18 +47,42 @@ class MedicationRepositoryImpl implements MedicationRepository {
 
           // Sync into local SQLite so cabinet persists offline
           for (final Medicine m in remoteList) {
-            _localDb.insertMedicine(m);
+            await _localDb.insertMedicine(m);
           }
-          return remoteList;
+
+          // Return merged union of local + remote (never wipe local data)
+          final List<Medicine> allLocal = await _localDb.getMedicines();
+          final Map<String, Medicine> merged = <String, Medicine>{
+            for (final Medicine m in allLocal) m.id: m,
+            for (final Medicine m in remoteList) m.id: m,
+          };
+          return merged.values.toList();
         })
         .handleError((Object error) {
           // Keep stream alive when offline
         });
   }
 
+  Future<void> _migrateAndSyncLocalMeds(String userId) async {
+    try {
+      final List<Medicine> localMeds = await _localDb.getMedicines();
+      for (final Medicine m in localMeds) {
+        if (m.userId == 'guest_user') {
+          final Medicine updated = m.copyWith(userId: userId);
+          await _localDb.insertMedicine(updated);
+          await _firestore
+              .collection('medicines')
+              .doc(updated.id)
+              .set(updated.toJson());
+        }
+      }
+    } catch (_) {}
+  }
+
   Future<void> _syncMedicinesFromFirestore(String userId) async {
     if (userId == 'guest_user') return;
     try {
+      await _migrateAndSyncLocalMeds(userId);
       final QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
           .collection('medicines')
           .where('userId', isEqualTo: userId)

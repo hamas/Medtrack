@@ -938,14 +938,18 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
       if (!mounted) return;
       setState(() => _isUploading = true);
       try {
-        final String uid = FirebaseAuth.instance.currentUser!.uid;
+        final User? currentUser = FirebaseAuth.instance.currentUser;
+        if (currentUser == null) {
+          throw Exception('Please sign in to upload a profile photo.');
+        }
+        final String uid = currentUser.uid;
         final Reference refStorage = FirebaseStorage.instance
             .ref()
             .child('avatars')
             .child('$uid.jpg');
         await refStorage.putFile(File(image.path));
         final String url = await refStorage.getDownloadURL();
-        await FirebaseAuth.instance.currentUser!.updatePhotoURL(url);
+        await currentUser.updatePhotoURL(url);
         if (!mounted) return;
         setState(() {});
       } catch (e) {

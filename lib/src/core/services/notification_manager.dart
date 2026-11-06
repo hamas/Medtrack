@@ -58,23 +58,51 @@ class NotificationManager {
     required String body,
     required DateTime scheduledDate,
   }) async {
-    await _localNotifications.zonedSchedule(
-      id: id,
-      title: title,
-      body: body,
-      scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
-      notificationDetails: const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'high_importance_medical_alerts',
-          'Medical Alerts',
-          channelDescription:
-              'This channel is used for critical medical reminders.',
-          importance: Importance.max,
-          priority: Priority.high,
+    if (scheduledDate.isBefore(DateTime.now())) {
+      return;
+    }
+
+    try {
+      await _localNotifications.zonedSchedule(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
+        notificationDetails: const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'high_importance_medical_alerts',
+            'Medical Alerts',
+            channelDescription:
+                'This channel is used for critical medical reminders.',
+            importance: Importance.max,
+            priority: Priority.high,
+          ),
         ),
-      ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-    );
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      );
+    } catch (_) {
+      try {
+        await _localNotifications.zonedSchedule(
+          id: id,
+          title: title,
+          body: body,
+          scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
+          notificationDetails: const NotificationDetails(
+            android: AndroidNotificationDetails(
+              'high_importance_medical_alerts',
+              'Medical Alerts',
+              channelDescription:
+                  'This channel is used for critical medical reminders.',
+              importance: Importance.max,
+              priority: Priority.high,
+            ),
+          ),
+          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        );
+      } catch (e) {
+        // Fallback gracefully if notifications are restricted
+      }
+    }
   }
 
   Future<void> cancelNotification(int id) async {

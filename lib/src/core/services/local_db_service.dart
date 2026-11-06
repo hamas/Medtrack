@@ -4,6 +4,10 @@ import '../../features/medication_management/domain/entities/adherence_log.dart'
 import '../../features/medication_management/domain/entities/medicine.dart';
 
 class LocalDbService {
+  factory LocalDbService() => _instance;
+  LocalDbService._internal();
+  static final LocalDbService _instance = LocalDbService._internal();
+
   static Database? _database;
 
   Future<Database> get database async {

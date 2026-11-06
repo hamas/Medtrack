@@ -20,19 +20,26 @@ class AlarmService {
       return;
     }
 
-    final Dose nextDose = nextDoses.first;
     final String body = _buildContextualBody(medicine);
+    final int baseId = medicine.id.hashCode & 0x7FFFFFFF;
 
-    await _notificationManager.scheduleNotification(
-      id: medicine.id.hashCode,
-      title: 'Time for ${medicine.name} (${medicine.dosage})',
-      body: body,
-      scheduledDate: nextDose.scheduledTime,
-    );
+    final List<Dose> upcoming = nextDoses.take(5).toList();
+    for (int i = 0; i < upcoming.length; i++) {
+      final Dose dose = upcoming[i];
+      await _notificationManager.scheduleNotification(
+        id: baseId + i,
+        title: 'Time for ${medicine.name} (${medicine.dosage})',
+        body: body,
+        scheduledDate: dose.scheduledTime,
+      );
+    }
   }
 
   Future<void> cancelAlarm(Medicine medicine) async {
-    await _notificationManager.cancelNotification(medicine.id.hashCode);
+    final int baseId = medicine.id.hashCode & 0x7FFFFFFF;
+    for (int i = 0; i < 5; i++) {
+      await _notificationManager.cancelNotification(baseId + i);
+    }
   }
 
   String _buildContextualBody(Medicine medicine) {

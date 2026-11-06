@@ -144,10 +144,14 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
   }
 
   Future<void> _selectDate() async {
+    final DateTime earliestDate = _startDate.isBefore(DateTime.now())
+        ? _startDate.subtract(const Duration(days: 30))
+        : DateTime.now().subtract(const Duration(days: 365));
+
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _startDate,
-      firstDate: DateTime.now(),
+      firstDate: earliestDate,
       lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (BuildContext context, Widget? child) {
         return Theme(
