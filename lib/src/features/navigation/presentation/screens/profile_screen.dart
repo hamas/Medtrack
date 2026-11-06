@@ -552,7 +552,7 @@ class ProfileScreen extends ConsumerWidget {
                   Symbols.mail_rounded,
                   (profile.email?.isNotEmpty ?? false)
                       ? profile.email!
-                      : (user?.email ?? 'email@medtrack.com'),
+                      : (user?.email ?? 'Not set'),
                 ),
                 const SizedBox(height: 4),
                 _buildContactRow(

@@ -187,7 +187,7 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
             'Email Address',
             _emailController,
             Symbols.mail_rounded,
-            hint: 'example@medtrack.com',
+            hint: 'name@example.com',
             keyboardType: TextInputType.emailAddress,
           ),
           _buildField(
