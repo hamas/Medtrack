@@ -26,7 +26,7 @@ android {
     defaultConfig {
         applicationId = "com.medtrack.medtrack"
         minSdk = flutter.minSdkVersion
-        targetSdk = 35
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
