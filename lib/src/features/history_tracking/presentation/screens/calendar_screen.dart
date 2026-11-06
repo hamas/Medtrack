@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 
@@ -192,33 +193,46 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               );
               final bool isToday = DateUtils.isSameDay(date, DateTime.now());
 
-              return Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: isToday
-                      ? Colors.blueAccent.withValues(alpha: 0.08)
-                      : Colors.white.withValues(alpha: 0.02),
+              return Material(
+                color: Colors.transparent,
+                child: InkWell(
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: isToday
-                        ? Colors.blueAccent.withValues(alpha: 0.2)
-                        : Colors.white.withValues(alpha: 0.03),
+                  onTap: () => _showDayInspectorSheet(
+                    context,
+                    date,
+                    medicinesAsync.value ?? <Medicine>[],
                   ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      day.toString(),
-                      style: TextStyle(
-                        color: isToday ? Colors.blueAccent : Colors.white60,
-                        fontWeight: isToday ? FontWeight.w900 : FontWeight.w600,
-                        fontSize: 12,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: isToday
+                          ? Colors.blueAccent.withValues(alpha: 0.08)
+                          : Colors.white.withValues(alpha: 0.02),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isToday
+                            ? Colors.blueAccent.withValues(alpha: 0.2)
+                            : Colors.white.withValues(alpha: 0.03),
                       ),
                     ),
-                    _buildDynamicMedicineIcons(date, medicinesAsync),
-                  ],
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          day.toString(),
+                          style: TextStyle(
+                            color: isToday ? Colors.blueAccent : Colors.white60,
+                            fontWeight: isToday
+                                ? FontWeight.w900
+                                : FontWeight.w600,
+                            fontSize: 12,
+                          ),
+                        ),
+                        _buildDynamicMedicineIcons(date, medicinesAsync),
+                      ],
+                    ),
+                  ),
                 ),
               );
             },
@@ -287,6 +301,300 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       default:
         return (icon: Symbols.medication_rounded, color: Colors.blueAccent);
     }
+  }
+
+  Future<void> _showDayInspectorSheet(
+    BuildContext context,
+    DateTime date,
+    List<Medicine> medicines,
+  ) async {
+    final List<AdherenceLog> allLogs = await ref
+        .read(medicationRepositoryProvider)
+        .getAllAdherenceLogs();
+
+    final List<AdherenceLog> dayLogs = allLogs.where((AdherenceLog l) {
+      final bool matchesScheduled = DateUtils.isSameDay(l.scheduledTime, date);
+      final bool matchesTaken =
+          l.takenTime != null && DateUtils.isSameDay(l.takenTime!, date);
+      return matchesScheduled || matchesTaken;
+    }).toList();
+
+    final Map<String, Medicine> medMap = <String, Medicine>{
+      for (final Medicine m in medicines) m.id: m,
+    };
+
+    final List<Dose> scheduledDoses = <Dose>[];
+    for (final Medicine m in medicines) {
+      if (!m.isActive) continue;
+      final List<Dose> doses = DoseScheduler.calculateNextDoses(
+        m,
+        startAfter: DateTime(
+          date.year,
+          date.month,
+          date.day,
+        ).subtract(const Duration(seconds: 1)),
+      );
+      for (final Dose d in doses) {
+        if (DateUtils.isSameDay(d.scheduledTime, date)) {
+          scheduledDoses.add(d);
+        }
+      }
+    }
+
+    final int takenCount = dayLogs
+        .where((AdherenceLog l) => l.status == AdherenceStatus.taken)
+        .length;
+    final int skippedCount = dayLogs
+        .where((AdherenceLog l) => l.status == AdherenceStatus.skipped)
+        .length;
+    final int totalActivity = takenCount + skippedCount;
+    final double adherenceRate = totalActivity == 0
+        ? 0.0
+        : (takenCount / totalActivity) * 100.0;
+
+    if (!context.mounted) return;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      useRootNavigator: true,
+      backgroundColor: const Color(0xFF0F172A),
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      ),
+      builder: (BuildContext sheetCtx) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        DateFormat('EEEE, MMM d').format(date),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 20,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        DateUtils.isSameDay(date, DateTime.now())
+                            ? "Today's Medication Timeline"
+                            : 'Historical Day Breakdown',
+                        style: const TextStyle(
+                          color: Colors.white38,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (totalActivity > 0)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: adherenceRate >= 80
+                            ? Colors.green.withValues(alpha: 0.2)
+                            : Colors.amber.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Text(
+                        '${adherenceRate.toStringAsFixed(0)}% Adherence',
+                        style: TextStyle(
+                          color: adherenceRate >= 80
+                              ? Colors.greenAccent
+                              : Colors.amberAccent,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: _buildSummaryMetric(
+                      label: 'Taken',
+                      value: '$takenCount',
+                      color: Colors.tealAccent,
+                      icon: Symbols.check_circle_rounded,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _buildSummaryMetric(
+                      label: 'Skipped',
+                      value: '$skippedCount',
+                      color: Colors.amberAccent,
+                      icon: Symbols.cancel_rounded,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _buildSummaryMetric(
+                      label: 'Scheduled',
+                      value: '${scheduledDoses.length}',
+                      color: Colors.blueAccent,
+                      icon: Symbols.schedule_rounded,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'LOGGED ACTIVITY & STATUS',
+                style: TextStyle(
+                  color: Colors.blueAccent,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 11,
+                  letterSpacing: 1,
+                ),
+              ),
+              const SizedBox(height: 12),
+              if (dayLogs.isEmpty && scheduledDoses.isEmpty)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.03),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'No medication activity recorded on this day.',
+                      style: TextStyle(color: Colors.white38, fontSize: 13),
+                    ),
+                  ),
+                )
+              else ...<Widget>[
+                ...dayLogs.map((AdherenceLog log) {
+                  final Medicine? med = medMap[log.medicineId];
+                  final bool isTaken = log.status == AdherenceStatus.taken;
+                  final DateTime displayTime =
+                      (isTaken && log.takenTime != null)
+                      ? log.takenTime!
+                      : log.scheduledTime;
+
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.03),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.05),
+                      ),
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Icon(
+                          isTaken
+                              ? Symbols.check_circle_rounded
+                              : Symbols.cancel_rounded,
+                          color: isTaken
+                              ? Colors.greenAccent
+                              : Colors.amberAccent,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                med?.name ?? 'Unknown Medication',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              if (log.mealNotes != null &&
+                                  log.mealNotes!.isNotEmpty)
+                                Text(
+                                  log.mealNotes!,
+                                  style: const TextStyle(
+                                    color: Colors.white38,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          DateFormat('hh:mm a').format(displayTime),
+                          style: const TextStyle(
+                            color: Colors.white60,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSummaryMetric({
+    required String label,
+    required String value,
+    required Color color,
+    required IconData icon,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        children: <Widget>[
+          Icon(icon, color: color, size: 16),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.w900,
+              fontSize: 16,
+            ),
+          ),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white38, fontSize: 10),
+          ),
+        ],
+      ),
+    );
   }
 }
 

@@ -42,6 +42,8 @@ abstract class Medicine with _$Medicine {
     @Default(0) int initialQuantity,
     @Default(0) int remainingQuantity,
     @Default(5) int lowStockThreshold,
+    @Default(false) bool isPrn,
+    @Default(4) int minCooldownHours,
     DateTime? createdAt,
   }) = _Medicine;
 

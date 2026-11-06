@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Medicine {
 
- String get id; String get userId; String get name; String get dosage; IntervalType get intervalType; int get intervalCount; IntervalUnit get intervalUnit; List<String> get scheduleTimes; MealContext get mealContext; DeliveryMethod get deliveryMethod; DateTime get startDate; DateTime? get endDate; int? get durationDays; bool get isActive; int get initialQuantity; int get remainingQuantity; int get lowStockThreshold; DateTime? get createdAt;
+ String get id; String get userId; String get name; String get dosage; IntervalType get intervalType; int get intervalCount; IntervalUnit get intervalUnit; List<String> get scheduleTimes; MealContext get mealContext; DeliveryMethod get deliveryMethod; DateTime get startDate; DateTime? get endDate; int? get durationDays; bool get isActive; int get initialQuantity; int get remainingQuantity; int get lowStockThreshold; bool get isPrn; int get minCooldownHours; DateTime? get createdAt;
 /// Create a copy of Medicine
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,20 +30,20 @@ $MedicineCopyWith<Medicine> get copyWith => _$MedicineCopyWithImpl<Medicine>(thi
 @override
 bool operator ==(Object other) {
   final _this = this as Medicine;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Medicine&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.userId, _this.userId) || other.userId == _this.userId)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.dosage, _this.dosage) || other.dosage == _this.dosage)&&(identical(other.intervalType, _this.intervalType) || other.intervalType == _this.intervalType)&&(identical(other.intervalCount, _this.intervalCount) || other.intervalCount == _this.intervalCount)&&(identical(other.intervalUnit, _this.intervalUnit) || other.intervalUnit == _this.intervalUnit)&&const DeepCollectionEquality().equals(other.scheduleTimes, _this.scheduleTimes)&&(identical(other.mealContext, _this.mealContext) || other.mealContext == _this.mealContext)&&(identical(other.deliveryMethod, _this.deliveryMethod) || other.deliveryMethod == _this.deliveryMethod)&&(identical(other.startDate, _this.startDate) || other.startDate == _this.startDate)&&(identical(other.endDate, _this.endDate) || other.endDate == _this.endDate)&&(identical(other.durationDays, _this.durationDays) || other.durationDays == _this.durationDays)&&(identical(other.isActive, _this.isActive) || other.isActive == _this.isActive)&&(identical(other.initialQuantity, _this.initialQuantity) || other.initialQuantity == _this.initialQuantity)&&(identical(other.remainingQuantity, _this.remainingQuantity) || other.remainingQuantity == _this.remainingQuantity)&&(identical(other.lowStockThreshold, _this.lowStockThreshold) || other.lowStockThreshold == _this.lowStockThreshold)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Medicine&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.userId, _this.userId) || other.userId == _this.userId)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.dosage, _this.dosage) || other.dosage == _this.dosage)&&(identical(other.intervalType, _this.intervalType) || other.intervalType == _this.intervalType)&&(identical(other.intervalCount, _this.intervalCount) || other.intervalCount == _this.intervalCount)&&(identical(other.intervalUnit, _this.intervalUnit) || other.intervalUnit == _this.intervalUnit)&&const DeepCollectionEquality().equals(other.scheduleTimes, _this.scheduleTimes)&&(identical(other.mealContext, _this.mealContext) || other.mealContext == _this.mealContext)&&(identical(other.deliveryMethod, _this.deliveryMethod) || other.deliveryMethod == _this.deliveryMethod)&&(identical(other.startDate, _this.startDate) || other.startDate == _this.startDate)&&(identical(other.endDate, _this.endDate) || other.endDate == _this.endDate)&&(identical(other.durationDays, _this.durationDays) || other.durationDays == _this.durationDays)&&(identical(other.isActive, _this.isActive) || other.isActive == _this.isActive)&&(identical(other.initialQuantity, _this.initialQuantity) || other.initialQuantity == _this.initialQuantity)&&(identical(other.remainingQuantity, _this.remainingQuantity) || other.remainingQuantity == _this.remainingQuantity)&&(identical(other.lowStockThreshold, _this.lowStockThreshold) || other.lowStockThreshold == _this.lowStockThreshold)&&(identical(other.isPrn, _this.isPrn) || other.isPrn == _this.isPrn)&&(identical(other.minCooldownHours, _this.minCooldownHours) || other.minCooldownHours == _this.minCooldownHours)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as Medicine;
-  return Object.hash(runtimeType,_this.id,_this.userId,_this.name,_this.dosage,_this.intervalType,_this.intervalCount,_this.intervalUnit,const DeepCollectionEquality().hash(_this.scheduleTimes),_this.mealContext,_this.deliveryMethod,_this.startDate,_this.endDate,_this.durationDays,_this.isActive,_this.initialQuantity,_this.remainingQuantity,_this.lowStockThreshold,_this.createdAt);
+  return Object.hashAll([runtimeType,_this.id,_this.userId,_this.name,_this.dosage,_this.intervalType,_this.intervalCount,_this.intervalUnit,const DeepCollectionEquality().hash(_this.scheduleTimes),_this.mealContext,_this.deliveryMethod,_this.startDate,_this.endDate,_this.durationDays,_this.isActive,_this.initialQuantity,_this.remainingQuantity,_this.lowStockThreshold,_this.isPrn,_this.minCooldownHours,_this.createdAt]);
 }
 
 @override
 String toString() {
   final _this = this as Medicine;
-  return 'Medicine(id: ${_this.id}, userId: ${_this.userId}, name: ${_this.name}, dosage: ${_this.dosage}, intervalType: ${_this.intervalType}, intervalCount: ${_this.intervalCount}, intervalUnit: ${_this.intervalUnit}, scheduleTimes: ${_this.scheduleTimes}, mealContext: ${_this.mealContext}, deliveryMethod: ${_this.deliveryMethod}, startDate: ${_this.startDate}, endDate: ${_this.endDate}, durationDays: ${_this.durationDays}, isActive: ${_this.isActive}, initialQuantity: ${_this.initialQuantity}, remainingQuantity: ${_this.remainingQuantity}, lowStockThreshold: ${_this.lowStockThreshold}, createdAt: ${_this.createdAt})';
+  return 'Medicine(id: ${_this.id}, userId: ${_this.userId}, name: ${_this.name}, dosage: ${_this.dosage}, intervalType: ${_this.intervalType}, intervalCount: ${_this.intervalCount}, intervalUnit: ${_this.intervalUnit}, scheduleTimes: ${_this.scheduleTimes}, mealContext: ${_this.mealContext}, deliveryMethod: ${_this.deliveryMethod}, startDate: ${_this.startDate}, endDate: ${_this.endDate}, durationDays: ${_this.durationDays}, isActive: ${_this.isActive}, initialQuantity: ${_this.initialQuantity}, remainingQuantity: ${_this.remainingQuantity}, lowStockThreshold: ${_this.lowStockThreshold}, isPrn: ${_this.isPrn}, minCooldownHours: ${_this.minCooldownHours}, createdAt: ${_this.createdAt})';
 }
 
 
@@ -54,7 +54,7 @@ abstract mixin class $MedicineCopyWith<$Res>  {
   factory $MedicineCopyWith(Medicine value, $Res Function(Medicine) _then) = _$MedicineCopyWithImpl;
 @useResult
 $Res call({
- String id, String userId, String name, String dosage, IntervalType intervalType, int intervalCount, IntervalUnit intervalUnit, List<String> scheduleTimes, MealContext mealContext, DeliveryMethod deliveryMethod, DateTime startDate, DateTime? endDate, int? durationDays, bool isActive, int initialQuantity, int remainingQuantity, int lowStockThreshold, DateTime? createdAt
+ String id, String userId, String name, String dosage, IntervalType intervalType, int intervalCount, IntervalUnit intervalUnit, List<String> scheduleTimes, MealContext mealContext, DeliveryMethod deliveryMethod, DateTime startDate, DateTime? endDate, int? durationDays, bool isActive, int initialQuantity, int remainingQuantity, int lowStockThreshold, bool isPrn, int minCooldownHours, DateTime? createdAt
 });
 
 
@@ -71,7 +71,7 @@ class _$MedicineCopyWithImpl<$Res>
 
 /// Create a copy of Medicine
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? name = null,Object? dosage = null,Object? intervalType = null,Object? intervalCount = null,Object? intervalUnit = null,Object? scheduleTimes = null,Object? mealContext = null,Object? deliveryMethod = null,Object? startDate = null,Object? endDate = freezed,Object? durationDays = freezed,Object? isActive = null,Object? initialQuantity = null,Object? remainingQuantity = null,Object? lowStockThreshold = null,Object? createdAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? name = null,Object? dosage = null,Object? intervalType = null,Object? intervalCount = null,Object? intervalUnit = null,Object? scheduleTimes = null,Object? mealContext = null,Object? deliveryMethod = null,Object? startDate = null,Object? endDate = freezed,Object? durationDays = freezed,Object? isActive = null,Object? initialQuantity = null,Object? remainingQuantity = null,Object? lowStockThreshold = null,Object? isPrn = null,Object? minCooldownHours = null,Object? createdAt = freezed,}) {
   return _then(Medicine(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
@@ -90,6 +90,8 @@ as int?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_n
 as bool,initialQuantity: null == initialQuantity ? _self.initialQuantity : initialQuantity // ignore: cast_nullable_to_non_nullable
 as int,remainingQuantity: null == remainingQuantity ? _self.remainingQuantity : remainingQuantity // ignore: cast_nullable_to_non_nullable
 as int,lowStockThreshold: null == lowStockThreshold ? _self.lowStockThreshold : lowStockThreshold // ignore: cast_nullable_to_non_nullable
+as int,isPrn: null == isPrn ? _self.isPrn : isPrn // ignore: cast_nullable_to_non_nullable
+as bool,minCooldownHours: null == minCooldownHours ? _self.minCooldownHours : minCooldownHours // ignore: cast_nullable_to_non_nullable
 as int,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
@@ -176,10 +178,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  String name,  String dosage,  IntervalType intervalType,  int intervalCount,  IntervalUnit intervalUnit,  List<String> scheduleTimes,  MealContext mealContext,  DeliveryMethod deliveryMethod,  DateTime startDate,  DateTime? endDate,  int? durationDays,  bool isActive,  int initialQuantity,  int remainingQuantity,  int lowStockThreshold,  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  String name,  String dosage,  IntervalType intervalType,  int intervalCount,  IntervalUnit intervalUnit,  List<String> scheduleTimes,  MealContext mealContext,  DeliveryMethod deliveryMethod,  DateTime startDate,  DateTime? endDate,  int? durationDays,  bool isActive,  int initialQuantity,  int remainingQuantity,  int lowStockThreshold,  bool isPrn,  int minCooldownHours,  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Medicine() when $default != null:
-return $default(_that.id,_that.userId,_that.name,_that.dosage,_that.intervalType,_that.intervalCount,_that.intervalUnit,_that.scheduleTimes,_that.mealContext,_that.deliveryMethod,_that.startDate,_that.endDate,_that.durationDays,_that.isActive,_that.initialQuantity,_that.remainingQuantity,_that.lowStockThreshold,_that.createdAt);case _:
+return $default(_that.id,_that.userId,_that.name,_that.dosage,_that.intervalType,_that.intervalCount,_that.intervalUnit,_that.scheduleTimes,_that.mealContext,_that.deliveryMethod,_that.startDate,_that.endDate,_that.durationDays,_that.isActive,_that.initialQuantity,_that.remainingQuantity,_that.lowStockThreshold,_that.isPrn,_that.minCooldownHours,_that.createdAt);case _:
   return orElse();
 
 }
@@ -197,10 +199,10 @@ return $default(_that.id,_that.userId,_that.name,_that.dosage,_that.intervalType
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  String name,  String dosage,  IntervalType intervalType,  int intervalCount,  IntervalUnit intervalUnit,  List<String> scheduleTimes,  MealContext mealContext,  DeliveryMethod deliveryMethod,  DateTime startDate,  DateTime? endDate,  int? durationDays,  bool isActive,  int initialQuantity,  int remainingQuantity,  int lowStockThreshold,  DateTime? createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  String name,  String dosage,  IntervalType intervalType,  int intervalCount,  IntervalUnit intervalUnit,  List<String> scheduleTimes,  MealContext mealContext,  DeliveryMethod deliveryMethod,  DateTime startDate,  DateTime? endDate,  int? durationDays,  bool isActive,  int initialQuantity,  int remainingQuantity,  int lowStockThreshold,  bool isPrn,  int minCooldownHours,  DateTime? createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _Medicine():
-return $default(_that.id,_that.userId,_that.name,_that.dosage,_that.intervalType,_that.intervalCount,_that.intervalUnit,_that.scheduleTimes,_that.mealContext,_that.deliveryMethod,_that.startDate,_that.endDate,_that.durationDays,_that.isActive,_that.initialQuantity,_that.remainingQuantity,_that.lowStockThreshold,_that.createdAt);case _:
+return $default(_that.id,_that.userId,_that.name,_that.dosage,_that.intervalType,_that.intervalCount,_that.intervalUnit,_that.scheduleTimes,_that.mealContext,_that.deliveryMethod,_that.startDate,_that.endDate,_that.durationDays,_that.isActive,_that.initialQuantity,_that.remainingQuantity,_that.lowStockThreshold,_that.isPrn,_that.minCooldownHours,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -217,10 +219,10 @@ return $default(_that.id,_that.userId,_that.name,_that.dosage,_that.intervalType
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  String name,  String dosage,  IntervalType intervalType,  int intervalCount,  IntervalUnit intervalUnit,  List<String> scheduleTimes,  MealContext mealContext,  DeliveryMethod deliveryMethod,  DateTime startDate,  DateTime? endDate,  int? durationDays,  bool isActive,  int initialQuantity,  int remainingQuantity,  int lowStockThreshold,  DateTime? createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  String name,  String dosage,  IntervalType intervalType,  int intervalCount,  IntervalUnit intervalUnit,  List<String> scheduleTimes,  MealContext mealContext,  DeliveryMethod deliveryMethod,  DateTime startDate,  DateTime? endDate,  int? durationDays,  bool isActive,  int initialQuantity,  int remainingQuantity,  int lowStockThreshold,  bool isPrn,  int minCooldownHours,  DateTime? createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Medicine() when $default != null:
-return $default(_that.id,_that.userId,_that.name,_that.dosage,_that.intervalType,_that.intervalCount,_that.intervalUnit,_that.scheduleTimes,_that.mealContext,_that.deliveryMethod,_that.startDate,_that.endDate,_that.durationDays,_that.isActive,_that.initialQuantity,_that.remainingQuantity,_that.lowStockThreshold,_that.createdAt);case _:
+return $default(_that.id,_that.userId,_that.name,_that.dosage,_that.intervalType,_that.intervalCount,_that.intervalUnit,_that.scheduleTimes,_that.mealContext,_that.deliveryMethod,_that.startDate,_that.endDate,_that.durationDays,_that.isActive,_that.initialQuantity,_that.remainingQuantity,_that.lowStockThreshold,_that.isPrn,_that.minCooldownHours,_that.createdAt);case _:
   return null;
 
 }
@@ -232,7 +234,7 @@ return $default(_that.id,_that.userId,_that.name,_that.dosage,_that.intervalType
 @JsonSerializable()
 
 class _Medicine implements Medicine {
-  const _Medicine({required this.id, required this.userId, required this.name, required this.dosage, required this.intervalType, this.intervalCount = 1, this.intervalUnit = IntervalUnit.days, required  List<String> scheduleTimes, required this.mealContext, required this.deliveryMethod, required this.startDate, this.endDate, this.durationDays, this.isActive = true, this.initialQuantity = 0, this.remainingQuantity = 0, this.lowStockThreshold = 5, this.createdAt}): _scheduleTimes = scheduleTimes;
+  const _Medicine({required this.id, required this.userId, required this.name, required this.dosage, required this.intervalType, this.intervalCount = 1, this.intervalUnit = IntervalUnit.days, required  List<String> scheduleTimes, required this.mealContext, required this.deliveryMethod, required this.startDate, this.endDate, this.durationDays, this.isActive = true, this.initialQuantity = 0, this.remainingQuantity = 0, this.lowStockThreshold = 5, this.isPrn = false, this.minCooldownHours = 4, this.createdAt}): _scheduleTimes = scheduleTimes;
   factory _Medicine.fromJson(Map<String, dynamic> json) => _$MedicineFromJson(json);
 
 @override final  String id;
@@ -258,6 +260,8 @@ class _Medicine implements Medicine {
 @override@JsonKey() final  int initialQuantity;
 @override@JsonKey() final  int remainingQuantity;
 @override@JsonKey() final  int lowStockThreshold;
+@override@JsonKey() final  bool isPrn;
+@override@JsonKey() final  int minCooldownHours;
 @override final  DateTime? createdAt;
 
 /// Create a copy of Medicine
@@ -273,18 +277,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Medicine&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.name, name) || other.name == name)&&(identical(other.dosage, dosage) || other.dosage == dosage)&&(identical(other.intervalType, intervalType) || other.intervalType == intervalType)&&(identical(other.intervalCount, intervalCount) || other.intervalCount == intervalCount)&&(identical(other.intervalUnit, intervalUnit) || other.intervalUnit == intervalUnit)&&const DeepCollectionEquality().equals(other.scheduleTimes, _scheduleTimes)&&(identical(other.mealContext, mealContext) || other.mealContext == mealContext)&&(identical(other.deliveryMethod, deliveryMethod) || other.deliveryMethod == deliveryMethod)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.durationDays, durationDays) || other.durationDays == durationDays)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.initialQuantity, initialQuantity) || other.initialQuantity == initialQuantity)&&(identical(other.remainingQuantity, remainingQuantity) || other.remainingQuantity == remainingQuantity)&&(identical(other.lowStockThreshold, lowStockThreshold) || other.lowStockThreshold == lowStockThreshold)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Medicine&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.name, name) || other.name == name)&&(identical(other.dosage, dosage) || other.dosage == dosage)&&(identical(other.intervalType, intervalType) || other.intervalType == intervalType)&&(identical(other.intervalCount, intervalCount) || other.intervalCount == intervalCount)&&(identical(other.intervalUnit, intervalUnit) || other.intervalUnit == intervalUnit)&&const DeepCollectionEquality().equals(other.scheduleTimes, _scheduleTimes)&&(identical(other.mealContext, mealContext) || other.mealContext == mealContext)&&(identical(other.deliveryMethod, deliveryMethod) || other.deliveryMethod == deliveryMethod)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&(identical(other.durationDays, durationDays) || other.durationDays == durationDays)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.initialQuantity, initialQuantity) || other.initialQuantity == initialQuantity)&&(identical(other.remainingQuantity, remainingQuantity) || other.remainingQuantity == remainingQuantity)&&(identical(other.lowStockThreshold, lowStockThreshold) || other.lowStockThreshold == lowStockThreshold)&&(identical(other.isPrn, isPrn) || other.isPrn == isPrn)&&(identical(other.minCooldownHours, minCooldownHours) || other.minCooldownHours == minCooldownHours)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,userId,name,dosage,intervalType,intervalCount,intervalUnit,const DeepCollectionEquality().hash(_scheduleTimes),mealContext,deliveryMethod,startDate,endDate,durationDays,isActive,initialQuantity,remainingQuantity,lowStockThreshold,createdAt);
+    return Object.hashAll([runtimeType,id,userId,name,dosage,intervalType,intervalCount,intervalUnit,const DeepCollectionEquality().hash(_scheduleTimes),mealContext,deliveryMethod,startDate,endDate,durationDays,isActive,initialQuantity,remainingQuantity,lowStockThreshold,isPrn,minCooldownHours,createdAt]);
 }
 
 @override
 String toString() {
-    return 'Medicine(id: $id, userId: $userId, name: $name, dosage: $dosage, intervalType: $intervalType, intervalCount: $intervalCount, intervalUnit: $intervalUnit, scheduleTimes: $scheduleTimes, mealContext: $mealContext, deliveryMethod: $deliveryMethod, startDate: $startDate, endDate: $endDate, durationDays: $durationDays, isActive: $isActive, initialQuantity: $initialQuantity, remainingQuantity: $remainingQuantity, lowStockThreshold: $lowStockThreshold, createdAt: $createdAt)';
+    return 'Medicine(id: $id, userId: $userId, name: $name, dosage: $dosage, intervalType: $intervalType, intervalCount: $intervalCount, intervalUnit: $intervalUnit, scheduleTimes: $scheduleTimes, mealContext: $mealContext, deliveryMethod: $deliveryMethod, startDate: $startDate, endDate: $endDate, durationDays: $durationDays, isActive: $isActive, initialQuantity: $initialQuantity, remainingQuantity: $remainingQuantity, lowStockThreshold: $lowStockThreshold, isPrn: $isPrn, minCooldownHours: $minCooldownHours, createdAt: $createdAt)';
 }
 
 
@@ -295,7 +299,7 @@ abstract mixin class _$MedicineCopyWith<$Res> implements $MedicineCopyWith<$Res>
   factory _$MedicineCopyWith(_Medicine value, $Res Function(_Medicine) _then) = __$MedicineCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String userId, String name, String dosage, IntervalType intervalType, int intervalCount, IntervalUnit intervalUnit, List<String> scheduleTimes, MealContext mealContext, DeliveryMethod deliveryMethod, DateTime startDate, DateTime? endDate, int? durationDays, bool isActive, int initialQuantity, int remainingQuantity, int lowStockThreshold, DateTime? createdAt
+ String id, String userId, String name, String dosage, IntervalType intervalType, int intervalCount, IntervalUnit intervalUnit, List<String> scheduleTimes, MealContext mealContext, DeliveryMethod deliveryMethod, DateTime startDate, DateTime? endDate, int? durationDays, bool isActive, int initialQuantity, int remainingQuantity, int lowStockThreshold, bool isPrn, int minCooldownHours, DateTime? createdAt
 });
 
 
@@ -312,7 +316,7 @@ class __$MedicineCopyWithImpl<$Res>
 
 /// Create a copy of Medicine
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? name = null,Object? dosage = null,Object? intervalType = null,Object? intervalCount = null,Object? intervalUnit = null,Object? scheduleTimes = null,Object? mealContext = null,Object? deliveryMethod = null,Object? startDate = null,Object? endDate = freezed,Object? durationDays = freezed,Object? isActive = null,Object? initialQuantity = null,Object? remainingQuantity = null,Object? lowStockThreshold = null,Object? createdAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? name = null,Object? dosage = null,Object? intervalType = null,Object? intervalCount = null,Object? intervalUnit = null,Object? scheduleTimes = null,Object? mealContext = null,Object? deliveryMethod = null,Object? startDate = null,Object? endDate = freezed,Object? durationDays = freezed,Object? isActive = null,Object? initialQuantity = null,Object? remainingQuantity = null,Object? lowStockThreshold = null,Object? isPrn = null,Object? minCooldownHours = null,Object? createdAt = freezed,}) {
   return _then(_Medicine(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
@@ -331,6 +335,8 @@ as int?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_n
 as bool,initialQuantity: null == initialQuantity ? _self.initialQuantity : initialQuantity // ignore: cast_nullable_to_non_nullable
 as int,remainingQuantity: null == remainingQuantity ? _self.remainingQuantity : remainingQuantity // ignore: cast_nullable_to_non_nullable
 as int,lowStockThreshold: null == lowStockThreshold ? _self.lowStockThreshold : lowStockThreshold // ignore: cast_nullable_to_non_nullable
+as int,isPrn: null == isPrn ? _self.isPrn : isPrn // ignore: cast_nullable_to_non_nullable
+as bool,minCooldownHours: null == minCooldownHours ? _self.minCooldownHours : minCooldownHours // ignore: cast_nullable_to_non_nullable
 as int,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));

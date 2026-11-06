@@ -41,7 +41,7 @@ final class NotificationCountProvider
   }
 }
 
-String _$notificationCountHash() => r'3428c59aa4e8d3b60ab0bc66e3bd10fb96d8d3ba';
+String _$notificationCountHash() => r'3457e377474bbc0b0430bee9e7411b93e50a1dae';
 
 abstract class _$NotificationCount extends $Notifier<int> {
   int build();

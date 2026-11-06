@@ -95,6 +95,25 @@ class DailyTimeline extends _$DailyTimeline {
     }
   }
 
+  Future<void> logSideEffect(
+    Dose dose, {
+    required String symptom,
+    required String severity,
+    String? details,
+  }) async {
+    final String noteText = details != null && details.trim().isNotEmpty
+        ? 'Side Effect: $symptom ($severity) - ${details.trim()}'
+        : 'Side Effect: $symptom ($severity)';
+
+    final DashboardRepository repository = ref.read(dashboardRepoProvider);
+    await repository.recordIntake(
+      dose,
+      DateTime.now(),
+      notes: noteText,
+      isSkipped: false,
+    );
+  }
+
   Future<void> snoozeDose(Dose dose, Duration duration) async {
     if (state.hasValue) {
       final DateTime newTime = dose.scheduledTime.add(duration);

@@ -109,13 +109,17 @@ class DashboardRepositoryImpl implements DashboardRepository {
           (isSkipped ? 'Dose skipped by user' : 'Recorded via Daily Dashboard'),
     );
 
-    if (userId == 'guest_user') {
-      await _localDb.insertAdherenceLog(log);
-    } else {
-      await _firestore
-          .collection('adherence_logs')
-          .doc(logId)
-          .set(log.toJson());
+    await _localDb.insertAdherenceLog(log);
+
+    if (userId != 'guest_user') {
+      try {
+        await _firestore
+            .collection('adherence_logs')
+            .doc(logId)
+            .set(log.toJson());
+      } catch (e) {
+        // Fallback for offline sync
+      }
     }
   }
 }

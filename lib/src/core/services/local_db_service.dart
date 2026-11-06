@@ -20,7 +20,7 @@ class LocalDbService {
 
     return openDatabase(
       path,
-      version: 4,
+      version: 5,
       onCreate: (Database db, int version) async {
         await db.execute('''
           CREATE TABLE medicines (
@@ -41,6 +41,8 @@ class LocalDbService {
             initialQuantity INTEGER,
             remainingQuantity INTEGER,
             lowStockThreshold INTEGER,
+            isPrn INTEGER DEFAULT 0,
+            minCooldownHours INTEGER DEFAULT 4,
             createdAt TEXT
           )
         ''');
@@ -100,6 +102,18 @@ class LocalDbService {
             // Column may already exist
           }
         }
+        if (oldVersion < 5) {
+          try {
+            await db.execute(
+              'ALTER TABLE medicines ADD COLUMN isPrn INTEGER DEFAULT 0',
+            );
+            await db.execute(
+              'ALTER TABLE medicines ADD COLUMN minCooldownHours INTEGER DEFAULT 4',
+            );
+          } catch (e) {
+            // Column may already exist
+          }
+        }
       },
     );
   }
@@ -109,6 +123,8 @@ class LocalDbService {
     final Map<String, dynamic> json = medicine.toJson();
     json['scheduleTimes'] = medicine.scheduleTimes.join(',');
     json['isActive'] = medicine.isActive ? 1 : 0;
+    json['isPrn'] = medicine.isPrn ? 1 : 0;
+    json['minCooldownHours'] = medicine.minCooldownHours;
 
     await db.insert(
       'medicines',
@@ -124,8 +140,30 @@ class LocalDbService {
       final Map<String, dynamic> map = Map<String, dynamic>.from(maps[i]);
       map['scheduleTimes'] = (map['scheduleTimes'] as String).split(',');
       map['isActive'] = map['isActive'] == 1;
+      map['isPrn'] = (map['isPrn'] ?? 0) == 1;
+      map['minCooldownHours'] = (map['minCooldownHours'] as num?)?.toInt() ?? 4;
       return Medicine.fromJson(map);
     });
+  }
+
+  Future<void> updateMedicineQuantity(String id, int remainingQuantity) async {
+    final Database db = await database;
+    await db.update(
+      'medicines',
+      <String, dynamic>{'remainingQuantity': remainingQuantity},
+      where: 'id = ?',
+      whereArgs: <Object>[id],
+    );
+  }
+
+  Future<void> toggleMedicineActive(String id, bool isActive) async {
+    final Database db = await database;
+    await db.update(
+      'medicines',
+      <String, dynamic>{'isActive': isActive ? 1 : 0},
+      where: 'id = ?',
+      whereArgs: <Object>[id],
+    );
   }
 
   Future<void> deleteMedicine(String medicineId) async {

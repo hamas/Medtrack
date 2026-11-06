@@ -10,6 +10,7 @@ import '../../../gamification/domain/entities/user_profile.dart';
 import '../../../gamification/presentation/providers/user_profile_provider.dart';
 import '../../../daily_dashboard/presentation/providers/daily_timeline_provider.dart';
 import '../../domain/entities/medicine.dart';
+import '../../domain/services/drug_interaction_service.dart';
 import '../providers/all_medicines_provider.dart';
 import '../../../medication_management/presentation/providers/medicine_save_provider.dart';
 
@@ -24,11 +25,27 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dosageController = TextEditingController();
+  final TextEditingController _supplyController = TextEditingController(
+    text: '30',
+  );
+  final TextEditingController _lowStockController = TextEditingController(
+    text: '5',
+  );
+  final TextEditingController _courseDaysController = TextEditingController(
+    text: '7',
+  );
+  final TextEditingController _cooldownController = TextEditingController(
+    text: '4',
+  );
 
-  // Scheduling State
+  // Scheduling & Clinical State
   DateTime _startDate = DateTime.now();
   String _frequency = 'Daily';
   String _selectedType = 'Tablet';
+  MealContext _mealContext = MealContext.none;
+  bool _isFixedCourse = false;
+  bool _isPrn = false;
+
   final List<String> _frequencies = <String>[
     'Daily',
     'Once a week',
@@ -45,6 +62,10 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
   void dispose() {
     _nameController.dispose();
     _dosageController.dispose();
+    _supplyController.dispose();
+    _lowStockController.dispose();
+    _courseDaysController.dispose();
+    _cooldownController.dispose();
     super.dispose();
   }
 
@@ -114,7 +135,24 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
 
     final String medName = _nameController.text.trim();
 
-    // Clinical Safety Check: Cross-reference against saved user allergies
+    // Map selected type to DeliveryMethod enum
+    DeliveryMethod deliveryMethod = DeliveryMethod.other;
+    switch (_selectedType) {
+      case 'Tablet':
+        deliveryMethod = DeliveryMethod.tablet;
+        break;
+      case 'Capsule':
+        deliveryMethod = DeliveryMethod.capsule;
+        break;
+      case 'Syringe':
+        deliveryMethod = DeliveryMethod.injection;
+        break;
+      case 'Syrup':
+        deliveryMethod = DeliveryMethod.syrup;
+        break;
+    }
+
+    // Clinical Safety Check 1: Cross-reference against saved user allergies
     final UserProfile? userProfile = ref.read(userProfileStateProvider).value;
     if (userProfile != null && userProfile.allergies.isNotEmpty) {
       final String lowerName = medName.toLowerCase();
@@ -134,6 +172,21 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
         );
         if (!proceed) return;
       }
+    }
+
+    // Clinical Safety Check 2: Drug-to-Drug and Food/Milk Interactions
+    final List<Medicine> cabinetMedicines =
+        ref.read(allMedicinesProvider).value ?? <Medicine>[];
+    final List<DrugInteraction> interactions =
+        DrugInteractionService.checkInteractions(
+          newDrugName: medName,
+          cabinetDrugs: cabinetMedicines,
+          deliveryMethod: deliveryMethod,
+        );
+
+    if (interactions.isNotEmpty) {
+      final bool proceed = await _showInteractionWarningDialog(interactions);
+      if (!proceed) return;
     }
 
     try {
@@ -165,27 +218,23 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
           break;
       }
 
-      // Map selected type to DeliveryMethod enum
-      DeliveryMethod deliveryMethod = DeliveryMethod.other;
-      switch (_selectedType) {
-        case 'Tablet':
-          deliveryMethod = DeliveryMethod.tablet;
-          break;
-        case 'Capsule':
-          deliveryMethod = DeliveryMethod.capsule;
-          break;
-        case 'Syringe':
-          deliveryMethod = DeliveryMethod.injection;
-          break;
-        case 'Syrup':
-          deliveryMethod = DeliveryMethod.syrup;
-          break;
-      }
+      final int initialQuantity =
+          int.tryParse(_supplyController.text.trim()) ?? 30;
+      final int lowStockThreshold =
+          int.tryParse(_lowStockController.text.trim()) ?? 5;
+      final int? durationDays = _isFixedCourse
+          ? (int.tryParse(_courseDaysController.text.trim()) ?? 7)
+          : null;
+      final DateTime? endDate = durationDays != null
+          ? _startDate.add(Duration(days: durationDays))
+          : null;
+      final int minCooldown =
+          int.tryParse(_cooldownController.text.trim()) ?? 4;
 
       final Medicine medicine = Medicine(
         id: id,
         userId: userId,
-        name: _nameController.text.trim(),
+        name: medName,
         dosage: _dosageController.text.trim().isEmpty
             ? '1 unit'
             : _dosageController.text.trim(),
@@ -196,9 +245,16 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
           final String m = t.minute.toString().padLeft(2, '0');
           return '$h:$m';
         }).toList(),
-        mealContext: MealContext.none,
+        mealContext: _mealContext,
         deliveryMethod: deliveryMethod,
         startDate: _startDate,
+        endDate: endDate,
+        durationDays: durationDays,
+        initialQuantity: initialQuantity,
+        remainingQuantity: initialQuantity,
+        lowStockThreshold: lowStockThreshold,
+        isPrn: _isPrn,
+        minCooldownHours: minCooldown,
         createdAt: DateTime.now(),
       );
 
@@ -228,6 +284,125 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
         );
       }
     }
+  }
+
+  Future<bool> _showInteractionWarningDialog(
+    List<DrugInteraction> interactions,
+  ) async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (BuildContext ctx) => AlertDialog(
+            backgroundColor: const Color(0xFF1E1B2E),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
+            icon: const Icon(
+              Symbols.health_and_safety_rounded,
+              color: Colors.redAccent,
+              size: 40,
+            ),
+            title: const Text(
+              'Clinical Interaction Guardrail',
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                fontSize: 18,
+              ),
+            ),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: interactions.length,
+                separatorBuilder: (BuildContext context, int index) =>
+                    const Divider(color: Colors.white12, height: 20),
+                itemBuilder: (BuildContext context, int index) {
+                  final DrugInteraction item = interactions[index];
+                  final bool isSevere = item.severity.toLowerCase() == 'severe';
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSevere
+                                  ? Colors.redAccent.withValues(alpha: 0.2)
+                                  : Colors.amber.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              '${item.severity.toUpperCase()} RISK',
+                              style: TextStyle(
+                                color: isSevere
+                                    ? Colors.redAccent
+                                    : Colors.amber,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 10,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              item.title,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        item.description,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                          height: 1.4,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Recommendation: ${item.recommendation}',
+                        style: const TextStyle(
+                          color: Colors.white38,
+                          fontSize: 11,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text(
+                  'Review & Adjust',
+                  style: TextStyle(color: Colors.white60),
+                ),
+              ),
+              FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.redAccent.withValues(alpha: 0.8),
+                ),
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('Doctor Approved — Save'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
   }
 
   Future<bool> _showAllergyWarningDialog(
@@ -487,6 +662,45 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: _buildSectionLabel('MEAL INSTRUCTIONS'),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildCard(child: _buildMealContextPicker()),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: _buildSectionLabel('SUPPLY & REFILL ALERT'),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildSupplyCard(),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: _buildSectionLabel('DURATION & PRN RESCUE'),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildCourseAndPrnCard(),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: _buildSectionLabel('REMINDERS'),
                     ),
                     const SizedBox(height: 16),
@@ -498,6 +712,197 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildMealContextPicker() {
+    final List<({MealContext context, String label, IconData icon})> options =
+        <({MealContext context, String label, IconData icon})>[
+          (
+            context: MealContext.none,
+            label: 'Anytime',
+            icon: Symbols.timer_rounded,
+          ),
+          (
+            context: MealContext.beforeMeal,
+            label: 'Before Meal',
+            icon: Symbols.restaurant_rounded,
+          ),
+          (
+            context: MealContext.withMeal,
+            label: 'With Meal',
+            icon: Symbols.lunch_dining_rounded,
+          ),
+          (
+            context: MealContext.afterMeal,
+            label: 'After Meal',
+            icon: Symbols.dinner_dining_rounded,
+          ),
+        ];
+
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      mainAxisSpacing: 8,
+      crossAxisSpacing: 8,
+      childAspectRatio: 2.3,
+      children: options.map((
+        ({MealContext context, IconData icon, String label}) opt,
+      ) {
+        final bool isSelected = _mealContext == opt.context;
+        return GestureDetector(
+          onTap: () => setState(() => _mealContext = opt.context),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? Colors.blueAccent.withValues(alpha: 0.15)
+                  : Colors.white.withValues(alpha: 0.03),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isSelected
+                    ? Colors.blueAccent.withValues(alpha: 0.4)
+                    : Colors.white.withValues(alpha: 0.05),
+              ),
+            ),
+            child: Row(
+              children: <Widget>[
+                Icon(
+                  opt.icon,
+                  size: 18,
+                  color: isSelected ? Colors.blueAccent : Colors.white38,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    opt.label,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.white60,
+                      fontWeight: isSelected
+                          ? FontWeight.w800
+                          : FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildSupplyCard() {
+    return _buildCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _buildInputField(
+            controller: _supplyController,
+            label: 'CURRENT SUPPLY (PACK SIZE / UNITS)',
+            hint: 'e.g. 30',
+            icon: Symbols.inventory_2_rounded,
+            isRequired: false,
+          ),
+          _buildInputField(
+            controller: _lowStockController,
+            label: 'LOW STOCK ALERT THRESHOLD',
+            hint: 'e.g. 5',
+            icon: Symbols.warning_amber_rounded,
+            isRequired: false,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCourseAndPrnCard() {
+    return _buildCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Fixed Duration Course',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    'e.g. Antibiotics or short steroid course',
+                    style: TextStyle(color: Colors.white38, fontSize: 11),
+                  ),
+                ],
+              ),
+              Switch(
+                value: _isFixedCourse,
+                activeThumbColor: Colors.blueAccent,
+                onChanged: (bool val) => setState(() => _isFixedCourse = val),
+              ),
+            ],
+          ),
+          if (_isFixedCourse) ...<Widget>[
+            const SizedBox(height: 12),
+            _buildInputField(
+              controller: _courseDaysController,
+              label: 'COURSE DURATION (DAYS)',
+              hint: 'e.g. 7 or 14',
+              icon: Symbols.date_range_rounded,
+              isRequired: false,
+            ),
+          ],
+          const Divider(height: 24, color: Colors.white10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'As-Needed (PRN) Rescue Dose',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    'For painkillers, inhalers, or relief drugs',
+                    style: TextStyle(color: Colors.white38, fontSize: 11),
+                  ),
+                ],
+              ),
+              Switch(
+                value: _isPrn,
+                activeThumbColor: Colors.tealAccent,
+                onChanged: (bool val) => setState(() => _isPrn = val),
+              ),
+            ],
+          ),
+          if (_isPrn) ...<Widget>[
+            const SizedBox(height: 12),
+            _buildInputField(
+              controller: _cooldownController,
+              label: 'SAFE MINIMUM SPACING (HOURS)',
+              hint: 'e.g. 4 or 6',
+              icon: Symbols.hourglass_empty_rounded,
+              isRequired: false,
+            ),
+          ],
+        ],
       ),
     );
   }

@@ -30,6 +30,8 @@ _Medicine _$MedicineFromJson(Map<String, dynamic> json) => _Medicine(
   initialQuantity: (json['initialQuantity'] as num?)?.toInt() ?? 0,
   remainingQuantity: (json['remainingQuantity'] as num?)?.toInt() ?? 0,
   lowStockThreshold: (json['lowStockThreshold'] as num?)?.toInt() ?? 5,
+  isPrn: json['isPrn'] as bool? ?? false,
+  minCooldownHours: (json['minCooldownHours'] as num?)?.toInt() ?? 4,
   createdAt: json['createdAt'] == null
       ? null
       : DateTime.parse(json['createdAt'] as String),
@@ -53,6 +55,8 @@ Map<String, dynamic> _$MedicineToJson(_Medicine instance) => <String, dynamic>{
   'initialQuantity': instance.initialQuantity,
   'remainingQuantity': instance.remainingQuantity,
   'lowStockThreshold': instance.lowStockThreshold,
+  'isPrn': instance.isPrn,
+  'minCooldownHours': instance.minCooldownHours,
   'createdAt': instance.createdAt?.toIso8601String(),
 };
 

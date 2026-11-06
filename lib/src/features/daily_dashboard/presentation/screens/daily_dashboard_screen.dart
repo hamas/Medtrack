@@ -470,6 +470,8 @@ class _DashboardItem extends ConsumerWidget {
                                 );
                               } else if (action == 'skip') {
                                 _showSkipDoseDialog(context, ref);
+                              } else if (action == 'symptom') {
+                                _showSymptomCheckInDialog(context, ref);
                               }
                             },
                             itemBuilder: (BuildContext ctx) =>
@@ -513,6 +515,20 @@ class _DashboardItem extends ConsumerWidget {
                                         ),
                                         SizedBox(width: 8),
                                         Text('Skip Dose (Reason)'),
+                                      ],
+                                    ),
+                                  ),
+                                  const PopupMenuItem<String>(
+                                    value: 'symptom',
+                                    child: Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          Symbols.vital_signs_rounded,
+                                          color: Colors.pinkAccent,
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text('Log Side Effect'),
                                       ],
                                     ),
                                   ),
@@ -676,6 +692,231 @@ class _DashboardItem extends ConsumerWidget {
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+
+  void _showSymptomCheckInDialog(BuildContext context, WidgetRef ref) {
+    String selectedSymptom = 'Nausea / Upset Stomach';
+    String selectedSeverity = 'Mild';
+    final TextEditingController detailsController = TextEditingController();
+
+    final List<String> commonSymptoms = <String>[
+      'Nausea / Upset Stomach',
+      'Headache / Dizziness',
+      'Fatigue / Drowsiness',
+      'Skin Rash / Itching',
+      'Gastrointestinal Cramps',
+      'Dry Mouth / Dehydration',
+      'Palpitations',
+      'Other reaction',
+    ];
+
+    final List<String> severities = <String>['Mild', 'Moderate', 'Severe'];
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF1E1B2E),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (BuildContext sheetCtx) {
+        return StatefulBuilder(
+          builder: (BuildContext ctx, StateSetter setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 16,
+                bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.white24,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        const Icon(
+                          Symbols.vital_signs_rounded,
+                          color: Colors.pinkAccent,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Symptom Check-In: ${dose.medicine.name}',
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Log tolerability observations or adverse reactions to share with your physician.',
+                      style: TextStyle(fontSize: 12, color: Colors.white60),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'SYMPTOM',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white38,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: commonSymptoms.map((String sym) {
+                        final bool isSel = selectedSymptom == sym;
+                        return ChoiceChip(
+                          label: Text(
+                            sym,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isSel ? Colors.white : Colors.white70,
+                            ),
+                          ),
+                          selected: isSel,
+                          selectedColor: Colors.pinkAccent.withValues(
+                            alpha: 0.3,
+                          ),
+                          backgroundColor: Colors.white.withValues(alpha: 0.05),
+                          side: BorderSide(
+                            color: isSel ? Colors.pinkAccent : Colors.white12,
+                          ),
+                          onSelected: (bool sel) {
+                            if (sel) {
+                              setModalState(() => selectedSymptom = sym);
+                            }
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'SEVERITY',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white38,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: severities.map((String sev) {
+                        final bool isSel = selectedSeverity == sev;
+                        final Color sevColor = sev == 'Severe'
+                            ? Colors.redAccent
+                            : sev == 'Moderate'
+                            ? Colors.amberAccent
+                            : Colors.tealAccent;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: ChoiceChip(
+                            label: Text(
+                              sev,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: isSel ? Colors.white : Colors.white70,
+                              ),
+                            ),
+                            selected: isSel,
+                            selectedColor: sevColor.withValues(alpha: 0.3),
+                            backgroundColor: Colors.white.withValues(
+                              alpha: 0.05,
+                            ),
+                            side: BorderSide(
+                              color: isSel ? sevColor : Colors.white12,
+                            ),
+                            onSelected: (bool sel) {
+                              if (sel) {
+                                setModalState(() => selectedSeverity = sev);
+                              }
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: detailsController,
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                      decoration: InputDecoration(
+                        hintText: 'Additional notes / details for doctor...',
+                        hintStyle: const TextStyle(
+                          color: Colors.white30,
+                          fontSize: 12,
+                        ),
+                        filled: true,
+                        fillColor: Colors.white.withValues(alpha: 0.04),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Colors.pinkAccent.withValues(
+                            alpha: 0.8,
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(sheetCtx);
+                          ref
+                              .read(dailyTimelineProvider.notifier)
+                              .logSideEffect(
+                                dose,
+                                symptom: selectedSymptom,
+                                severity: selectedSeverity,
+                                details: detailsController.text,
+                              );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Logged symptom: $selectedSymptom ($selectedSeverity)',
+                              ),
+                              backgroundColor: Colors.pink[800],
+                            ),
+                          );
+                        },
+                        icon: const Icon(Symbols.check_rounded, size: 18),
+                        label: const Text('Save Tolerability Log'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );

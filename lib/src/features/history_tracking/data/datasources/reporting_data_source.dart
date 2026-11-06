@@ -29,6 +29,13 @@ class ReportingService {
         ? 100.0
         : (totalTaken / (totalTaken + totalSkipped)) * 100.0;
 
+    final List<AdherenceLog> sideEffectLogs = logs
+        .where(
+          (AdherenceLog l) =>
+              l.mealNotes != null && l.mealNotes!.contains('Side Effect:'),
+        )
+        .toList();
+
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -213,6 +220,44 @@ class ReportingService {
               ),
             ),
             pw.SizedBox(height: 20),
+
+            if (sideEffectLogs.isNotEmpty) ...<pw.Widget>[
+              pw.Text(
+                'Side Effects & Tolerability Observations',
+                style: const pw.TextStyle(
+                  fontSize: 14,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.red900,
+                ),
+              ),
+              pw.SizedBox(height: 8),
+              pw.TableHelper.fromTextArray(
+                headers: <String>[
+                  'Timestamp',
+                  'Clinical Tolerability Observation',
+                ],
+                data: sideEffectLogs.map((AdherenceLog log) {
+                  return <String>[
+                    dateFormat.format(log.takenTime ?? log.scheduledTime),
+                    log.mealNotes ?? '--',
+                  ];
+                }).toList(),
+                headerStyle: const pw.TextStyle(
+                  fontWeight: pw.FontWeight.bold,
+                  fontSize: 10,
+                  color: PdfColors.white,
+                ),
+                headerDecoration: const pw.BoxDecoration(
+                  color: PdfColors.red800,
+                ),
+                cellStyle: const pw.TextStyle(fontSize: 9),
+                cellPadding: const pw.EdgeInsets.symmetric(
+                  vertical: 4,
+                  horizontal: 6,
+                ),
+              ),
+              pw.SizedBox(height: 20),
+            ],
 
             // Adherence Intake Audit Logs
             pw.Text(
