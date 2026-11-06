@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.medtrack.medtrack"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
