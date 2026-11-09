@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import '../../../../core/services/notification_manager.dart';
 import '../../../../core/widgets/shared_ui.dart';
 import '../providers/settings_provider.dart';
 
@@ -64,6 +65,64 @@ class NotificationsScreen extends ConsumerWidget {
               'Summary Time',
               settings['summary_time'] as String? ?? '08:00',
             ),
+            const SizedBox(height: 32),
+            const GlassSectionTitle(title: 'DEVICE NOTIFICATION TEST'),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const Text(
+                    'Test Device Notification',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Triggers an immediate high-priority alert in your Android status bar.',
+                    style: TextStyle(fontSize: 12, color: Colors.white54),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      icon: const Icon(Symbols.notifications_active_rounded, size: 18),
+                      label: const Text('Send Test Alert Now'),
+                      onPressed: () async {
+                        await NotificationManager().showNotification(
+                          id: 99999,
+                          title: 'Medtrack Alert: Aspirin (81mg) 🔔',
+                          body: 'Time for your scheduled dose • Instructions: With Meal',
+                        );
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Notification sent to system notification tray!'),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
           ],
         ),
       ),

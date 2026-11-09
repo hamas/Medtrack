@@ -108,6 +108,32 @@ class NotificationManager {
     }
   }
 
+  Future<void> showNotification({
+    required int id,
+    required String title,
+    required String body,
+  }) async {
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'high_importance_medical_alerts',
+        'Medical Alerts',
+        channelDescription:
+            'This channel is used for critical medical reminders.',
+        importance: Importance.max,
+        priority: Priority.high,
+        playSound: true,
+        enableVibration: true,
+      ),
+    );
+
+    await _localNotifications.show(
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: notificationDetails,
+    );
+  }
+
   Future<void> cancelNotification(int id) async {
     await _localNotifications.cancel(id: id);
   }

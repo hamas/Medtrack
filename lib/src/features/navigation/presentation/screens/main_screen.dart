@@ -57,7 +57,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     final bool showBackButton = !isMainRoot;
     final String title = config.title;
     final bool showSettingsGear = config.showSettingsGear;
-    final bool showBellIcon = config.showBellIcon;
     final bool showEditPen = config.showEditPen;
 
     final int navBarIndex = currentIndex <= 3 ? currentIndex : 0;
@@ -157,16 +156,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                           .read(profileSaveTriggerProvider.notifier)
                           .trigger(),
                       hasBackground: true,
-                    )
-                  else if (showBellIcon)
-                    Badge.count(
-                      count: ref.watch(notificationCountProvider),
-                      isLabelVisible: ref.watch(notificationCountProvider) > 0,
-                      child: _buildCircularIconButton(
-                        icon: Symbols.notifications_rounded,
-                        onPressed: () => context.push('/notifications'),
-                        hasBackground: true,
-                      ),
                     ),
                   const SizedBox(width: 16),
                 ],
