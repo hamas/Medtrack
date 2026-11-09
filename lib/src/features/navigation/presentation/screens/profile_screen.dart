@@ -9,6 +9,7 @@ import '../../../gamification/domain/entities/user_profile.dart';
 import '../../../gamification/presentation/providers/user_profile_provider.dart';
 import '../../../medication_management/domain/entities/medicine.dart';
 import '../../../medication_management/presentation/providers/all_medicines_provider.dart';
+import '../../../../core/widgets/shared_ui.dart';
 import '../providers/settings_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -138,10 +139,11 @@ class ProfileScreen extends ConsumerWidget {
     showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: kAppSheetBackground,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        side: BorderSide(color: Color(0x14FFFFFF), width: 1),
       ),
       builder: (BuildContext sheetCtx) {
         return Container(
@@ -154,17 +156,27 @@ class ProfileScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Center(
-                  child: Container(
-                    width: 36,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.white24,
-                      borderRadius: BorderRadius.circular(2),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    const SizedBox(width: 32),
+                    Container(
+                      width: 36,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.white24,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
-                  ),
+                    IconButton(
+                      icon: const Icon(Symbols.close_rounded, color: Colors.white54, size: 20),
+                      onPressed: () => Navigator.pop(sheetCtx),
+                      constraints: const BoxConstraints(),
+                      padding: EdgeInsets.zero,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 Row(
                   children: <Widget>[
                     Container(
@@ -487,10 +499,11 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                       child: Row(
                         children: <Widget>[
-                          const Icon(
-                            Symbols.medication_rounded,
-                            color: Colors.tealAccent,
-                            size: 18,
+                          MedicationCategoryBadge(
+                            method: med.deliveryMethod,
+                            size: 34,
+                            iconSize: 18,
+                            borderRadius: 12,
                           ),
                           const SizedBox(width: 12),
                           Expanded(

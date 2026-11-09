@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import '../../../../core/widgets/adherence_heatmap_card.dart';
+import '../../../../core/widgets/shared_ui.dart';
 
 import '../../../gamification/domain/entities/user_profile.dart';
 import '../../../gamification/presentation/providers/user_profile_provider.dart';
@@ -354,13 +355,24 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
     if (!context.mounted) return;
 
+    final List<Dose> pendingScheduledDoses = scheduledDoses.where((Dose d) {
+      final bool alreadyLogged = dayLogs.any(
+        (AdherenceLog log) =>
+            log.medicineId == d.medicine.id &&
+            log.scheduledTime.hour == d.scheduledTime.hour &&
+            log.scheduledTime.minute == d.scheduledTime.minute,
+      );
+      return !alreadyLogged;
+    }).toList();
+
     await showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: kAppSheetBackground,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        side: BorderSide(color: Color(0x14FFFFFF), width: 1),
       ),
       builder: (BuildContext sheetCtx) {
         return Padding(
@@ -369,17 +381,28 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.white24,
-                    borderRadius: BorderRadius.circular(2),
+              // Handle and Close
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  const SizedBox(width: 32),
+                  Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                ),
+                  IconButton(
+                    icon: const Icon(Symbols.close_rounded, color: Colors.white54, size: 20),
+                    onPressed: () => Navigator.pop(sheetCtx),
+                    constraints: const BoxConstraints(),
+                    padding: EdgeInsets.zero,
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -455,7 +478,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   Expanded(
                     child: _buildSummaryMetric(
                       label: 'Scheduled',
-                      value: '${scheduledDoses.length}',
+                      value: '${pendingScheduledDoses.length}',
                       color: Colors.blueAccent,
                       icon: Symbols.schedule_rounded,
                     ),
@@ -473,7 +496,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              if (dayLogs.isEmpty && scheduledDoses.isEmpty)
+              if (dayLogs.isEmpty && pendingScheduledDoses.isEmpty)
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 24),
@@ -488,127 +511,189 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     ),
                   ),
                 )
-              else ...<Widget>[
-                ...dayLogs.map((AdherenceLog log) {
-                  final Medicine? med = medMap[log.medicineId];
-                  final bool isTaken = log.status == AdherenceStatus.taken;
-                  final DateTime displayTime =
-                      (isTaken && log.takenTime != null)
-                      ? log.takenTime!
-                      : log.scheduledTime;
-
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.03),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.05),
-                      ),
-                    ),
-                    child: Row(
+              else
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(sheetCtx).size.height * 0.42,
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Icon(
-                          isTaken
-                              ? Symbols.check_circle_rounded
-                              : Symbols.cancel_rounded,
-                          color: isTaken
-                              ? Colors.greenAccent
-                              : Colors.amberAccent,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                med?.name ?? 'Unknown Medication',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 14,
-                                ),
+                        ...dayLogs.map((AdherenceLog log) {
+                          final Medicine? med = medMap[log.medicineId];
+                          final DeliveryMethod method =
+                              med?.deliveryMethod ?? DeliveryMethod.tablet;
+                          final bool isTaken =
+                              log.status == AdherenceStatus.taken;
+                          final DateTime displayTime =
+                              (isTaken && log.takenTime != null)
+                              ? log.takenTime!
+                              : log.scheduledTime;
+
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.03),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.05),
                               ),
-                              if (log.mealNotes != null &&
-                                  log.mealNotes!.isNotEmpty)
-                                Text(
-                                  log.mealNotes!,
-                                  style: const TextStyle(
-                                    color: Colors.white38,
-                                    fontSize: 11,
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                MedicationCategoryBadge(
+                                  method: method,
+                                  size: 38,
+                                  iconSize: 20,
+                                  borderRadius: 14,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        med?.name ?? 'Unknown Medication',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        '${med?.dosage ?? ''} • ${isTaken ? 'Taken' : 'Skipped'}',
+                                        style: const TextStyle(
+                                          color: Colors.white38,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          DateFormat('hh:mm a').format(displayTime),
-                          style: const TextStyle(
-                            color: Colors.white60,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
-                          ),
-                        ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isTaken
+                                        ? Colors.greenAccent.withValues(alpha: 0.12)
+                                        : Colors.amberAccent.withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Icon(
+                                        isTaken
+                                            ? Symbols.check_circle_rounded
+                                            : Symbols.cancel_rounded,
+                                        color: isTaken
+                                            ? Colors.greenAccent
+                                            : Colors.amberAccent,
+                                        size: 14,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        DateFormat('hh:mm a').format(displayTime),
+                                        style: TextStyle(
+                                          color: isTaken
+                                              ? Colors.greenAccent
+                                              : Colors.amberAccent,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                        ...pendingScheduledDoses.map((Dose dose) {
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.02),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.04),
+                              ),
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                MedicationCategoryBadge(
+                                  method: dose.medicine.deliveryMethod,
+                                  size: 38,
+                                  iconSize: 20,
+                                  borderRadius: 14,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        dose.medicine.name,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        '${dose.medicine.dosage} • Upcoming',
+                                        style: const TextStyle(
+                                          color: Colors.white38,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blueAccent.withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      const Icon(
+                                        Symbols.schedule_rounded,
+                                        color: Colors.blueAccent,
+                                        size: 14,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        DateFormat('hh:mm a').format(dose.scheduledTime),
+                                        style: const TextStyle(
+                                          color: Colors.blueAccent,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
                       ],
                     ),
-                  );
-                }),
-                ...scheduledDoses.map((Dose dose) {
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.02),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.04),
-                      ),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        const Icon(
-                          Symbols.schedule_rounded,
-                          color: Colors.blueAccent,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                dose.medicine.name,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                '${dose.medicine.dosage} • Scheduled',
-                                style: const TextStyle(
-                                  color: Colors.white38,
-                                  fontSize: 11,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          DateFormat('hh:mm a').format(dose.scheduledTime),
-                          style: const TextStyle(
-                            color: Colors.white60,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              ],
+                  ),
+                ),
             ],
           ),
         );

@@ -11,6 +11,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../gamification/domain/entities/user_profile.dart';
 import '../../../gamification/presentation/providers/user_profile_provider.dart';
+import '../../../../core/widgets/shared_ui.dart';
 import '../providers/settings_provider.dart';
 
 class ProfileSettingsScreen extends ConsumerStatefulWidget {
@@ -784,11 +785,12 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
     showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: kAppSheetBackground,
       isScrollControlled: true,
       useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        side: BorderSide(color: Color(0x14FFFFFF), width: 1),
       ),
       builder: (BuildContext sheetContext) => StatefulBuilder(
         builder: (BuildContext context, void Function(void Function()) setSheetState) => Container(
@@ -879,7 +881,7 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
                   colorScheme: const ColorScheme.dark(
                     primary: Colors.blueAccent,
                     onPrimary: Colors.white,
-                    surface: Color(0xFF0F172A),
+                    surface: kAppDialogBackground,
                     onSurface: Colors.white,
                   ),
                 ),
@@ -925,9 +927,10 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
     final XFile? image = await showModalBottomSheet<XFile?>(
       context: context,
       useRootNavigator: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: kAppSheetBackground,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        side: BorderSide(color: Color(0x14FFFFFF), width: 1),
       ),
       builder: (BuildContext sheetCtx) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),

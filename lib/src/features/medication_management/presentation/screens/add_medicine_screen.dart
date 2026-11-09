@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 
 import '../../../gamification/domain/entities/user_profile.dart';
 import '../../../gamification/presentation/providers/user_profile_provider.dart';
+import '../../../../core/widgets/shared_ui.dart';
 import '../../../daily_dashboard/presentation/providers/daily_timeline_provider.dart';
 import '../../domain/entities/medicine.dart';
 import '../../domain/services/drug_interaction_service.dart';
@@ -160,7 +161,7 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
             colorScheme: const ColorScheme.dark(
               primary: Colors.blueAccent,
               onPrimary: Colors.white,
-              surface: Color(0xFF1A1A1A),
+              surface: kAppDialogBackground,
               onSurface: Colors.white,
             ),
           ),
@@ -383,7 +384,7 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
     return await showDialog<bool>(
           context: context,
           builder: (BuildContext ctx) => AlertDialog(
-            backgroundColor: const Color(0xFF1E1B2E),
+            backgroundColor: kAppDialogBackground,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(28),
             ),
@@ -503,7 +504,7 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
     return await showDialog<bool>(
           context: context,
           builder: (BuildContext ctx) => AlertDialog(
-            backgroundColor: const Color(0xFF1E1B2E),
+            backgroundColor: kAppDialogBackground,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(28),
             ),
@@ -556,11 +557,12 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
     showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: kAppSheetBackground,
       isScrollControlled: true,
       useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        side: BorderSide(color: Color(0x14FFFFFF), width: 1),
       ),
       builder: (BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),

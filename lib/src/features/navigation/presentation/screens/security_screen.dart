@@ -67,7 +67,7 @@ class SecurityScreen extends ConsumerWidget {
     final bool? confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1B2E),
+        backgroundColor: kAppDialogBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: const Text(
           'Clear Local Data?',
@@ -114,7 +114,7 @@ class SecurityScreen extends ConsumerWidget {
     final bool? confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1B2E),
+        backgroundColor: kAppDialogBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: const Text(
           'Sign Out?',

@@ -34,6 +34,22 @@ class MedTrackTheme {
       useMaterial3: true,
       colorScheme: darkScheme,
       textTheme: GoogleFonts.googleSansTextTheme(ThemeData.dark().textTheme),
+      dialogTheme: DialogThemeData(
+        backgroundColor: const Color(0xFF11142A),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        titleTextStyle: GoogleFonts.googleSans(
+          color: Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Color(0xFF0D0F22),
+        modalBackgroundColor: Color(0xFF0D0F22),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+      ),
       scaffoldBackgroundColor:
           Colors.transparent, // Required for global background
       appBarTheme: AppBarTheme(

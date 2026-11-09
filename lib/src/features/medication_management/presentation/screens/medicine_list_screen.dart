@@ -148,10 +148,11 @@ class MedicineListScreen extends ConsumerWidget {
     showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: kAppSheetBackground,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        side: BorderSide(color: Color(0x14FFFFFF), width: 1),
       ),
       builder: (BuildContext sheetCtx) {
         return Padding(
@@ -160,36 +161,37 @@ class MedicineListScreen extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              // Handle
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.white24,
-                    borderRadius: BorderRadius.circular(2),
+              // Handle and Close
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  const SizedBox(width: 32),
+                  Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                ),
+                  IconButton(
+                    icon: const Icon(Symbols.close_rounded, color: Colors.white54, size: 20),
+                    onPressed: () => Navigator.pop(sheetCtx),
+                    constraints: const BoxConstraints(),
+                    padding: EdgeInsets.zero,
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // Medication Header
               Row(
                 children: <Widget>[
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.06),
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        getDeliveryMethodIcon(medicine.deliveryMethod),
-                        color: Colors.blueAccent,
-                        size: 26,
-                      ),
-                    ),
+                  MedicationCategoryBadge(
+                    method: medicine.deliveryMethod,
+                    size: 52,
+                    iconSize: 26,
+                    borderRadius: 18,
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -537,7 +539,7 @@ class MedicineListScreen extends ConsumerWidget {
     await showDialog<void>(
       context: context,
       builder: (BuildContext ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1B2E),
+        backgroundColor: kAppDialogBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           'Refill ${medicine.name}',
@@ -624,7 +626,7 @@ class MedicineListScreen extends ConsumerWidget {
     final bool? confirm = await showDialog<bool>(
       context: context,
       builder: (BuildContext ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1B2E),
+        backgroundColor: kAppDialogBackground,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         icon: const Icon(
           Symbols.delete_forever_rounded,
@@ -703,7 +705,7 @@ class MedicineListScreen extends ConsumerWidget {
         final bool? proceed = await showDialog<bool>(
           context: context,
           builder: (BuildContext ctx) => AlertDialog(
-            backgroundColor: const Color(0xFF1E1B2E),
+            backgroundColor: kAppDialogBackground,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24),
             ),
@@ -816,20 +818,11 @@ class _MedicineCard extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: <Widget>[
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        getDeliveryMethodIcon(medicine.deliveryMethod),
-                        color: Colors.blueAccent.withValues(alpha: 0.8),
-                        size: 24,
-                      ),
-                    ),
+                  MedicationCategoryBadge(
+                    method: medicine.deliveryMethod,
+                    size: 56,
+                    iconSize: 26,
+                    borderRadius: 20,
                   ),
                   const SizedBox(width: 16),
                   Expanded(

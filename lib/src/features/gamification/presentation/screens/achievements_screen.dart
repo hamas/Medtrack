@@ -122,15 +122,38 @@ class _BadgeTile extends StatelessWidget {
   ) {
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: const Color(0xFF0F172A),
+      useRootNavigator: true,
+      backgroundColor: kAppSheetBackground,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+        side: BorderSide(color: Color(0x14FFFFFF), width: 1),
       ),
-      builder: (BuildContext context) => Container(
-        padding: const EdgeInsets.all(32),
+      builder: (BuildContext sheetCtx) => Container(
+        padding: const EdgeInsets.fromLTRB(28, 16, 28, 32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                const SizedBox(width: 32),
+                Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Symbols.close_rounded, color: Colors.white54, size: 20),
+                  onPressed: () => Navigator.pop(sheetCtx),
+                  constraints: const BoxConstraints(),
+                  padding: EdgeInsets.zero,
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
             Icon(
               earned ? Symbols.award_star_rounded : Symbols.lock_rounded,
               color: earned ? Colors.amber : Colors.white10,
@@ -155,7 +178,7 @@ class _BadgeTile extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(sheetCtx),
                 child: Text(earned ? 'Awesome!' : 'I will get it!'),
               ),
             ),

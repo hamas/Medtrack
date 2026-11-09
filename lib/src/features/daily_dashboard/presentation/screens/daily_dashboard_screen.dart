@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import '../../../../core/widgets/shared_ui.dart';
 
 import '../../../medication_management/domain/entities/medicine.dart';
 import '../../domain/entities/dose.dart';
@@ -420,10 +421,10 @@ class _DashboardItem extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: 0.2),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+          color: Colors.white.withValues(alpha: 0.05),
         ),
       ),
       clipBehavior: Clip.antiAlias,
@@ -448,21 +449,11 @@ class _DashboardItem extends ConsumerWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Container(
-                      width: 60,
-                      height: 60,
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.08),
-                        ),
-                      ),
-                      child: Image.asset(
-                        'assets/images/medication_3d.png',
-                        fit: BoxFit.contain,
-                      ),
+                    MedicationCategoryBadge(
+                      method: medicine.deliveryMethod,
+                      size: 58,
+                      iconSize: 26,
+                      borderRadius: 18,
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -490,9 +481,12 @@ class _DashboardItem extends ConsumerWidget {
                                     alpha: 0.3,
                                   ),
                                 ),
-                                color: const Color(0xFF1E1B2E),
+                                color: kAppDialogBackground,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
+                                  side: BorderSide(
+                                    color: Colors.white.withValues(alpha: 0.08),
+                                  ),
                                 ),
                                 onSelected: (String action) {
                                   if (action == 'take') {
@@ -610,16 +604,19 @@ class _DashboardItem extends ConsumerWidget {
                           const SizedBox(height: 16),
                           Wrap(
                             spacing: 8,
+                            runSpacing: 6,
                             children: <Widget>[
                               _TimeChip(
                                 label: _getMealLabel(medicine.mealContext),
-                                color: const Color(0xFFE0F7F6),
-                                textColor: const Color(0xFF0D9488),
+                                color: Colors.tealAccent.withValues(alpha: 0.12),
+                                textColor: Colors.tealAccent,
+                                borderColor: Colors.tealAccent.withValues(alpha: 0.25),
                               ),
                               _TimeChip(
                                 label: timeStr,
-                                color: const Color(0xFFE0E7FF),
-                                textColor: const Color(0xFF4338CA),
+                                color: Colors.blueAccent.withValues(alpha: 0.12),
+                                textColor: const Color(0xFF93C5FD),
+                                borderColor: Colors.blueAccent.withValues(alpha: 0.25),
                               ),
                               if (!dose.isTaken &&
                                   DateTime.now()
@@ -629,8 +626,9 @@ class _DashboardItem extends ConsumerWidget {
                                 _TimeChip(
                                   label:
                                       'Overdue by ${_formatOverdue(dose.scheduledTime)}',
-                                  color: const Color(0xFFFEE2E2),
-                                  textColor: const Color(0xFFDC2626),
+                                  color: Colors.redAccent.withValues(alpha: 0.12),
+                                  textColor: const Color(0xFFFCA5A5),
+                                  borderColor: Colors.redAccent.withValues(alpha: 0.25),
                                 ),
                             ],
                           ),
@@ -677,21 +675,28 @@ class _DashboardItem extends ConsumerWidget {
     showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: kAppSheetBackground,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
       builder: (BuildContext sheetContext) {
         return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Container(
+            decoration: BoxDecoration(
+              color: kAppSheetBackground,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+              border: Border(
+                top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+              ),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Center(
                   child: Container(
-                    width: 40,
+                    width: 36,
                     height: 4,
                     margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
@@ -700,13 +705,24 @@ class _DashboardItem extends ConsumerWidget {
                     ),
                   ),
                 ),
-                Text(
-                  'Skip Dose: ${dose.medicine.name}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        'Skip Dose: ${dose.medicine.name}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(sheetContext),
+                      icon: const Icon(Symbols.close_rounded, color: Colors.white38),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 6),
                 const Text(
@@ -782,17 +798,24 @@ class _DashboardItem extends ConsumerWidget {
       context: context,
       useRootNavigator: true,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: kAppSheetBackground,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
       builder: (BuildContext sheetCtx) {
         return StatefulBuilder(
           builder: (BuildContext ctx, StateSetter setModalState) {
-            return Padding(
+            return Container(
+              decoration: BoxDecoration(
+                color: kAppSheetBackground,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                border: Border(
+                  top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+                ),
+              ),
               padding: EdgeInsets.only(
-                left: 20,
-                right: 20,
+                left: 24,
+                right: 24,
                 top: 16,
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
               ),
@@ -803,7 +826,7 @@ class _DashboardItem extends ConsumerWidget {
                   children: <Widget>[
                     Center(
                       child: Container(
-                        width: 40,
+                        width: 36,
                         height: 4,
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
@@ -824,11 +847,15 @@ class _DashboardItem extends ConsumerWidget {
                           child: Text(
                             'Symptom Check-In: ${dose.medicine.name}',
                             style: const TextStyle(
-                              fontSize: 17,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
                           ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.pop(sheetCtx),
+                          icon: const Icon(Symbols.close_rounded, color: Colors.white38),
                         ),
                       ],
                     ),
@@ -924,35 +951,37 @@ class _DashboardItem extends ConsumerWidget {
                       }).toList(),
                     ),
                     const SizedBox(height: 16),
-                    TextField(
-                      controller: detailsController,
-                      style: const TextStyle(color: Colors.white, fontSize: 13),
-                      decoration: InputDecoration(
-                        hintText: 'Additional notes / details for doctor...',
-                        hintStyle: const TextStyle(
-                          color: Colors.white30,
-                          fontSize: 12,
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.03),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                      ),
+                      child: TextField(
+                        controller: detailsController,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
                         ),
-                        filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.04),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
+                        decoration: const InputDecoration(
+                          hintText: 'Additional notes / details for doctor...',
+                          hintStyle: TextStyle(
+                            color: Colors.white24,
+                            fontSize: 12,
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 14,
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
-                      child: FilledButton.icon(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: Colors.pinkAccent.withValues(
-                            alpha: 0.8,
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
+                      child: FloatingActionButton.extended(
                         onPressed: () {
                           Navigator.pop(sheetCtx);
                           ref
@@ -972,8 +1001,17 @@ class _DashboardItem extends ConsumerWidget {
                             ),
                           );
                         },
+                        backgroundColor: Colors.pinkAccent,
+                        foregroundColor: Colors.white,
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                         icon: const Icon(Symbols.check_rounded, size: 18),
-                        label: const Text('Save Tolerability Log'),
+                        label: const Text(
+                          'Save Tolerability Log',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                   ],
@@ -1015,7 +1053,7 @@ class _DashboardItem extends ConsumerWidget {
       final bool? proceed = await showDialog<bool>(
         context: context,
         builder: (BuildContext ctx) => AlertDialog(
-          backgroundColor: const Color(0xFF1E1B2E),
+          backgroundColor: kAppDialogBackground,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
           ),
@@ -1074,15 +1112,22 @@ class _DashboardItem extends ConsumerWidget {
       context: context,
       useRootNavigator: true,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: kAppSheetBackground,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
       builder: (BuildContext sheetCtx) {
-        return Padding(
+        return Container(
+          decoration: BoxDecoration(
+            color: kAppSheetBackground,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+            border: Border(
+              top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+            ),
+          ),
           padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
+            left: 24,
+            right: 24,
             top: 16,
             bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + 24,
           ),
@@ -1093,7 +1138,7 @@ class _DashboardItem extends ConsumerWidget {
               children: <Widget>[
                 Center(
                   child: Container(
-                    width: 40,
+                    width: 36,
                     height: 4,
                     margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
@@ -1114,11 +1159,15 @@ class _DashboardItem extends ConsumerWidget {
                       child: Text(
                         'Log Vitals: ${dose.medicine.name}',
                         style: const TextStyle(
-                          fontSize: 17,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(sheetCtx),
+                      icon: const Icon(Symbols.close_rounded, color: Colors.white38),
                     ),
                   ],
                 ),
@@ -1131,41 +1180,75 @@ class _DashboardItem extends ConsumerWidget {
                 Row(
                   children: <Widget>[
                     Expanded(
-                      child: TextField(
-                        controller: bpController,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.03),
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.05),
+                          ),
                         ),
-                        decoration: InputDecoration(
-                          labelText: 'Blood Pressure',
-                          hintText: '120/80',
-                          suffixText: 'mmHg',
-                          filled: true,
-                          fillColor: Colors.white.withValues(alpha: 0.04),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
+                        child: TextField(
+                          controller: bpController,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          decoration: const InputDecoration(
+                            labelText: 'BP (mmHg)',
+                            labelStyle: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 11,
+                            ),
+                            hintText: '120/80',
+                            hintStyle: TextStyle(
+                              color: Colors.white24,
+                              fontSize: 12,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: TextField(
-                        controller: glucoseController,
-                        keyboardType: TextInputType.number,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.03),
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.05),
+                          ),
                         ),
-                        decoration: InputDecoration(
-                          labelText: 'Blood Glucose',
-                          hintText: '100',
-                          suffixText: 'mg/dL',
-                          filled: true,
-                          fillColor: Colors.white.withValues(alpha: 0.04),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
+                        child: TextField(
+                          controller: glucoseController,
+                          keyboardType: TextInputType.number,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          decoration: const InputDecoration(
+                            labelText: 'Glucose (mg/dL)',
+                            labelStyle: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 11,
+                            ),
+                            hintText: '100',
+                            hintStyle: TextStyle(
+                              color: Colors.white24,
+                              fontSize: 12,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                           ),
                         ),
                       ),
@@ -1176,42 +1259,76 @@ class _DashboardItem extends ConsumerWidget {
                 Row(
                   children: <Widget>[
                     Expanded(
-                      child: TextField(
-                        controller: hrController,
-                        keyboardType: TextInputType.number,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.03),
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.05),
+                          ),
                         ),
-                        decoration: InputDecoration(
-                          labelText: 'Heart Rate',
-                          hintText: '72',
-                          suffixText: 'bpm',
-                          filled: true,
-                          fillColor: Colors.white.withValues(alpha: 0.04),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
+                        child: TextField(
+                          controller: hrController,
+                          keyboardType: TextInputType.number,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          decoration: const InputDecoration(
+                            labelText: 'Heart Rate (bpm)',
+                            labelStyle: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 11,
+                            ),
+                            hintText: '72',
+                            hintStyle: TextStyle(
+                              color: Colors.white24,
+                              fontSize: 12,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: TextField(
-                        controller: spo2Controller,
-                        keyboardType: TextInputType.number,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.03),
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.05),
+                          ),
                         ),
-                        decoration: InputDecoration(
-                          labelText: 'SpO2 Oxygen',
-                          hintText: '98',
-                          suffixText: '%',
-                          filled: true,
-                          fillColor: Colors.white.withValues(alpha: 0.04),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
+                        child: TextField(
+                          controller: spo2Controller,
+                          keyboardType: TextInputType.number,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          decoration: const InputDecoration(
+                            labelText: 'SpO2 Oxygen (%)',
+                            labelStyle: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 11,
+                            ),
+                            hintText: '98',
+                            hintStyle: TextStyle(
+                              color: Colors.white24,
+                              fontSize: 12,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                           ),
                         ),
                       ),
@@ -1221,15 +1338,7 @@ class _DashboardItem extends ConsumerWidget {
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
-                  child: FilledButton.icon(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: Colors.cyanAccent.withValues(alpha: 0.8),
-                      foregroundColor: Colors.black87,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
+                  child: FloatingActionButton.extended(
                     onPressed: () {
                       final List<String> entries = <String>[];
                       if (bpController.text.trim().isNotEmpty) {
@@ -1264,6 +1373,12 @@ class _DashboardItem extends ConsumerWidget {
                         ),
                       );
                     },
+                    backgroundColor: Colors.cyanAccent,
+                    foregroundColor: Colors.black87,
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     icon: const Icon(Symbols.check_rounded, size: 18),
                     label: const Text(
                       'Save Vitals & Readings',
@@ -1285,24 +1400,29 @@ class _TimeChip extends StatelessWidget {
     required this.label,
     required this.color,
     required this.textColor,
+    this.borderColor,
   });
   final String label;
   final Color color;
   final Color textColor;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: borderColor ?? Colors.transparent,
+        ),
       ),
       child: Text(
         label,
         style: TextStyle(
           color: textColor,
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: FontWeight.w700,
         ),
       ),

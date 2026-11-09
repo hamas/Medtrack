@@ -139,34 +139,46 @@ class GlassActionTile extends StatelessWidget {
   }
 }
 
+const Color kAppSheetBackground = Color(0xFF0D0F22);
+const Color kAppDialogBackground = Color(0xFF11142A);
+
 Future<T?> showGlassBottomSheet<T>({
   required BuildContext context,
   required String title,
   required Widget content,
+  VoidCallback? onConfirm,
+  String? confirmText,
 }) {
   return showModalBottomSheet<T>(
     context: context,
     useRootNavigator: true,
-    backgroundColor: const Color(0xFF0F172A),
+    backgroundColor: kAppSheetBackground,
     isScrollControlled: true,
     useSafeArea: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
     ),
     builder: (BuildContext ctx) => Container(
+      decoration: BoxDecoration(
+        color: kAppSheetBackground,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        border: Border(
+          top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+        ),
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Container(
-            width: 32,
+            width: 36,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.white10,
+              color: Colors.white24,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
           Row(
             children: <Widget>[
               Text(
@@ -179,10 +191,26 @@ Future<T?> showGlassBottomSheet<T>({
                 ),
               ),
               const Spacer(),
-              IconButton(
-                onPressed: () => Navigator.pop(ctx),
-                icon: const Icon(Symbols.close_rounded, color: Colors.white38),
-              ),
+              if (onConfirm != null)
+                TextButton(
+                  onPressed: () {
+                    onConfirm();
+                    Navigator.pop(ctx);
+                  },
+                  child: Text(
+                    confirmText ?? 'Done',
+                    style: const TextStyle(
+                      color: Colors.blueAccent,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                )
+              else
+                IconButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  icon: const Icon(Symbols.close_rounded, color: Colors.white38),
+                ),
             ],
           ),
           const SizedBox(height: 16),
@@ -194,27 +222,114 @@ Future<T?> showGlassBottomSheet<T>({
   );
 }
 
-IconData getDeliveryMethodIcon(DeliveryMethod method) {
+({IconData icon, Color color, String label}) getDeliveryMethodConfig(
+  DeliveryMethod method,
+) {
   switch (method) {
     case DeliveryMethod.tablet:
-      return Symbols.pill_rounded;
+      return (
+        icon: Symbols.pill_rounded,
+        color: Colors.amber,
+        label: 'Tablet',
+      );
     case DeliveryMethod.capsule:
-      return Symbols.vaccines_rounded;
+      return (
+        icon: Symbols.vaccines_rounded,
+        color: Colors.redAccent,
+        label: 'Capsule',
+      );
     case DeliveryMethod.syrup:
-      return Symbols.medication_liquid_rounded;
+      return (
+        icon: Symbols.medication_liquid_rounded,
+        color: Colors.greenAccent,
+        label: 'Syrup',
+      );
     case DeliveryMethod.injection:
-      return Symbols.syringe_rounded;
+      return (
+        icon: Symbols.syringe_rounded,
+        color: Colors.blueAccent,
+        label: 'Syringe',
+      );
     case DeliveryMethod.water:
-      return Symbols.pill_rounded;
+      return (
+        icon: Symbols.pill_rounded,
+        color: Colors.amber,
+        label: 'Water',
+      );
     case DeliveryMethod.milk:
-      return Symbols.vaccines_rounded;
+      return (
+        icon: Symbols.vaccines_rounded,
+        color: Colors.redAccent,
+        label: 'Milk',
+      );
     case DeliveryMethod.mixed:
-      return Symbols.science_rounded;
+      return (
+        icon: Symbols.science_rounded,
+        color: Colors.purpleAccent,
+        label: 'Mixed',
+      );
     case DeliveryMethod.drops:
-      return Symbols.opacity_rounded;
+      return (
+        icon: Symbols.opacity_rounded,
+        color: Colors.cyanAccent,
+        label: 'Drops',
+      );
     case DeliveryMethod.inhaler:
-      return Symbols.air_rounded;
+      return (
+        icon: Symbols.air_rounded,
+        color: Colors.tealAccent,
+        label: 'Inhaler',
+      );
     case DeliveryMethod.other:
-      return Symbols.medication_rounded;
+      return (
+        icon: Symbols.medication_rounded,
+        color: Colors.blueAccent,
+        label: 'Other',
+      );
+  }
+}
+
+IconData getDeliveryMethodIcon(DeliveryMethod method) =>
+    getDeliveryMethodConfig(method).icon;
+
+Color getDeliveryMethodColor(DeliveryMethod method) =>
+    getDeliveryMethodConfig(method).color;
+
+class MedicationCategoryBadge extends StatelessWidget {
+  const MedicationCategoryBadge({
+    required this.method,
+    this.size = 56,
+    this.iconSize = 24,
+    this.borderRadius = 20,
+    super.key,
+  });
+
+  final DeliveryMethod method;
+  final double size;
+  final double iconSize;
+  final double borderRadius;
+
+  @override
+  Widget build(BuildContext context) {
+    final ({IconData icon, Color color, String label}) config =
+        getDeliveryMethodConfig(method);
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: config.color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(
+          color: config.color.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Center(
+        child: Icon(
+          config.icon,
+          color: config.color,
+          size: iconSize,
+        ),
+      ),
+    );
   }
 }
