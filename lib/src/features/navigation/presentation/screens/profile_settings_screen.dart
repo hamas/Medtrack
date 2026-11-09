@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -266,6 +267,19 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
     final User? user = Firebase.apps.isNotEmpty
         ? FirebaseAuth.instance.currentUser
         : null;
+    final String? localAvatarPath = ref.watch(customAvatarPathProvider);
+
+    ImageProvider avatarImage;
+    if (localAvatarPath != null &&
+        localAvatarPath.isNotEmpty &&
+        File(localAvatarPath).existsSync()) {
+      avatarImage = FileImage(File(localAvatarPath));
+    } else if (user?.photoURL != null && user!.photoURL!.isNotEmpty) {
+      avatarImage = NetworkImage(user.photoURL!);
+    } else {
+      avatarImage = const AssetImage('assets/images/default_avatar.png');
+    }
+
     return Center(
       child: GestureDetector(
         onTap: _pickImage,
@@ -281,10 +295,7 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
               child: CircleAvatar(
                 radius: 50,
                 backgroundColor: Colors.white.withValues(alpha: 0.05),
-                backgroundImage: user?.photoURL != null
-                    ? NetworkImage(user!.photoURL!)
-                    : const AssetImage('assets/images/default_avatar.png')
-                          as ImageProvider,
+                backgroundImage: avatarImage,
               ),
             ),
             if (_isUploading)
@@ -407,7 +418,7 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
         GestureDetector(
           onTap: () => _showExpressiveBottomSheet(
             title: 'Select Gender',
-            content: ListView(
+            builder: (BuildContext sheetCtx, void Function(void Function()) setSheetState) => ListView(
               shrinkWrap: true,
               children: <String>['Male', 'Female', 'Rather not say']
                   .map(
@@ -436,7 +447,7 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
                           : null,
                       onTap: () {
                         setState(() => _selectedGender = value);
-                        Navigator.pop(context);
+                        Navigator.pop(sheetCtx);
                       },
                     ),
                   )
@@ -495,7 +506,7 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
         GestureDetector(
           onTap: () => _showExpressiveBottomSheet(
             title: 'Select Blood Type',
-            content: GridView.count(
+            builder: (BuildContext sheetCtx, void Function(void Function()) setSheetState) => GridView.count(
               shrinkWrap: true,
               crossAxisCount: 4,
               mainAxisSpacing: 12,
@@ -506,8 +517,9 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
                       .map(
                         (String value) => GestureDetector(
                           onTap: () {
+                            setSheetState(() => _selectedBloodType = value);
                             setState(() => _selectedBloodType = value);
-                            Navigator.pop(context);
+                            Navigator.pop(sheetCtx);
                           },
                           child: Container(
                             alignment: Alignment.center,
@@ -585,62 +597,72 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
         ),
         const SizedBox(height: 8),
         GestureDetector(
-          onTap: () => _showExpressiveBottomSheet(
-            title: 'Select Height',
-            content: SizedBox(
-              height: 200,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: CupertinoPicker(
-                      itemExtent: 44,
-                      scrollController: FixedExtentScrollController(
-                        initialItem: int.tryParse(_feetController.text) ?? 5,
-                      ),
-                      onSelectedItemChanged: (int index) => setState(
-                        () => _feetController.text = index.toString(),
-                      ),
-                      children: List<Widget>.generate(
-                        9,
-                        (int i) => Center(
-                          child: Text(
-                            '$i ft',
-                            style: const TextStyle(
-                              color: dulledGrey,
-                              fontSize: 18,
+          onTap: () {
+            int tempFeet = int.tryParse(_feetController.text) ?? 5;
+            int tempInches = int.tryParse(_inchesController.text) ?? 8;
+            _showExpressiveBottomSheet(
+              title: 'Select Height',
+              onConfirm: () {
+                setState(() {
+                  _feetController.text = tempFeet.toString();
+                  _inchesController.text = tempInches.toString();
+                });
+              },
+              builder: (BuildContext sheetCtx, void Function(void Function()) setSheetState) => SizedBox(
+                height: 200,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: CupertinoPicker(
+                        itemExtent: 44,
+                        scrollController: FixedExtentScrollController(
+                          initialItem: tempFeet,
+                        ),
+                        onSelectedItemChanged: (int index) {
+                          tempFeet = index;
+                        },
+                        children: List<Widget>.generate(
+                          9,
+                          (int i) => Center(
+                            child: Text(
+                              '$i ft',
+                              style: const TextStyle(
+                                color: dulledGrey,
+                                fontSize: 18,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: CupertinoPicker(
-                      itemExtent: 44,
-                      scrollController: FixedExtentScrollController(
-                        initialItem: int.tryParse(_inchesController.text) ?? 8,
-                      ),
-                      onSelectedItemChanged: (int index) => setState(
-                        () => _inchesController.text = index.toString(),
-                      ),
-                      children: List<Widget>.generate(
-                        12,
-                        (int i) => Center(
-                          child: Text(
-                            '$i in',
-                            style: const TextStyle(
-                              color: dulledGrey,
-                              fontSize: 18,
+                    Expanded(
+                      child: CupertinoPicker(
+                        itemExtent: 44,
+                        scrollController: FixedExtentScrollController(
+                          initialItem: tempInches,
+                        ),
+                        onSelectedItemChanged: (int index) {
+                          tempInches = index;
+                        },
+                        children: List<Widget>.generate(
+                          12,
+                          (int i) => Center(
+                            child: Text(
+                              '$i in',
+                              style: const TextStyle(
+                                color: dulledGrey,
+                                fontSize: 18,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
@@ -690,30 +712,37 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
         ),
         const SizedBox(height: 8),
         GestureDetector(
-          onTap: () => _showExpressiveBottomSheet(
-            title: 'Select Weight',
-            content: SizedBox(
-              height: 200,
-              child: CupertinoPicker(
-                itemExtent: 44,
-                scrollController: FixedExtentScrollController(
-                  initialItem: (double.tryParse(_weightController.text) ?? 70)
-                      .round(),
-                ),
-                onSelectedItemChanged: (int index) =>
-                    setState(() => _weightController.text = index.toString()),
-                children: List<Widget>.generate(
-                  201,
-                  (int i) => Center(
-                    child: Text(
-                      '$i kg',
-                      style: const TextStyle(color: dulledGrey, fontSize: 18),
+          onTap: () {
+            int tempWeight =
+                (double.tryParse(_weightController.text) ?? 70).round();
+            _showExpressiveBottomSheet(
+              title: 'Select Weight',
+              onConfirm: () {
+                setState(() => _weightController.text = tempWeight.toString());
+              },
+              builder: (BuildContext sheetCtx, void Function(void Function()) setSheetState) => SizedBox(
+                height: 200,
+                child: CupertinoPicker(
+                  itemExtent: 44,
+                  scrollController: FixedExtentScrollController(
+                    initialItem: tempWeight,
+                  ),
+                  onSelectedItemChanged: (int index) {
+                    tempWeight = index;
+                  },
+                  children: List<Widget>.generate(
+                    201,
+                    (int i) => Center(
+                      child: Text(
+                        '$i kg',
+                        style: const TextStyle(color: dulledGrey, fontSize: 18),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
@@ -749,7 +778,8 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
 
   void _showExpressiveBottomSheet({
     required String title,
-    required Widget content,
+    required Widget Function(BuildContext sheetContext, void Function(void Function()) setSheetState) builder,
+    VoidCallback? onConfirm,
   }) {
     showModalBottomSheet<void>(
       context: context,
@@ -760,45 +790,63 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
-      builder: (BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(
-              width: 32,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.white10,
-                borderRadius: BorderRadius.circular(2),
+      builder: (BuildContext sheetContext) => StatefulBuilder(
+        builder: (BuildContext context, void Function(void Function()) setSheetState) => Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                width: 32,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white10,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: <Widget>[
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 20,
-                    letterSpacing: -0.5,
+              const SizedBox(height: 24),
+              Row(
+                children: <Widget>[
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 20,
+                      letterSpacing: -0.5,
+                    ),
                   ),
-                ),
-                const Spacer(),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Symbols.close_rounded,
-                    color: Colors.white38,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            content,
-            const SizedBox(height: 24),
-          ],
+                  const Spacer(),
+                  if (onConfirm != null)
+                    TextButton(
+                      onPressed: () {
+                        onConfirm();
+                        Navigator.pop(sheetContext);
+                      },
+                      child: const Text(
+                        'Done',
+                        style: TextStyle(
+                          color: Colors.blueAccent,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    )
+                  else
+                    IconButton(
+                      onPressed: () => Navigator.pop(sheetContext),
+                      icon: const Icon(
+                        Symbols.close_rounded,
+                        color: Colors.white38,
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              builder(sheetContext, setSheetState),
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );
@@ -881,7 +929,7 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
-      builder: (BuildContext context) => Container(
+      builder: (BuildContext sheetCtx) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -911,22 +959,44 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
                   icon: Symbols.photo_camera_rounded,
                   label: 'Camera',
                   onTap: () async {
-                    final XFile? img = await _picker.pickImage(
-                      source: ImageSource.camera,
-                      imageQuality: 50,
-                    );
-                    if (context.mounted) Navigator.pop(context, img);
+                    try {
+                      final XFile? img = await _picker.pickImage(
+                        source: ImageSource.camera,
+                        imageQuality: 70,
+                      );
+                      if (sheetCtx.mounted) Navigator.pop(sheetCtx, img);
+                    } catch (e) {
+                      if (sheetCtx.mounted) {
+                        Navigator.pop(sheetCtx);
+                      }
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Camera unavailable: $e')),
+                        );
+                      }
+                    }
                   },
                 ),
                 _buildExpressiveOption(
                   icon: Symbols.image_rounded,
                   label: 'Gallery',
                   onTap: () async {
-                    final XFile? img = await _picker.pickImage(
-                      source: ImageSource.gallery,
-                      imageQuality: 50,
-                    );
-                    if (context.mounted) Navigator.pop(context, img);
+                    try {
+                      final XFile? img = await _picker.pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 70,
+                      );
+                      if (sheetCtx.mounted) Navigator.pop(sheetCtx, img);
+                    } catch (e) {
+                      if (sheetCtx.mounted) {
+                        Navigator.pop(sheetCtx);
+                      }
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Gallery unavailable: $e')),
+                        );
+                      }
+                    }
                   },
                 ),
               ],
@@ -941,27 +1011,40 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
       if (!mounted) return;
       setState(() => _isUploading = true);
       try {
+        // Save locally first for instant offline & guest persistence
+        final Directory appDocDir = await getApplicationDocumentsDirectory();
+        final String localPath =
+            '${appDocDir.path}/avatar_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        await File(image.path).copy(localPath);
+        await ref
+            .read(customAvatarPathProvider.notifier)
+            .setAvatarPath(localPath);
+
+        // Best effort cloud sync if authenticated
         final User? currentUser = Firebase.apps.isNotEmpty
             ? FirebaseAuth.instance.currentUser
             : null;
-        if (currentUser == null) {
-          throw Exception('Please sign in to upload a profile photo.');
+        if (currentUser != null) {
+          try {
+            final String uid = currentUser.uid;
+            final Reference refStorage = FirebaseStorage.instance
+                .ref()
+                .child('avatars')
+                .child('$uid.jpg');
+            await refStorage.putFile(File(localPath));
+            final String url = await refStorage.getDownloadURL();
+            await currentUser.updatePhotoURL(url);
+          } catch (_) {
+            // Local file persistence succeeded; suppress cloud-only sync errors
+          }
         }
-        final String uid = currentUser.uid;
-        final Reference refStorage = FirebaseStorage.instance
-            .ref()
-            .child('avatars')
-            .child('$uid.jpg');
-        await refStorage.putFile(File(image.path));
-        final String url = await refStorage.getDownloadURL();
-        await currentUser.updatePhotoURL(url);
         if (!mounted) return;
         setState(() {});
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
+          ).showSnackBar(SnackBar(content: Text('Photo update error: $e')));
         }
       } finally {
         if (mounted) {

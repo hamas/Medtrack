@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -162,13 +163,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                       count: ref.watch(notificationCountProvider),
                       isLabelVisible: ref.watch(notificationCountProvider) > 0,
                       child: _buildCircularIconButton(
-                        customIcon: Image.asset(
-                          'assets/icons/notification_bell.png',
-                          width: 18,
-                          height: 18,
-                        ),
+                        icon: Symbols.notifications_rounded,
                         onPressed: () => context.push('/notifications'),
-                        hasBackground: false,
+                        hasBackground: true,
                       ),
                     ),
                   const SizedBox(width: 16),
@@ -363,6 +360,36 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     double size = 32,
     bool isSelected = false,
   }) {
+    final String? localAvatarPath = ref.watch(customAvatarPathProvider);
+    Widget avatarWidget;
+    if (localAvatarPath != null &&
+        localAvatarPath.isNotEmpty &&
+        File(localAvatarPath).existsSync()) {
+      avatarWidget = Image.file(
+        File(localAvatarPath),
+        fit: BoxFit.cover,
+      );
+    } else if (user?.photoURL != null && user!.photoURL!.isNotEmpty) {
+      avatarWidget = Image.network(
+        user.photoURL!,
+        fit: BoxFit.cover,
+        errorBuilder:
+            (
+              BuildContext context,
+              Object error,
+              StackTrace? stackTrace,
+            ) => Image.asset(
+              'assets/images/default_avatar.png',
+              fit: BoxFit.cover,
+            ),
+      );
+    } else {
+      avatarWidget = Image.asset(
+        'assets/images/default_avatar.png',
+        fit: BoxFit.cover,
+      );
+    }
+
     return profileAsync.when(
       data: (UserProfile profile) => Container(
         width: size,
@@ -374,26 +401,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             width: isSelected ? 1.5 : 1,
           ),
         ),
-        child: ClipOval(
-          child: (user?.photoURL != null && user!.photoURL!.isNotEmpty)
-              ? Image.network(
-                  user.photoURL!,
-                  fit: BoxFit.cover,
-                  errorBuilder:
-                      (
-                        BuildContext context,
-                        Object error,
-                        StackTrace? stackTrace,
-                      ) => Image.asset(
-                        'assets/images/default_avatar.png',
-                        fit: BoxFit.cover,
-                      ),
-                )
-              : Image.asset(
-                  'assets/images/default_avatar.png',
-                  fit: BoxFit.cover,
-                ),
-        ),
+        child: ClipOval(child: avatarWidget),
       ),
       loading: () => Container(
         width: size,

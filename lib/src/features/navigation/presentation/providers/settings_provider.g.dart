@@ -162,3 +162,55 @@ abstract class _$SettingsState extends $AsyncNotifier<Map<String, dynamic>> {
     return element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(CustomAvatarPath)
+final customAvatarPathProvider = CustomAvatarPathProvider._();
+
+final class CustomAvatarPathProvider
+    extends $NotifierProvider<CustomAvatarPath, String?> {
+  CustomAvatarPathProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'customAvatarPathProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$customAvatarPathHash();
+
+  @$internal
+  @override
+  CustomAvatarPath create() => CustomAvatarPath();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
+String _$customAvatarPathHash() => r'43455511295fae24662afcb83dc7096fe6d67215';
+
+abstract class _$CustomAvatarPath extends $Notifier<String?> {
+  String? build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<String?, String?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String?, String?>,
+              String?,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

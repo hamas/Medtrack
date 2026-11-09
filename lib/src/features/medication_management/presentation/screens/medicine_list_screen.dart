@@ -59,35 +59,16 @@ class MedicineListScreen extends ConsumerWidget {
   }
 
   Widget _buildFab(BuildContext context) {
-    return Container(
-      height: 64,
-      width: 64,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => context.push('/medicines/add'),
-          customBorder: const CircleBorder(),
-          child: const Center(
-            child: Icon(
-              Symbols.add_rounded,
-              color: Colors.white,
-              size: 28,
-              weight: 700,
-            ),
-          ),
-        ),
+    return FloatingActionButton.extended(
+      onPressed: () => context.push('/medicines/add'),
+      backgroundColor: Colors.blueAccent,
+      foregroundColor: Colors.white,
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      icon: const Icon(Symbols.add_rounded),
+      label: const Text(
+        'Add Medication',
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -134,6 +115,21 @@ class MedicineListScreen extends ConsumerWidget {
               fontWeight: FontWeight.w400,
             ),
             textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          FloatingActionButton.extended(
+            onPressed: () => context.push('/medicines/add'),
+            backgroundColor: Colors.blueAccent,
+            foregroundColor: Colors.white,
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            icon: const Icon(Symbols.add_rounded),
+            label: const Text(
+              'Add Medication',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
           const SizedBox(height: 100),
         ],

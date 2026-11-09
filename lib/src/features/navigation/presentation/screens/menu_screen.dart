@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../../../core/widgets/shared_ui.dart';
 import '../../../gamification/domain/entities/user_profile.dart';
 import '../../../gamification/presentation/providers/user_profile_provider.dart';
+import '../providers/settings_provider.dart';
 
 class MenuScreen extends ConsumerWidget {
   const MenuScreen({super.key});
@@ -109,7 +111,7 @@ class MenuScreen extends ConsumerWidget {
   }
 }
 
-class _ProfileHeader extends StatelessWidget {
+class _ProfileHeader extends ConsumerWidget {
   const _ProfileHeader({
     required this.user,
     required this.profile,
@@ -120,8 +122,19 @@ class _ProfileHeader extends StatelessWidget {
   final bool isLoading;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final Color primaryColor = Theme.of(context).colorScheme.primary;
+    final String? localAvatarPath = ref.watch(customAvatarPathProvider);
+    ImageProvider avatarImage;
+    if (localAvatarPath != null &&
+        localAvatarPath.isNotEmpty &&
+        File(localAvatarPath).existsSync()) {
+      avatarImage = FileImage(File(localAvatarPath));
+    } else if (user?.photoURL != null && user!.photoURL!.isNotEmpty) {
+      avatarImage = NetworkImage(user!.photoURL!);
+    } else {
+      avatarImage = const AssetImage('assets/images/default_avatar.png');
+    }
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -146,10 +159,7 @@ class _ProfileHeader extends StatelessWidget {
             CircleAvatar(
               radius: 40,
               backgroundColor: Colors.white.withValues(alpha: 0.05),
-              backgroundImage: user?.photoURL != null
-                  ? NetworkImage(user!.photoURL!)
-                  : const AssetImage('assets/images/default_avatar.png')
-                        as ImageProvider,
+              backgroundImage: avatarImage,
               child: isLoading
                   ? const CircularProgressIndicator(
                       strokeWidth: 2,

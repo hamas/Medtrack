@@ -53,3 +53,32 @@ class SettingsState extends _$SettingsState {
     await updateSetting('biometric_enabled', value);
   }
 }
+
+@riverpod
+class CustomAvatarPath extends _$CustomAvatarPath {
+  static const String _key = 'user_avatar_local_path';
+
+  @override
+  String? build() {
+    _loadFromPrefs();
+    return null;
+  }
+
+  Future<void> _loadFromPrefs() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? path = prefs.getString(_key);
+    if (path != null && path.isNotEmpty) {
+      state = path;
+    }
+  }
+
+  Future<void> setAvatarPath(String? path) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (path == null) {
+      await prefs.remove(_key);
+    } else {
+      await prefs.setString(_key, path);
+    }
+    state = path;
+  }
+}

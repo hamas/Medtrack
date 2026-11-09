@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import '../../../gamification/domain/entities/user_profile.dart';
 import '../../../gamification/presentation/providers/user_profile_provider.dart';
 import '../../../medication_management/domain/entities/medicine.dart';
 import '../../../medication_management/presentation/providers/all_medicines_provider.dart';
+import '../providers/settings_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -39,7 +41,7 @@ class ProfileScreen extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       children: <Widget>[
         const SizedBox(height: 16),
-        _buildHeader(context, profile, authUser),
+        _buildHeader(context, ref, profile, authUser),
         const SizedBox(height: 16),
         _buildEmergencyIdBanner(context, ref, profile),
         const SizedBox(height: 16),
@@ -525,7 +527,12 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, UserProfile profile, User? user) {
+  Widget _buildHeader(
+    BuildContext context,
+    WidgetRef ref,
+    UserProfile profile,
+    User? user,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -535,7 +542,7 @@ class ProfileScreen extends ConsumerWidget {
       ),
       child: Row(
         children: <Widget>[
-          _buildAvatar(user),
+          _buildAvatar(user, ref),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -572,7 +579,19 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAvatar(User? user) {
+  Widget _buildAvatar(User? user, WidgetRef ref) {
+    final String? localAvatarPath = ref.watch(customAvatarPathProvider);
+    ImageProvider avatarImage;
+    if (localAvatarPath != null &&
+        localAvatarPath.isNotEmpty &&
+        File(localAvatarPath).existsSync()) {
+      avatarImage = FileImage(File(localAvatarPath));
+    } else if (user?.photoURL != null && user!.photoURL!.isNotEmpty) {
+      avatarImage = NetworkImage(user.photoURL!);
+    } else {
+      avatarImage = const AssetImage('assets/images/default_avatar.png');
+    }
+
     return Container(
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
@@ -582,10 +601,7 @@ class ProfileScreen extends ConsumerWidget {
       child: CircleAvatar(
         radius: 40,
         backgroundColor: Colors.white.withValues(alpha: 0.05),
-        backgroundImage: user?.photoURL != null
-            ? NetworkImage(user!.photoURL!)
-            : const AssetImage('assets/images/default_avatar.png')
-                  as ImageProvider,
+        backgroundImage: avatarImage,
       ),
     );
   }

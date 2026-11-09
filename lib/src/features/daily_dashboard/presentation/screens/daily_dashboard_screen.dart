@@ -229,10 +229,19 @@ class _DailyDashboardScreenState extends ConsumerState<DailyDashboardScreen> {
                               style: TextStyle(color: Colors.white60),
                             ),
                             const SizedBox(height: 16),
-                            FilledButton.icon(
+                            FloatingActionButton.extended(
                               onPressed: () => context.push('/medicines/add'),
+                              backgroundColor: Colors.blueAccent,
+                              foregroundColor: Colors.white,
+                              elevation: 4,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
                               icon: const Icon(Symbols.add_rounded),
-                              label: const Text('Add Medication'),
+                              label: const Text(
+                                'Add Medication',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ],
                         ),
@@ -258,8 +267,17 @@ class _DailyDashboardScreenState extends ConsumerState<DailyDashboardScreen> {
                             right: 16,
                             child: FloatingActionButton.extended(
                               onPressed: () => context.push('/medicines/add'),
+                              backgroundColor: Colors.blueAccent,
+                              foregroundColor: Colors.white,
+                              elevation: 4,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
                               icon: const Icon(Symbols.add_rounded),
-                              label: const Text('Add Medication'),
+                              label: const Text(
+                                'Add Medication',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
                         ],
@@ -431,12 +449,15 @@ class _DashboardItem extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
-                      width: 80,
-                      height: 80,
+                      width: 60,
+                      height: 60,
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.6),
-                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.08),
+                        ),
                       ),
                       child: Image.asset(
                         'assets/images/medication_3d.png',
@@ -655,7 +676,8 @@ class _DashboardItem extends ConsumerWidget {
 
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: const Color(0xFF1E1B2E),
+      useRootNavigator: true,
+      backgroundColor: const Color(0xFF0F172A),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -758,8 +780,9 @@ class _DashboardItem extends ConsumerWidget {
 
     showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF1E1B2E),
+      backgroundColor: const Color(0xFF0F172A),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -1049,8 +1072,9 @@ class _DashboardItem extends ConsumerWidget {
 
     showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF1E1B2E),
+      backgroundColor: const Color(0xFF0F172A),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
