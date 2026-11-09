@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/services/local_db_service.dart';
 
@@ -11,16 +12,17 @@ class DashboardRepositoryImpl implements DashboardRepository {
   DashboardRepositoryImpl({LocalDbService? localDb})
     : _localDb = localDb ?? LocalDbService();
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  FirebaseFirestore? get _firestore =>
+      Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null;
   final LocalDbService _localDb;
 
   @override
   Future<List<Dose>> getDailyTimeline(String userId, DateTime date) async {
     List<Medicine> medicines = await _localDb.getMedicines();
 
-    if (userId != 'guest_user') {
+    if (userId != 'guest_user' && _firestore != null) {
       try {
-        final QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
+        final QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore!
             .collection('medicines')
             .where('userId', isEqualTo: userId)
             .get();
@@ -51,9 +53,9 @@ class DashboardRepositoryImpl implements DashboardRepository {
     // Retrieve today's recorded adherence logs to reconcile taken and skipped states
     List<AdherenceLog> existingLogs = await _localDb.getAllAdherenceLogs();
 
-    if (userId != 'guest_user') {
+    if (userId != 'guest_user' && _firestore != null) {
       try {
-        final QuerySnapshot<Map<String, dynamic>> snap = await _firestore
+        final QuerySnapshot<Map<String, dynamic>> snap = await _firestore!
             .collection('adherence_logs')
             .where('userId', isEqualTo: userId)
             .get();
@@ -69,7 +71,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
       }
     }
 
-    if (userId != 'guest_user') {
+    if (userId != 'guest_user' && _firestore != null) {
       try {
         final List<AdherenceLog> allLocal = await _localDb
             .getAllAdherenceLogs();
@@ -77,7 +79,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
           if (l.userId == 'guest_user') {
             final AdherenceLog updated = l.copyWith(userId: userId);
             await _localDb.insertAdherenceLog(updated);
-            await _firestore
+            await _firestore!
                 .collection('adherence_logs')
                 .doc(updated.id)
                 .set(updated.toJson());
@@ -154,9 +156,9 @@ class DashboardRepositoryImpl implements DashboardRepository {
 
     await _localDb.insertAdherenceLog(log);
 
-    if (userId != 'guest_user') {
+    if (userId != 'guest_user' && _firestore != null) {
       try {
-        await _firestore
+        await _firestore!
             .collection('adherence_logs')
             .doc(logId)
             .set(log.toJson());
@@ -184,9 +186,9 @@ class DashboardRepositoryImpl implements DashboardRepository {
 
     await _localDb.insertAdherenceLog(log);
 
-    if (userId != 'guest_user') {
+    if (userId != 'guest_user' && _firestore != null) {
       try {
-        await _firestore
+        await _firestore!
             .collection('adherence_logs')
             .doc(logId)
             .set(log.toJson());

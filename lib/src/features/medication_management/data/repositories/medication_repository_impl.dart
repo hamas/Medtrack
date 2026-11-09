@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/services/alarm_service.dart';
 import '../../../../core/services/local_db_service.dart';
@@ -9,7 +10,8 @@ import '../../domain/repositories/medication_repository.dart';
 class MedicationRepositoryImpl implements MedicationRepository {
   MedicationRepositoryImpl(this._localDb);
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  FirebaseFirestore? get _firestore =>
+      Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null;
   final LocalDbService _localDb;
   final AlarmService _alarmService = AlarmService();
 
@@ -26,14 +28,14 @@ class MedicationRepositoryImpl implements MedicationRepository {
     final List<Medicine> localMeds = await _localDb.getMedicines();
     yield localMeds;
 
-    // 2. Skip Firestore if we're in guest mode (avoids PERMISSION_DENIED)
-    if (userId == 'guest_user') return;
+    // 2. Skip Firestore if we're in guest mode or if Firebase is offline
+    if (userId == 'guest_user' || _firestore == null) return;
 
     // 3. Migrate any local guest medicines to this user and upload unsynced
     unawaited(_migrateAndSyncLocalMeds(userId));
 
     // 4. Continue with Firestore snapshots for real-time synchronization
-    yield* _firestore
+    yield* _firestore!
         .collection('medicines')
         .where('userId', isEqualTo: userId)
         .snapshots()
@@ -64,13 +66,14 @@ class MedicationRepositoryImpl implements MedicationRepository {
   }
 
   Future<void> _migrateAndSyncLocalMeds(String userId) async {
+    if (_firestore == null) return;
     try {
       final List<Medicine> localMeds = await _localDb.getMedicines();
       for (final Medicine m in localMeds) {
         if (m.userId == 'guest_user') {
           final Medicine updated = m.copyWith(userId: userId);
           await _localDb.insertMedicine(updated);
-          await _firestore
+          await _firestore!
               .collection('medicines')
               .doc(updated.id)
               .set(updated.toJson());
@@ -80,10 +83,10 @@ class MedicationRepositoryImpl implements MedicationRepository {
   }
 
   Future<void> _syncMedicinesFromFirestore(String userId) async {
-    if (userId == 'guest_user') return;
+    if (userId == 'guest_user' || _firestore == null) return;
     try {
       await _migrateAndSyncLocalMeds(userId);
-      final QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
+      final QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore!
           .collection('medicines')
           .where('userId', isEqualTo: userId)
           .get();
@@ -104,9 +107,9 @@ class MedicationRepositoryImpl implements MedicationRepository {
     await _localDb.insertMedicine(medicine);
     await _alarmService.scheduleNextAlarm(medicine);
 
-    if (medicine.userId == 'guest_user') return;
+    if (medicine.userId == 'guest_user' || _firestore == null) return;
     try {
-      await _firestore
+      await _firestore!
           .collection('medicines')
           .doc(medicine.id)
           .set(medicine.toJson());
@@ -118,8 +121,9 @@ class MedicationRepositoryImpl implements MedicationRepository {
   @override
   Future<void> deleteMedicine(String medicineId) async {
     await _localDb.deleteMedicine(medicineId);
+    if (_firestore == null) return;
     try {
-      await _firestore.collection('medicines').doc(medicineId).delete();
+      await _firestore!.collection('medicines').doc(medicineId).delete();
     } catch (e) {
       // Ignore if offline
     }
@@ -134,8 +138,9 @@ class MedicationRepositoryImpl implements MedicationRepository {
   Future<void> saveAdherenceLog(AdherenceLog log) async {
     await _localDb.insertAdherenceLog(log);
 
+    if (_firestore == null) return;
     try {
-      await _firestore
+      await _firestore!
           .collection('adherence_logs')
           .doc(log.id)
           .set(log.toJson());

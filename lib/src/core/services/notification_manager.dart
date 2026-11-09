@@ -47,8 +47,11 @@ class NotificationManager {
 
   Future<void> requestPermissions() async {
     if (Platform.isAndroid) {
-      await Permission.notification.request();
-      await Permission.scheduleExactAlarm.request();
+      try {
+        await Permission.notification.request();
+      } catch (e) {
+        // Notification permission request handled gracefully
+      }
     }
   }
 

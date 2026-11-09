@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -269,7 +270,9 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
 
     try {
       final String id = widget.initialMedicine?.id ?? const Uuid().v4();
-      final User? user = FirebaseAuth.instance.currentUser;
+      final User? user = Firebase.apps.isNotEmpty
+          ? FirebaseAuth.instance.currentUser
+          : null;
       final String userId =
           widget.initialMedicine?.userId ?? (user?.uid ?? 'guest_user');
 

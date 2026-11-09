@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../gamification/domain/entities/user_profile.dart';
@@ -262,7 +263,9 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
   }
 
   Widget _buildAvatarSection() {
-    final User? user = FirebaseAuth.instance.currentUser;
+    final User? user = Firebase.apps.isNotEmpty
+        ? FirebaseAuth.instance.currentUser
+        : null;
     return Center(
       child: GestureDetector(
         onTap: _pickImage,
@@ -938,7 +941,9 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
       if (!mounted) return;
       setState(() => _isUploading = true);
       try {
-        final User? currentUser = FirebaseAuth.instance.currentUser;
+        final User? currentUser = Firebase.apps.isNotEmpty
+            ? FirebaseAuth.instance.currentUser
+            : null;
         if (currentUser == null) {
           throw Exception('Please sign in to upload a profile photo.');
         }

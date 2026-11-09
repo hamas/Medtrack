@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../gamification/domain/entities/user_profile.dart';
 import '../../../gamification/presentation/providers/user_profile_provider.dart';
@@ -16,7 +17,9 @@ class ProfileScreen extends ConsumerWidget {
     final AsyncValue<UserProfile> profileAsync = ref.watch(
       userProfileStateProvider,
     );
-    final User? authUser = FirebaseAuth.instance.currentUser;
+    final User? authUser = Firebase.apps.isNotEmpty
+        ? FirebaseAuth.instance.currentUser
+        : null;
 
     return profileAsync.when(
       data: (UserProfile profile) =>

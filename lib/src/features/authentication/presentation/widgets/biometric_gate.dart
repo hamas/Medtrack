@@ -17,7 +17,7 @@ class BiometricGate extends ConsumerStatefulWidget {
 class _BiometricGateState extends ConsumerState<BiometricGate>
     with WidgetsBindingObserver {
   final LocalAuthentication _auth = LocalAuthentication();
-  bool _isAuthenticated = false;
+  bool _isAuthenticated = true;
   bool _isAuthenticating = false;
 
   @override
@@ -28,15 +28,25 @@ class _BiometricGateState extends ConsumerState<BiometricGate>
   }
 
   Future<void> _checkAndAuthenticate() async {
-    // Wait for settings to load
-    final Map<String, dynamic> settings = await ref.read(
-      settingsStateProvider.future,
-    );
-    if (!((settings['biometric_enabled'] as bool?) ?? false)) {
-      setState(() => _isAuthenticated = true);
-      return;
+    try {
+      final Map<String, dynamic> settings = await ref.read(
+        settingsStateProvider.future,
+      );
+      final bool biometricEnabled =
+          (settings['biometric_enabled'] as bool?) ?? false;
+      if (!biometricEnabled) {
+        if (!_isAuthenticated) {
+          setState(() => _isAuthenticated = true);
+        }
+        return;
+      }
+      setState(() => _isAuthenticated = false);
+      await _authenticate();
+    } catch (_) {
+      if (!_isAuthenticated) {
+        setState(() => _isAuthenticated = true);
+      }
     }
-    await _authenticate();
   }
 
   @override
@@ -52,9 +62,16 @@ class _BiometricGateState extends ConsumerState<BiometricGate>
         !_isAuthenticating) {
       _checkAndAuthenticate();
     } else if (state == AppLifecycleState.paused) {
-      setState(() {
-        _isAuthenticated = false;
-      });
+      final AsyncValue<Map<String, dynamic>> settingsAsync = ref.read(
+        settingsStateProvider,
+      );
+      final bool biometricEnabled =
+          (settingsAsync.value?['biometric_enabled'] as bool?) ?? false;
+      if (biometricEnabled) {
+        setState(() {
+          _isAuthenticated = false;
+        });
+      }
     }
   }
 

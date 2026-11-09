@@ -1,11 +1,13 @@
 import 'dart:convert';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../domain/repositories/user_profile_repository.dart';
 
 class UserProfileRepositoryImpl implements UserProfileRepository {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  FirebaseFirestore? get _firestore =>
+      Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null;
 
   static const String _prefKey = 'cached_user_profile';
 
@@ -23,12 +25,12 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
       } catch (_) {}
     }
 
-    if (uid == 'guest' || uid == 'guest_user') {
+    if (uid == 'guest' || uid == 'guest_user' || _firestore == null) {
       return cachedProfile ?? const UserProfile(uid: 'guest', name: 'Hamas');
     }
 
     try {
-      final DocumentSnapshot<Map<String, dynamic>> doc = await _firestore
+      final DocumentSnapshot<Map<String, dynamic>> doc = await _firestore!
           .collection('users')
           .doc(uid)
           .get();
@@ -55,9 +57,13 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     );
 
     // 2. Sync to cloud if not in guest mode
-    if (profile.uid == 'guest' || profile.uid == 'guest_user') return;
+    if (profile.uid == 'guest' ||
+        profile.uid == 'guest_user' ||
+        _firestore == null) {
+      return;
+    }
     try {
-      await _firestore
+      await _firestore!
           .collection('users')
           .doc(profile.uid)
           .set(profile.toJson());
@@ -72,9 +78,9 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
     final UserProfile initial = await getUserProfile(uid);
     yield initial;
 
-    if (uid == 'guest' || uid == 'guest_user') return;
+    if (uid == 'guest' || uid == 'guest_user' || _firestore == null) return;
 
-    yield* _firestore
+    yield* _firestore!
         .collection('users')
         .doc(uid)
         .snapshots()
