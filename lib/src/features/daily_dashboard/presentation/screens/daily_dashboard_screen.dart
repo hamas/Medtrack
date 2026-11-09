@@ -413,19 +413,25 @@ class _DashboardItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Medicine medicine = dose.medicine;
     final String timeStr = DateFormat('hh:mm a').format(dose.scheduledTime);
-    final bool isOverdue = !dose.isTaken &&
+    final bool isHandled = dose.isTaken || dose.isSkipped;
+    final bool isOverdue = !isHandled &&
+        !dose.isSnoozed &&
         DateTime.now().difference(dose.scheduledTime).inMinutes > 60;
 
     return Container(
       decoration: BoxDecoration(
-        color: dose.isTaken
+        color: isHandled
             ? Colors.white.withValues(alpha: 0.02)
-            : Colors.white.withValues(alpha: 0.05),
+            : (dose.isSnoozed
+                ? Colors.amber.withValues(alpha: 0.04)
+                : Colors.white.withValues(alpha: 0.05)),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: dose.isTaken
+          color: isHandled
               ? Colors.white.withValues(alpha: 0.03)
-              : Colors.white.withValues(alpha: 0.07),
+              : (dose.isSnoozed
+                  ? Colors.amberAccent.withValues(alpha: 0.2)
+                  : Colors.white.withValues(alpha: 0.07)),
         ),
       ),
       clipBehavior: Clip.antiAlias,
@@ -467,13 +473,13 @@ class _DashboardItem extends ConsumerWidget {
                                 child: Text(
                                   medicine.name,
                                   style: TextStyle(
-                                    color: dose.isTaken
+                                    color: isHandled
                                         ? Colors.white54
                                         : Colors.white,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 16,
                                     letterSpacing: -0.2,
-                                    decoration: dose.isTaken
+                                    decoration: isHandled
                                         ? TextDecoration.lineThrough
                                         : null,
                                   ),
@@ -516,7 +522,7 @@ class _DashboardItem extends ConsumerWidget {
                           Text(
                             '${medicine.dosage} • ${_getMealLabel(medicine.mealContext)}',
                             style: TextStyle(
-                              color: dose.isTaken
+                              color: isHandled
                                   ? Colors.white30
                                   : Colors.white60,
                               fontSize: 12,
@@ -528,39 +534,66 @@ class _DashboardItem extends ConsumerWidget {
                           const SizedBox(height: 5),
                           Row(
                             children: <Widget>[
-                              Icon(
-                                Symbols.schedule_rounded,
-                                size: 13,
-                                color: dose.isTaken
-                                    ? Colors.white30
-                                    : const Color(0xFF93C5FD),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                timeStr,
-                                style: TextStyle(
-                                  color: dose.isTaken
-                                      ? Colors.white30
-                                      : const Color(0xFF93C5FD),
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
                               if (dose.isTaken) ...<Widget>[
-                                const SizedBox(width: 8),
-                                Container(
-                                  width: 3,
-                                  height: 3,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white24,
-                                    shape: BoxShape.circle,
+                                const Icon(
+                                  Symbols.check_circle_rounded,
+                                  size: 13,
+                                  color: Colors.greenAccent,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Taken at ${DateFormat('hh:mm a').format(dose.takenTime ?? dose.scheduledTime)}',
+                                  style: const TextStyle(
+                                    color: Colors.greenAccent,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  'Taken',
-                                  style: TextStyle(
-                                    color: Colors.greenAccent,
+                              ] else if (dose.isSkipped) ...<Widget>[
+                                const Icon(
+                                  Symbols.cancel_rounded,
+                                  size: 13,
+                                  color: Colors.redAccent,
+                                ),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    'Skipped: ${dose.skipReason ?? 'By user'}',
+                                    style: const TextStyle(
+                                      color: Color(0xFFFCA5A5),
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ] else if (dose.isSnoozed) ...<Widget>[
+                                const Icon(
+                                  Symbols.snooze_rounded,
+                                  size: 13,
+                                  color: Colors.amberAccent,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Snoozed to $timeStr',
+                                  style: const TextStyle(
+                                    color: Colors.amberAccent,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ] else ...<Widget>[
+                                const Icon(
+                                  Symbols.schedule_rounded,
+                                  size: 13,
+                                  color: Color(0xFF93C5FD),
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  timeStr,
+                                  style: const TextStyle(
+                                    color: Color(0xFF93C5FD),
                                     fontSize: 11,
                                     fontWeight: FontWeight.w700,
                                   ),
@@ -568,6 +601,56 @@ class _DashboardItem extends ConsumerWidget {
                               ],
                             ],
                           ),
+                          if (dose.observation != null) ...<Widget>[
+                            const SizedBox(height: 5),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: dose.observation!.startsWith('Vitals:')
+                                    ? Colors.cyanAccent.withValues(alpha: 0.1)
+                                    : Colors.pinkAccent.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: dose.observation!.startsWith('Vitals:')
+                                      ? Colors.cyanAccent.withValues(alpha: 0.25)
+                                      : Colors.pinkAccent.withValues(alpha: 0.25),
+                                  width: 0.5,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Icon(
+                                    dose.observation!.startsWith('Vitals:')
+                                        ? Symbols.monitor_heart_rounded
+                                        : Symbols.vital_signs_rounded,
+                                    size: 12,
+                                    color: dose.observation!.startsWith('Vitals:')
+                                        ? Colors.cyanAccent
+                                        : Colors.pinkAccent,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Flexible(
+                                    child: Text(
+                                      dose.observation!,
+                                      style: TextStyle(
+                                        color: dose.observation!.startsWith('Vitals:')
+                                            ? Colors.cyanAccent
+                                            : Colors.pinkAccent,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -703,22 +786,38 @@ class _DashboardItem extends ConsumerWidget {
                             decoration: BoxDecoration(
                               color: dose.isTaken
                                   ? Colors.greenAccent.withValues(alpha: 0.15)
-                                  : Colors.white.withValues(alpha: 0.05),
+                                  : (dose.isSkipped
+                                      ? Colors.redAccent.withValues(alpha: 0.15)
+                                      : (dose.isSnoozed
+                                          ? Colors.amberAccent.withValues(alpha: 0.15)
+                                          : Colors.white.withValues(alpha: 0.05))),
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: dose.isTaken
                                     ? Colors.greenAccent.withValues(alpha: 0.5)
-                                    : Colors.white.withValues(alpha: 0.12),
+                                    : (dose.isSkipped
+                                        ? Colors.redAccent.withValues(alpha: 0.5)
+                                        : (dose.isSnoozed
+                                            ? Colors.amberAccent.withValues(alpha: 0.4)
+                                            : Colors.white.withValues(alpha: 0.12))),
                                 width: 1.5,
                               ),
                             ),
                             child: Icon(
                               dose.isTaken
                                   ? Symbols.check_rounded
-                                  : Symbols.radio_button_unchecked_rounded,
+                                  : (dose.isSkipped
+                                      ? Symbols.close_rounded
+                                      : (dose.isSnoozed
+                                          ? Symbols.snooze_rounded
+                                          : Symbols.radio_button_unchecked_rounded)),
                               color: dose.isTaken
                                   ? Colors.greenAccent
-                                  : Colors.white30,
+                                  : (dose.isSkipped
+                                      ? Colors.redAccent
+                                      : (dose.isSnoozed
+                                          ? Colors.amberAccent
+                                          : Colors.white30)),
                               size: 18,
                             ),
                           ),

@@ -42,7 +42,12 @@ class DailyTimeline extends _$DailyTimeline {
     if (state.hasValue) {
       final List<Dose> updatedList = state.value!.map((Dose d) {
         if (d.id == dose.id) {
-          return d.copyWith(isTaken: true, takenTime: DateTime.now());
+          return d.copyWith(
+            isTaken: true,
+            isSkipped: false,
+            isSnoozed: false,
+            takenTime: DateTime.now(),
+          );
         }
         return d;
       }).toList();
@@ -62,8 +67,10 @@ class DailyTimeline extends _$DailyTimeline {
       }
 
       // --- Streak Engine Integration ---
-      final bool allTaken = updatedList.every((Dose d) => d.isTaken);
-      if (allTaken) {
+      final bool allHandled = updatedList.every(
+        (Dose d) => d.isTaken || d.isSkipped,
+      );
+      if (allHandled) {
         // Trigger Haptic Feedback
         await HapticFeedback.heavyImpact();
 
@@ -82,7 +89,12 @@ class DailyTimeline extends _$DailyTimeline {
     if (state.hasValue) {
       final List<Dose> updatedList = state.value!.map((Dose d) {
         if (d.id == dose.id) {
-          return d.copyWith(isTaken: true);
+          return d.copyWith(
+            isTaken: false,
+            isSkipped: true,
+            isSnoozed: false,
+            skipReason: reason,
+          );
         }
         return d;
       }).toList();
@@ -110,6 +122,16 @@ class DailyTimeline extends _$DailyTimeline {
         ? 'Side Effect: $symptom ($severity) - ${details.trim()}'
         : 'Side Effect: $symptom ($severity)';
 
+    if (state.hasValue) {
+      final List<Dose> updatedList = state.value!.map((Dose d) {
+        if (d.id == dose.id) {
+          return d.copyWith(observation: noteText);
+        }
+        return d;
+      }).toList();
+      state = AsyncValue<List<Dose>>.data(updatedList);
+    }
+
     final DashboardRepository repository = ref.read(dashboardRepoProvider);
     await repository.recordObservation(dose, noteText);
 
@@ -117,8 +139,19 @@ class DailyTimeline extends _$DailyTimeline {
   }
 
   Future<void> logVitals(Dose dose, String vitalsSummary) async {
+    final String noteText = 'Vitals: $vitalsSummary';
+    if (state.hasValue) {
+      final List<Dose> updatedList = state.value!.map((Dose d) {
+        if (d.id == dose.id) {
+          return d.copyWith(observation: noteText);
+        }
+        return d;
+      }).toList();
+      state = AsyncValue<List<Dose>>.data(updatedList);
+    }
+
     final DashboardRepository repository = ref.read(dashboardRepoProvider);
-    await repository.recordObservation(dose, 'Vitals: $vitalsSummary');
+    await repository.recordObservation(dose, noteText);
 
     ref.invalidate(adherenceHistoryProvider);
   }
@@ -128,7 +161,12 @@ class DailyTimeline extends _$DailyTimeline {
       final DateTime newTime = dose.scheduledTime.add(duration);
       final List<Dose> updatedList = state.value!.map((Dose d) {
         if (d.id == dose.id) {
-          return d.copyWith(scheduledTime: newTime);
+          return d.copyWith(
+            scheduledTime: newTime,
+            isSnoozed: true,
+            isTaken: false,
+            isSkipped: false,
+          );
         }
         return d;
       }).toList();
@@ -143,7 +181,7 @@ class DailyTimeline extends _$DailyTimeline {
     if (!state.hasValue) return false;
     final List<Dose> doses = state.value!;
     if (doses.isEmpty) return false;
-    return doses.every((Dose d) => d.isTaken);
+    return doses.every((Dose d) => d.isTaken || d.isSkipped);
   }
 
   Future<void> _updateStreakAndBadges() async {

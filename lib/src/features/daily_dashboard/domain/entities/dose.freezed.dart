@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Dose {
 
- String get id; Medicine get medicine; DateTime get scheduledTime; bool get isTaken; DateTime? get takenTime;
+ String get id; Medicine get medicine; DateTime get scheduledTime; bool get isTaken; bool get isSkipped; bool get isSnoozed; String? get skipReason; String? get observation; DateTime? get takenTime;
 /// Create a copy of Dose
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,20 +30,20 @@ $DoseCopyWith<Dose> get copyWith => _$DoseCopyWithImpl<Dose>(this as Dose, _$ide
 @override
 bool operator ==(Object other) {
   final _this = this as Dose;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Dose&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.medicine, _this.medicine) || other.medicine == _this.medicine)&&(identical(other.scheduledTime, _this.scheduledTime) || other.scheduledTime == _this.scheduledTime)&&(identical(other.isTaken, _this.isTaken) || other.isTaken == _this.isTaken)&&(identical(other.takenTime, _this.takenTime) || other.takenTime == _this.takenTime));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Dose&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.medicine, _this.medicine) || other.medicine == _this.medicine)&&(identical(other.scheduledTime, _this.scheduledTime) || other.scheduledTime == _this.scheduledTime)&&(identical(other.isTaken, _this.isTaken) || other.isTaken == _this.isTaken)&&(identical(other.isSkipped, _this.isSkipped) || other.isSkipped == _this.isSkipped)&&(identical(other.isSnoozed, _this.isSnoozed) || other.isSnoozed == _this.isSnoozed)&&(identical(other.skipReason, _this.skipReason) || other.skipReason == _this.skipReason)&&(identical(other.observation, _this.observation) || other.observation == _this.observation)&&(identical(other.takenTime, _this.takenTime) || other.takenTime == _this.takenTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as Dose;
-  return Object.hash(runtimeType,_this.id,_this.medicine,_this.scheduledTime,_this.isTaken,_this.takenTime);
+  return Object.hash(runtimeType,_this.id,_this.medicine,_this.scheduledTime,_this.isTaken,_this.isSkipped,_this.isSnoozed,_this.skipReason,_this.observation,_this.takenTime);
 }
 
 @override
 String toString() {
   final _this = this as Dose;
-  return 'Dose(id: ${_this.id}, medicine: ${_this.medicine}, scheduledTime: ${_this.scheduledTime}, isTaken: ${_this.isTaken}, takenTime: ${_this.takenTime})';
+  return 'Dose(id: ${_this.id}, medicine: ${_this.medicine}, scheduledTime: ${_this.scheduledTime}, isTaken: ${_this.isTaken}, isSkipped: ${_this.isSkipped}, isSnoozed: ${_this.isSnoozed}, skipReason: ${_this.skipReason}, observation: ${_this.observation}, takenTime: ${_this.takenTime})';
 }
 
 
@@ -54,7 +54,7 @@ abstract mixin class $DoseCopyWith<$Res>  {
   factory $DoseCopyWith(Dose value, $Res Function(Dose) _then) = _$DoseCopyWithImpl;
 @useResult
 $Res call({
- String id, Medicine medicine, DateTime scheduledTime, bool isTaken, DateTime? takenTime
+ String id, Medicine medicine, DateTime scheduledTime, bool isTaken, bool isSkipped, bool isSnoozed, String? skipReason, String? observation, DateTime? takenTime
 });
 
 
@@ -71,13 +71,17 @@ class _$DoseCopyWithImpl<$Res>
 
 /// Create a copy of Dose
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? medicine = null,Object? scheduledTime = null,Object? isTaken = null,Object? takenTime = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? medicine = null,Object? scheduledTime = null,Object? isTaken = null,Object? isSkipped = null,Object? isSnoozed = null,Object? skipReason = freezed,Object? observation = freezed,Object? takenTime = freezed,}) {
   return _then(Dose(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,medicine: null == medicine ? _self.medicine : medicine // ignore: cast_nullable_to_non_nullable
 as Medicine,scheduledTime: null == scheduledTime ? _self.scheduledTime : scheduledTime // ignore: cast_nullable_to_non_nullable
 as DateTime,isTaken: null == isTaken ? _self.isTaken : isTaken // ignore: cast_nullable_to_non_nullable
-as bool,takenTime: freezed == takenTime ? _self.takenTime : takenTime // ignore: cast_nullable_to_non_nullable
+as bool,isSkipped: null == isSkipped ? _self.isSkipped : isSkipped // ignore: cast_nullable_to_non_nullable
+as bool,isSnoozed: null == isSnoozed ? _self.isSnoozed : isSnoozed // ignore: cast_nullable_to_non_nullable
+as bool,skipReason: freezed == skipReason ? _self.skipReason : skipReason // ignore: cast_nullable_to_non_nullable
+as String?,observation: freezed == observation ? _self.observation : observation // ignore: cast_nullable_to_non_nullable
+as String?,takenTime: freezed == takenTime ? _self.takenTime : takenTime // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
 }
@@ -172,10 +176,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  Medicine medicine,  DateTime scheduledTime,  bool isTaken,  DateTime? takenTime)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  Medicine medicine,  DateTime scheduledTime,  bool isTaken,  bool isSkipped,  bool isSnoozed,  String? skipReason,  String? observation,  DateTime? takenTime)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Dose() when $default != null:
-return $default(_that.id,_that.medicine,_that.scheduledTime,_that.isTaken,_that.takenTime);case _:
+return $default(_that.id,_that.medicine,_that.scheduledTime,_that.isTaken,_that.isSkipped,_that.isSnoozed,_that.skipReason,_that.observation,_that.takenTime);case _:
   return orElse();
 
 }
@@ -193,10 +197,10 @@ return $default(_that.id,_that.medicine,_that.scheduledTime,_that.isTaken,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  Medicine medicine,  DateTime scheduledTime,  bool isTaken,  DateTime? takenTime)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  Medicine medicine,  DateTime scheduledTime,  bool isTaken,  bool isSkipped,  bool isSnoozed,  String? skipReason,  String? observation,  DateTime? takenTime)  $default,) {final _that = this;
 switch (_that) {
 case _Dose():
-return $default(_that.id,_that.medicine,_that.scheduledTime,_that.isTaken,_that.takenTime);case _:
+return $default(_that.id,_that.medicine,_that.scheduledTime,_that.isTaken,_that.isSkipped,_that.isSnoozed,_that.skipReason,_that.observation,_that.takenTime);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -213,10 +217,10 @@ return $default(_that.id,_that.medicine,_that.scheduledTime,_that.isTaken,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  Medicine medicine,  DateTime scheduledTime,  bool isTaken,  DateTime? takenTime)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  Medicine medicine,  DateTime scheduledTime,  bool isTaken,  bool isSkipped,  bool isSnoozed,  String? skipReason,  String? observation,  DateTime? takenTime)?  $default,) {final _that = this;
 switch (_that) {
 case _Dose() when $default != null:
-return $default(_that.id,_that.medicine,_that.scheduledTime,_that.isTaken,_that.takenTime);case _:
+return $default(_that.id,_that.medicine,_that.scheduledTime,_that.isTaken,_that.isSkipped,_that.isSnoozed,_that.skipReason,_that.observation,_that.takenTime);case _:
   return null;
 
 }
@@ -228,13 +232,17 @@ return $default(_that.id,_that.medicine,_that.scheduledTime,_that.isTaken,_that.
 @JsonSerializable()
 
 class _Dose implements Dose {
-  const _Dose({required this.id, required this.medicine, required this.scheduledTime, this.isTaken = false, this.takenTime});
+  const _Dose({required this.id, required this.medicine, required this.scheduledTime, this.isTaken = false, this.isSkipped = false, this.isSnoozed = false, this.skipReason, this.observation, this.takenTime});
   factory _Dose.fromJson(Map<String, dynamic> json) => _$DoseFromJson(json);
 
 @override final  String id;
 @override final  Medicine medicine;
 @override final  DateTime scheduledTime;
 @override@JsonKey() final  bool isTaken;
+@override@JsonKey() final  bool isSkipped;
+@override@JsonKey() final  bool isSnoozed;
+@override final  String? skipReason;
+@override final  String? observation;
 @override final  DateTime? takenTime;
 
 /// Create a copy of Dose
@@ -250,18 +258,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Dose&&(identical(other.id, id) || other.id == id)&&(identical(other.medicine, medicine) || other.medicine == medicine)&&(identical(other.scheduledTime, scheduledTime) || other.scheduledTime == scheduledTime)&&(identical(other.isTaken, isTaken) || other.isTaken == isTaken)&&(identical(other.takenTime, takenTime) || other.takenTime == takenTime));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Dose&&(identical(other.id, id) || other.id == id)&&(identical(other.medicine, medicine) || other.medicine == medicine)&&(identical(other.scheduledTime, scheduledTime) || other.scheduledTime == scheduledTime)&&(identical(other.isTaken, isTaken) || other.isTaken == isTaken)&&(identical(other.isSkipped, isSkipped) || other.isSkipped == isSkipped)&&(identical(other.isSnoozed, isSnoozed) || other.isSnoozed == isSnoozed)&&(identical(other.skipReason, skipReason) || other.skipReason == skipReason)&&(identical(other.observation, observation) || other.observation == observation)&&(identical(other.takenTime, takenTime) || other.takenTime == takenTime));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,medicine,scheduledTime,isTaken,takenTime);
+    return Object.hash(runtimeType,id,medicine,scheduledTime,isTaken,isSkipped,isSnoozed,skipReason,observation,takenTime);
 }
 
 @override
 String toString() {
-    return 'Dose(id: $id, medicine: $medicine, scheduledTime: $scheduledTime, isTaken: $isTaken, takenTime: $takenTime)';
+    return 'Dose(id: $id, medicine: $medicine, scheduledTime: $scheduledTime, isTaken: $isTaken, isSkipped: $isSkipped, isSnoozed: $isSnoozed, skipReason: $skipReason, observation: $observation, takenTime: $takenTime)';
 }
 
 
@@ -272,7 +280,7 @@ abstract mixin class _$DoseCopyWith<$Res> implements $DoseCopyWith<$Res> {
   factory _$DoseCopyWith(_Dose value, $Res Function(_Dose) _then) = __$DoseCopyWithImpl;
 @override @useResult
 $Res call({
- String id, Medicine medicine, DateTime scheduledTime, bool isTaken, DateTime? takenTime
+ String id, Medicine medicine, DateTime scheduledTime, bool isTaken, bool isSkipped, bool isSnoozed, String? skipReason, String? observation, DateTime? takenTime
 });
 
 
@@ -289,13 +297,17 @@ class __$DoseCopyWithImpl<$Res>
 
 /// Create a copy of Dose
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? medicine = null,Object? scheduledTime = null,Object? isTaken = null,Object? takenTime = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? medicine = null,Object? scheduledTime = null,Object? isTaken = null,Object? isSkipped = null,Object? isSnoozed = null,Object? skipReason = freezed,Object? observation = freezed,Object? takenTime = freezed,}) {
   return _then(_Dose(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,medicine: null == medicine ? _self.medicine : medicine // ignore: cast_nullable_to_non_nullable
 as Medicine,scheduledTime: null == scheduledTime ? _self.scheduledTime : scheduledTime // ignore: cast_nullable_to_non_nullable
 as DateTime,isTaken: null == isTaken ? _self.isTaken : isTaken // ignore: cast_nullable_to_non_nullable
-as bool,takenTime: freezed == takenTime ? _self.takenTime : takenTime // ignore: cast_nullable_to_non_nullable
+as bool,isSkipped: null == isSkipped ? _self.isSkipped : isSkipped // ignore: cast_nullable_to_non_nullable
+as bool,isSnoozed: null == isSnoozed ? _self.isSnoozed : isSnoozed // ignore: cast_nullable_to_non_nullable
+as bool,skipReason: freezed == skipReason ? _self.skipReason : skipReason // ignore: cast_nullable_to_non_nullable
+as String?,observation: freezed == observation ? _self.observation : observation // ignore: cast_nullable_to_non_nullable
+as String?,takenTime: freezed == takenTime ? _self.takenTime : takenTime // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
 }

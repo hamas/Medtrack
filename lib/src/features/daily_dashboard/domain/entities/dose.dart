@@ -11,6 +11,10 @@ abstract class Dose with _$Dose {
     required Medicine medicine,
     required DateTime scheduledTime,
     @Default(false) bool isTaken,
+    @Default(false) bool isSkipped,
+    @Default(false) bool isSnoozed,
+    String? skipReason,
+    String? observation,
     DateTime? takenTime,
   }) = _Dose;
 

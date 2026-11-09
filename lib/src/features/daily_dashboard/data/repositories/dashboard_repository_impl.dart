@@ -112,15 +112,36 @@ class DashboardRepositoryImpl implements DashboardRepository {
         final String doseLogKey =
             '${dose.medicine.id}_${dose.scheduledTime.millisecondsSinceEpoch}';
         final AdherenceLog? matchLog = logMap[doseLogKey];
-        final bool isHandled =
-            matchLog != null &&
-            (matchLog.status == AdherenceStatus.taken ||
-                matchLog.status == AdherenceStatus.skipped);
+
+        AdherenceLog? observationLog;
+        for (final AdherenceLog l in existingLogs) {
+          if (l.medicineId == dose.medicine.id &&
+              l.scheduledTime.day == dose.scheduledTime.day &&
+              l.scheduledTime.month == dose.scheduledTime.month &&
+              l.scheduledTime.year == dose.scheduledTime.year &&
+              (l.mealNotes?.startsWith('Vitals:') == true ||
+                  l.mealNotes?.startsWith('Side Effect:') == true)) {
+            observationLog = l;
+            break;
+          }
+        }
+
+        final bool isTaken =
+            matchLog != null && matchLog.status == AdherenceStatus.taken;
+        final bool isSkipped =
+            matchLog != null && matchLog.status == AdherenceStatus.skipped;
+        final String? skipReason = isSkipped
+            ? (matchLog.mealNotes?.replaceFirst('Skipped: ', '') ?? 'Skipped')
+            : null;
 
         todayDoses.add(
-          isHandled
-              ? dose.copyWith(isTaken: true, takenTime: matchLog.takenTime)
-              : dose,
+          dose.copyWith(
+            isTaken: isTaken,
+            isSkipped: isSkipped,
+            skipReason: skipReason,
+            observation: observationLog?.mealNotes,
+            takenTime: matchLog?.takenTime,
+          ),
         );
       }
     }
