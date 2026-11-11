@@ -146,7 +146,11 @@ class _BadgeTile extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Symbols.close_rounded, color: Colors.white54, size: 20),
+                  icon: const Icon(
+                    Symbols.close_rounded,
+                    color: Colors.white54,
+                    size: 20,
+                  ),
                   onPressed: () => Navigator.pop(sheetCtx),
                   constraints: const BoxConstraints(),
                   padding: EdgeInsets.zero,

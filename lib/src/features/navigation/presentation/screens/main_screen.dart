@@ -354,23 +354,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     if (localAvatarPath != null &&
         localAvatarPath.isNotEmpty &&
         File(localAvatarPath).existsSync()) {
-      avatarWidget = Image.file(
-        File(localAvatarPath),
-        fit: BoxFit.cover,
-      );
+      avatarWidget = Image.file(File(localAvatarPath), fit: BoxFit.cover);
     } else if (user?.photoURL != null && user!.photoURL!.isNotEmpty) {
       avatarWidget = Image.network(
         user.photoURL!,
         fit: BoxFit.cover,
         errorBuilder:
-            (
-              BuildContext context,
-              Object error,
-              StackTrace? stackTrace,
-            ) => Image.asset(
-              'assets/images/default_avatar.png',
-              fit: BoxFit.cover,
-            ),
+            (BuildContext context, Object error, StackTrace? stackTrace) =>
+                Image.asset(
+                  'assets/images/default_avatar.png',
+                  fit: BoxFit.cover,
+                ),
       );
     } else {
       avatarWidget = Image.asset(

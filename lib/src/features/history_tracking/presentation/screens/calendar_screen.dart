@@ -395,7 +395,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Symbols.close_rounded, color: Colors.white54, size: 20),
+                    icon: const Icon(
+                      Symbols.close_rounded,
+                      color: Colors.white54,
+                      size: 20,
+                    ),
                     onPressed: () => Navigator.pop(sheetCtx),
                     constraints: const BoxConstraints(),
                     padding: EdgeInsets.zero,
@@ -552,7 +556,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
                                         med?.name ?? 'Unknown Medication',
@@ -580,8 +585,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: isTaken
-                                        ? Colors.greenAccent.withValues(alpha: 0.12)
-                                        : Colors.amberAccent.withValues(alpha: 0.12),
+                                        ? Colors.greenAccent.withValues(
+                                            alpha: 0.12,
+                                          )
+                                        : Colors.amberAccent.withValues(
+                                            alpha: 0.12,
+                                          ),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Row(
@@ -598,7 +607,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        DateFormat('hh:mm a').format(displayTime),
+                                        DateFormat(
+                                          'hh:mm a',
+                                        ).format(displayTime),
                                         style: TextStyle(
                                           color: isTaken
                                               ? Colors.greenAccent
@@ -636,7 +647,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
                                         dose.medicine.name,
@@ -663,7 +675,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.blueAccent.withValues(alpha: 0.12),
+                                    color: Colors.blueAccent.withValues(
+                                      alpha: 0.12,
+                                    ),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Row(
@@ -676,7 +690,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        DateFormat('hh:mm a').format(dose.scheduledTime),
+                                        DateFormat(
+                                          'hh:mm a',
+                                        ).format(dose.scheduledTime),
                                         style: const TextStyle(
                                           color: Colors.blueAccent,
                                           fontWeight: FontWeight.w700,

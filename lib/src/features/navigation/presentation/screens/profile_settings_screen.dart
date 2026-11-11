@@ -419,41 +419,45 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
         GestureDetector(
           onTap: () => _showExpressiveBottomSheet(
             title: 'Select Gender',
-            builder: (BuildContext sheetCtx, void Function(void Function()) setSheetState) => ListView(
-              shrinkWrap: true,
-              children: <String>['Male', 'Female', 'Rather not say']
-                  .map(
-                    (String value) => ListTile(
-                      leading: Icon(
-                        value == 'Male'
-                            ? Symbols.male_rounded
-                            : value == 'Female'
-                            ? Symbols.female_rounded
-                            : Symbols.person_rounded,
-                        color: Colors.white38,
-                      ),
-                      title: Text(
-                        value,
-                        style: const TextStyle(
-                          color: dulledGrey,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
+            builder:
+                (
+                  BuildContext sheetCtx,
+                  void Function(void Function()) setSheetState,
+                ) => ListView(
+                  shrinkWrap: true,
+                  children: <String>['Male', 'Female', 'Rather not say']
+                      .map(
+                        (String value) => ListTile(
+                          leading: Icon(
+                            value == 'Male'
+                                ? Symbols.male_rounded
+                                : value == 'Female'
+                                ? Symbols.female_rounded
+                                : Symbols.person_rounded,
+                            color: Colors.white38,
+                          ),
+                          title: Text(
+                            value,
+                            style: const TextStyle(
+                              color: dulledGrey,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                          trailing: _selectedGender == value
+                              ? const Icon(
+                                  Symbols.check_circle_rounded,
+                                  color: Colors.blueAccent,
+                                )
+                              : null,
+                          onTap: () {
+                            setState(() => _selectedGender = value);
+                            Navigator.pop(sheetCtx);
+                          },
                         ),
-                      ),
-                      trailing: _selectedGender == value
-                          ? const Icon(
-                              Symbols.check_circle_rounded,
-                              color: Colors.blueAccent,
-                            )
-                          : null,
-                      onTap: () {
-                        setState(() => _selectedGender = value);
-                        Navigator.pop(sheetCtx);
-                      },
-                    ),
-                  )
-                  .toList(),
-            ),
+                      )
+                      .toList(),
+                ),
           ),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
@@ -507,49 +511,53 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
         GestureDetector(
           onTap: () => _showExpressiveBottomSheet(
             title: 'Select Blood Type',
-            builder: (BuildContext sheetCtx, void Function(void Function()) setSheetState) => GridView.count(
-              shrinkWrap: true,
-              crossAxisCount: 4,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              padding: const EdgeInsets.all(16),
-              children:
-                  <String>['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
-                      .map(
-                        (String value) => GestureDetector(
-                          onTap: () {
-                            setSheetState(() => _selectedBloodType = value);
-                            setState(() => _selectedBloodType = value);
-                            Navigator.pop(sheetCtx);
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: _selectedBloodType == value
-                                  ? Colors.blueAccent.withValues(alpha: 0.2)
-                                  : Colors.white.withValues(alpha: 0.05),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: _selectedBloodType == value
-                                    ? Colors.blueAccent
-                                    : Colors.white10,
+            builder:
+                (
+                  BuildContext sheetCtx,
+                  void Function(void Function()) setSheetState,
+                ) => GridView.count(
+                  shrinkWrap: true,
+                  crossAxisCount: 4,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  padding: const EdgeInsets.all(16),
+                  children:
+                      <String>['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+                          .map(
+                            (String value) => GestureDetector(
+                              onTap: () {
+                                setSheetState(() => _selectedBloodType = value);
+                                setState(() => _selectedBloodType = value);
+                                Navigator.pop(sheetCtx);
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: _selectedBloodType == value
+                                      ? Colors.blueAccent.withValues(alpha: 0.2)
+                                      : Colors.white.withValues(alpha: 0.05),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: _selectedBloodType == value
+                                        ? Colors.blueAccent
+                                        : Colors.white10,
+                                  ),
+                                ),
+                                child: Text(
+                                  value,
+                                  style: TextStyle(
+                                    color: _selectedBloodType == value
+                                        ? Colors.blueAccent
+                                        : dulledGrey,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
                               ),
                             ),
-                            child: Text(
-                              value,
-                              style: TextStyle(
-                                color: _selectedBloodType == value
-                                    ? Colors.blueAccent
-                                    : dulledGrey,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                      .toList(),
-            ),
+                          )
+                          .toList(),
+                ),
           ),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -609,59 +617,63 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
                   _inchesController.text = tempInches.toString();
                 });
               },
-              builder: (BuildContext sheetCtx, void Function(void Function()) setSheetState) => SizedBox(
-                height: 200,
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: CupertinoPicker(
-                        itemExtent: 44,
-                        scrollController: FixedExtentScrollController(
-                          initialItem: tempFeet,
-                        ),
-                        onSelectedItemChanged: (int index) {
-                          tempFeet = index;
-                        },
-                        children: List<Widget>.generate(
-                          9,
-                          (int i) => Center(
-                            child: Text(
-                              '$i ft',
-                              style: const TextStyle(
-                                color: dulledGrey,
-                                fontSize: 18,
+              builder:
+                  (
+                    BuildContext sheetCtx,
+                    void Function(void Function()) setSheetState,
+                  ) => SizedBox(
+                    height: 200,
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: CupertinoPicker(
+                            itemExtent: 44,
+                            scrollController: FixedExtentScrollController(
+                              initialItem: tempFeet,
+                            ),
+                            onSelectedItemChanged: (int index) {
+                              tempFeet = index;
+                            },
+                            children: List<Widget>.generate(
+                              9,
+                              (int i) => Center(
+                                child: Text(
+                                  '$i ft',
+                                  style: const TextStyle(
+                                    color: dulledGrey,
+                                    fontSize: 18,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      child: CupertinoPicker(
-                        itemExtent: 44,
-                        scrollController: FixedExtentScrollController(
-                          initialItem: tempInches,
-                        ),
-                        onSelectedItemChanged: (int index) {
-                          tempInches = index;
-                        },
-                        children: List<Widget>.generate(
-                          12,
-                          (int i) => Center(
-                            child: Text(
-                              '$i in',
-                              style: const TextStyle(
-                                color: dulledGrey,
-                                fontSize: 18,
+                        Expanded(
+                          child: CupertinoPicker(
+                            itemExtent: 44,
+                            scrollController: FixedExtentScrollController(
+                              initialItem: tempInches,
+                            ),
+                            onSelectedItemChanged: (int index) {
+                              tempInches = index;
+                            },
+                            children: List<Widget>.generate(
+                              12,
+                              (int i) => Center(
+                                child: Text(
+                                  '$i in',
+                                  style: const TextStyle(
+                                    color: dulledGrey,
+                                    fontSize: 18,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
             );
           },
           child: Container(
@@ -714,34 +726,41 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
         const SizedBox(height: 8),
         GestureDetector(
           onTap: () {
-            int tempWeight =
-                (double.tryParse(_weightController.text) ?? 70).round();
+            int tempWeight = (double.tryParse(_weightController.text) ?? 70)
+                .round();
             _showExpressiveBottomSheet(
               title: 'Select Weight',
               onConfirm: () {
                 setState(() => _weightController.text = tempWeight.toString());
               },
-              builder: (BuildContext sheetCtx, void Function(void Function()) setSheetState) => SizedBox(
-                height: 200,
-                child: CupertinoPicker(
-                  itemExtent: 44,
-                  scrollController: FixedExtentScrollController(
-                    initialItem: tempWeight,
-                  ),
-                  onSelectedItemChanged: (int index) {
-                    tempWeight = index;
-                  },
-                  children: List<Widget>.generate(
-                    201,
-                    (int i) => Center(
-                      child: Text(
-                        '$i kg',
-                        style: const TextStyle(color: dulledGrey, fontSize: 18),
+              builder:
+                  (
+                    BuildContext sheetCtx,
+                    void Function(void Function()) setSheetState,
+                  ) => SizedBox(
+                    height: 200,
+                    child: CupertinoPicker(
+                      itemExtent: 44,
+                      scrollController: FixedExtentScrollController(
+                        initialItem: tempWeight,
+                      ),
+                      onSelectedItemChanged: (int index) {
+                        tempWeight = index;
+                      },
+                      children: List<Widget>.generate(
+                        201,
+                        (int i) => Center(
+                          child: Text(
+                            '$i kg',
+                            style: const TextStyle(
+                              color: dulledGrey,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
             );
           },
           child: Container(
@@ -779,7 +798,11 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
 
   void _showExpressiveBottomSheet({
     required String title,
-    required Widget Function(BuildContext sheetContext, void Function(void Function()) setSheetState) builder,
+    required Widget Function(
+      BuildContext sheetContext,
+      void Function(void Function()) setSheetState,
+    )
+    builder,
     VoidCallback? onConfirm,
   }) {
     showModalBottomSheet<void>(
@@ -793,63 +816,67 @@ class ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen>
         side: BorderSide(color: Color(0x14FFFFFF), width: 1),
       ),
       builder: (BuildContext sheetContext) => StatefulBuilder(
-        builder: (BuildContext context, void Function(void Function()) setSheetState) => Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Container(
-                width: 32,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.white10,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
+        builder:
+            (
+              BuildContext context,
+              void Function(void Function()) setSheetState,
+            ) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 20,
-                      letterSpacing: -0.5,
+                  Container(
+                    width: 32,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white10,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  const Spacer(),
-                  if (onConfirm != null)
-                    TextButton(
-                      onPressed: () {
-                        onConfirm();
-                        Navigator.pop(sheetContext);
-                      },
-                      child: const Text(
-                        'Done',
-                        style: TextStyle(
-                          color: Colors.blueAccent,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                  const SizedBox(height: 24),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 20,
+                          letterSpacing: -0.5,
                         ),
                       ),
-                    )
-                  else
-                    IconButton(
-                      onPressed: () => Navigator.pop(sheetContext),
-                      icon: const Icon(
-                        Symbols.close_rounded,
-                        color: Colors.white38,
-                      ),
-                    ),
+                      const Spacer(),
+                      if (onConfirm != null)
+                        TextButton(
+                          onPressed: () {
+                            onConfirm();
+                            Navigator.pop(sheetContext);
+                          },
+                          child: const Text(
+                            'Done',
+                            style: TextStyle(
+                              color: Colors.blueAccent,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        )
+                      else
+                        IconButton(
+                          onPressed: () => Navigator.pop(sheetContext),
+                          icon: const Icon(
+                            Symbols.close_rounded,
+                            color: Colors.white38,
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  builder(sheetContext, setSheetState),
+                  const SizedBox(height: 24),
                 ],
               ),
-              const SizedBox(height: 16),
-              builder(sheetContext, setSheetState),
-              const SizedBox(height: 24),
-            ],
-          ),
-        ),
+            ),
       ),
     );
   }

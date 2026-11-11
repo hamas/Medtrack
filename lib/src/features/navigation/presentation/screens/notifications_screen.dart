@@ -101,18 +101,24 @@ class NotificationsScreen extends ConsumerWidget {
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
-                      icon: const Icon(Symbols.notifications_active_rounded, size: 18),
+                      icon: const Icon(
+                        Symbols.notifications_active_rounded,
+                        size: 18,
+                      ),
                       label: const Text('Send Test Alert Now'),
                       onPressed: () async {
                         await NotificationManager().showNotification(
                           id: 99999,
                           title: 'Medtrack Alert: Aspirin (81mg) 🔔',
-                          body: 'Time for your scheduled dose • Instructions: With Meal',
+                          body:
+                              'Time for your scheduled dose • Instructions: With Meal',
                         );
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Notification sent to system notification tray!'),
+                              content: Text(
+                                'Notification sent to system notification tray!',
+                              ),
                             ),
                           );
                         }

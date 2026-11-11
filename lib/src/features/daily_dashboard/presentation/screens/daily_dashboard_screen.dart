@@ -414,7 +414,8 @@ class _DashboardItem extends ConsumerWidget {
     final Medicine medicine = dose.medicine;
     final String timeStr = DateFormat('hh:mm a').format(dose.scheduledTime);
     final bool isHandled = dose.isTaken || dose.isSkipped;
-    final bool isOverdue = !isHandled &&
+    final bool isOverdue =
+        !isHandled &&
         !dose.isSnoozed &&
         DateTime.now().difference(dose.scheduledTime).inMinutes > 60;
 
@@ -423,15 +424,15 @@ class _DashboardItem extends ConsumerWidget {
         color: isHandled
             ? Colors.white.withValues(alpha: 0.02)
             : (dose.isSnoozed
-                ? Colors.amber.withValues(alpha: 0.04)
-                : Colors.white.withValues(alpha: 0.05)),
+                  ? Colors.amber.withValues(alpha: 0.04)
+                  : Colors.white.withValues(alpha: 0.05)),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isHandled
               ? Colors.white.withValues(alpha: 0.03)
               : (dose.isSnoozed
-                  ? Colors.amberAccent.withValues(alpha: 0.2)
-                  : Colors.white.withValues(alpha: 0.07)),
+                    ? Colors.amberAccent.withValues(alpha: 0.2)
+                    : Colors.white.withValues(alpha: 0.07)),
         ),
       ),
       clipBehavior: Clip.antiAlias,
@@ -452,7 +453,10 @@ class _DashboardItem extends ConsumerWidget {
                 }
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
                 child: Row(
                   children: <Widget>[
                     MedicationCategoryBadge(
@@ -615,8 +619,12 @@ class _DashboardItem extends ConsumerWidget {
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
                                   color: dose.observation!.startsWith('Vitals:')
-                                      ? Colors.cyanAccent.withValues(alpha: 0.25)
-                                      : Colors.pinkAccent.withValues(alpha: 0.25),
+                                      ? Colors.cyanAccent.withValues(
+                                          alpha: 0.25,
+                                        )
+                                      : Colors.pinkAccent.withValues(
+                                          alpha: 0.25,
+                                        ),
                                   width: 0.5,
                                 ),
                               ),
@@ -628,7 +636,8 @@ class _DashboardItem extends ConsumerWidget {
                                         ? Symbols.monitor_heart_rounded
                                         : Symbols.vital_signs_rounded,
                                     size: 12,
-                                    color: dose.observation!.startsWith('Vitals:')
+                                    color:
+                                        dose.observation!.startsWith('Vitals:')
                                         ? Colors.cyanAccent
                                         : Colors.pinkAccent,
                                   ),
@@ -637,7 +646,10 @@ class _DashboardItem extends ConsumerWidget {
                                     child: Text(
                                       dose.observation!,
                                       style: TextStyle(
-                                        color: dose.observation!.startsWith('Vitals:')
+                                        color:
+                                            dose.observation!.startsWith(
+                                              'Vitals:',
+                                            )
                                             ? Colors.cyanAccent
                                             : Colors.pinkAccent,
                                         fontSize: 10,
@@ -787,19 +799,31 @@ class _DashboardItem extends ConsumerWidget {
                               color: dose.isTaken
                                   ? Colors.greenAccent.withValues(alpha: 0.15)
                                   : (dose.isSkipped
-                                      ? Colors.redAccent.withValues(alpha: 0.15)
-                                      : (dose.isSnoozed
-                                          ? Colors.amberAccent.withValues(alpha: 0.15)
-                                          : Colors.white.withValues(alpha: 0.05))),
+                                        ? Colors.redAccent.withValues(
+                                            alpha: 0.15,
+                                          )
+                                        : (dose.isSnoozed
+                                              ? Colors.amberAccent.withValues(
+                                                  alpha: 0.15,
+                                                )
+                                              : Colors.white.withValues(
+                                                  alpha: 0.05,
+                                                ))),
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: dose.isTaken
                                     ? Colors.greenAccent.withValues(alpha: 0.5)
                                     : (dose.isSkipped
-                                        ? Colors.redAccent.withValues(alpha: 0.5)
-                                        : (dose.isSnoozed
-                                            ? Colors.amberAccent.withValues(alpha: 0.4)
-                                            : Colors.white.withValues(alpha: 0.12))),
+                                          ? Colors.redAccent.withValues(
+                                              alpha: 0.5,
+                                            )
+                                          : (dose.isSnoozed
+                                                ? Colors.amberAccent.withValues(
+                                                    alpha: 0.4,
+                                                  )
+                                                : Colors.white.withValues(
+                                                    alpha: 0.12,
+                                                  ))),
                                 width: 1.5,
                               ),
                             ),
@@ -807,17 +831,18 @@ class _DashboardItem extends ConsumerWidget {
                               dose.isTaken
                                   ? Symbols.check_rounded
                                   : (dose.isSkipped
-                                      ? Symbols.close_rounded
-                                      : (dose.isSnoozed
-                                          ? Symbols.snooze_rounded
-                                          : Symbols.radio_button_unchecked_rounded)),
+                                        ? Symbols.close_rounded
+                                        : (dose.isSnoozed
+                                              ? Symbols.snooze_rounded
+                                              : Symbols
+                                                    .radio_button_unchecked_rounded)),
                               color: dose.isTaken
                                   ? Colors.greenAccent
                                   : (dose.isSkipped
-                                      ? Colors.redAccent
-                                      : (dose.isSnoozed
-                                          ? Colors.amberAccent
-                                          : Colors.white30)),
+                                        ? Colors.redAccent
+                                        : (dose.isSnoozed
+                                              ? Colors.amberAccent
+                                              : Colors.white30)),
                               size: 18,
                             ),
                           ),
@@ -856,7 +881,9 @@ class _DashboardItem extends ConsumerWidget {
           child: Container(
             decoration: BoxDecoration(
               color: kAppSheetBackground,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(32),
+              ),
               border: Border(
                 top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
               ),
@@ -892,7 +919,10 @@ class _DashboardItem extends ConsumerWidget {
                     ),
                     IconButton(
                       onPressed: () => Navigator.pop(sheetContext),
-                      icon: const Icon(Symbols.close_rounded, color: Colors.white38),
+                      icon: const Icon(
+                        Symbols.close_rounded,
+                        color: Colors.white38,
+                      ),
                     ),
                   ],
                 ),
@@ -980,7 +1010,9 @@ class _DashboardItem extends ConsumerWidget {
             return Container(
               decoration: BoxDecoration(
                 color: kAppSheetBackground,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(32),
+                ),
                 border: Border(
                   top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
                 ),
@@ -1027,7 +1059,10 @@ class _DashboardItem extends ConsumerWidget {
                         ),
                         IconButton(
                           onPressed: () => Navigator.pop(sheetCtx),
-                          icon: const Icon(Symbols.close_rounded, color: Colors.white38),
+                          icon: const Icon(
+                            Symbols.close_rounded,
+                            color: Colors.white38,
+                          ),
                         ),
                       ],
                     ),
@@ -1127,7 +1162,9 @@ class _DashboardItem extends ConsumerWidget {
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.03),
                         borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.05),
+                        ),
                       ),
                       child: TextField(
                         controller: detailsController,
@@ -1339,7 +1376,10 @@ class _DashboardItem extends ConsumerWidget {
                     ),
                     IconButton(
                       onPressed: () => Navigator.pop(sheetCtx),
-                      icon: const Icon(Symbols.close_rounded, color: Colors.white38),
+                      icon: const Icon(
+                        Symbols.close_rounded,
+                        color: Colors.white38,
+                      ),
                     ),
                   ],
                 ),

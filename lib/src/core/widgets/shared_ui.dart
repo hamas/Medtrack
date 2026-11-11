@@ -209,7 +209,10 @@ Future<T?> showGlassBottomSheet<T>({
               else
                 IconButton(
                   onPressed: () => Navigator.pop(ctx),
-                  icon: const Icon(Symbols.close_rounded, color: Colors.white38),
+                  icon: const Icon(
+                    Symbols.close_rounded,
+                    color: Colors.white38,
+                  ),
                 ),
             ],
           ),
@@ -227,11 +230,7 @@ Future<T?> showGlassBottomSheet<T>({
 ) {
   switch (method) {
     case DeliveryMethod.tablet:
-      return (
-        icon: Symbols.pill_rounded,
-        color: Colors.amber,
-        label: 'Tablet',
-      );
+      return (icon: Symbols.pill_rounded, color: Colors.amber, label: 'Tablet');
     case DeliveryMethod.capsule:
       return (
         icon: Symbols.vaccines_rounded,
@@ -251,11 +250,7 @@ Future<T?> showGlassBottomSheet<T>({
         label: 'Syringe',
       );
     case DeliveryMethod.water:
-      return (
-        icon: Symbols.pill_rounded,
-        color: Colors.amber,
-        label: 'Water',
-      );
+      return (icon: Symbols.pill_rounded, color: Colors.amber, label: 'Water');
     case DeliveryMethod.milk:
       return (
         icon: Symbols.vaccines_rounded,
@@ -319,16 +314,10 @@ class MedicationCategoryBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: config.color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(
-          color: config.color.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: config.color.withValues(alpha: 0.3)),
       ),
       child: Center(
-        child: Icon(
-          config.icon,
-          color: config.color,
-          size: iconSize,
-        ),
+        child: Icon(config.icon, color: config.color, size: iconSize),
       ),
     );
   }
