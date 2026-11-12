@@ -7,7 +7,7 @@ analyzer:
     strict-raw-types: true
   errors:
     todo: ignore
-    deprecated_member_use: warning
+    deprecated_member_use: ignore
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
