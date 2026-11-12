@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 Hamas <hamasdmc@gmail.com>
+Copyright (c) 2026 Hamas Younis <hamasdmc@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,16 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-### Medical & Clinical Disclaimer
-
-Medtrack is designed and provided solely as an informational personal medication
-and adherence management application. It is not a certified medical device and
-does not provide medical diagnosis, treatment planning, prescription validation,
-or clinical consultation.
-
-Users should always verify dosages, schedules, and drug interactions with a licensed
-physician, pharmacist, or healthcare provider. In the event of a medical emergency,
-immediately contact your local emergency services.
